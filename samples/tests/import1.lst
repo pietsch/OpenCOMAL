@@ -1,0 +1,28 @@
+       10 // IMPORT sample program
+       20 //
+       30 a:=4
+       40 b:=4
+       50 aap
+       60 PRINT a
+       70 PRINT b
+       80 IF a<>b OR a<>6 THEN STOP
+       90 //
+      100 PRINT "All ok"
+      110 //
+      120 PROC aap CLOSED
+      130   IMPORT a
+      140   a:=6
+      150   b:=6
+      160   olifant
+      170 ENDPROC
+      180 //
+      190 PROC olifant CLOSED
+      200   IMPORT aap: b
+      210   b:=9
+      220   tijger
+      230 ENDPROC
+      240 //
+      250 PROC tijger CLOSED
+      260   IMPORT _program: b
+      270   b:=6
+      280 ENDPROC

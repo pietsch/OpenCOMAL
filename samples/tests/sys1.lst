@@ -1,0 +1,15 @@
+       10 // SYS, SYS() and SYS$() sample program
+       20 //
+       30 PRINT "PDComal version ";SYS(version)
+       40 PRINT "PDComal running under ";SYS$(host)
+       50 PRINT "Current interpreter is ";SYS$(interpreter)
+       60 //
+       70 PRINT "Internal debugging will be set to on"
+       80 SYS debug, on
+       90 PRINT "Een kleine test"
+      100 IF 1=2 THEN PRINT "processing testje"
+      110 SYS debug, off
+      120 //
+      130 PRINT "Short circuit boolean evaluation = ";SYS$(short_circuit)
+      140 PRINT "Showing the EXEC keyword in listings = ";SYS$(show_exec)
+      150 PRINT "Program trace is ";SYS$(prog_trace)

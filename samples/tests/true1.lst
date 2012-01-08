@@ -1,0 +1,6 @@
+       10 // TRUE sample program
+       20 //
+       30 PRINT TRUE
+       40 PRINT 1=1
+       50 IF (1=1)<>TRUE THEN STOP
+       60 PRINT "All ok"

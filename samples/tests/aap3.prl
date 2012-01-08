@@ -1,0 +1,6 @@
+       10 // olifant external PROCedure
+       20 //
+       30 PROC olifant
+       40   olifant:+1
+       50   tijger
+       60 ENDPROC

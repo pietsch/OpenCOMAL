@@ -1,0 +1,18 @@
+       10 // EOF() sample program
+       20 //
+       30 TRAP
+       40   DELETE "ofile3"
+       50 ENDTRAP
+       60 //
+       70 OPEN FILE 1, "ofile3", WRITE 
+       80 FOR f#:=-1 TO RND(100) DO PRINT FILE 1: f#
+       90 CLOSE FILE 1
+      100 //
+      110 OPEN FILE 1, "ofile3", READ 
+      120 WHILE NOT(EOF(1)) DO
+      130   INPUT FILE 1: f#
+      140   PRINT USING "#####": f#;
+      150 ENDWHILE
+      160 CLOSE FILE 1
+      170 //
+      180 PRINT 

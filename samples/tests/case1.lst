@@ -1,0 +1,19 @@
+       10 // CASE sample program
+       20 //
+       30 FOR f:=1 TO 10 DO
+       40   PRINT "Kees is ";f;"   ";
+       50   CASE f OF
+       60     // test kees
+       70   WHEN 1
+       80     PRINT "een"
+       90   WHEN <=2
+      100     PRINT "kleiner gelijk 2"
+      110   WHEN 6, 7
+      120     PRINT "zes of zeven"
+      130   WHEN >9
+      140     PRINT "groter negen"
+      150   OTHERWISE
+      160     PRINT "none of the above"
+      170   ENDCASE
+      180   //
+      190 ENDFOR

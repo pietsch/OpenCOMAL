@@ -1,0 +1,8 @@
+       10 DIM a$ OF 20
+       20 REPEAT a$:+"X" UNTIL LEN(a$)=20
+       30 REPEAT
+       40   PRINT a$
+       50   IF LEN(a$)>1 THEN a$:=a$(2:)
+       60 UNTIL LEN(a$)=1
+       70 IF a$<>"X" THEN STOP "Not ok!"
+       80 PRINT "All ok"

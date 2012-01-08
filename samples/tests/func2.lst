@@ -1,0 +1,18 @@
+       10 // FUNC sample program
+       20 //
+       30 f#:=0; g:=0
+       40 IF aap<>1 THEN STOP
+       50 IF aap#<>2 THEN STOP
+       60 IF f#<>0 OR g<>0 THEN STOP
+       70 //
+       80 PRINT "All ok"
+       90 //
+      100 FUNC aap CLOSED
+      110   f#:=1
+      120   RETURN f#
+      130 ENDFUNC
+      140 //
+      150 FUNC aap# CLOSED
+      160   g:=2
+      170   RETURN g
+      180 ENDFUNC

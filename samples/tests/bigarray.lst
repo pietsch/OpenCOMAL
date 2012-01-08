@@ -1,0 +1,16 @@
+       10 // Checking whether an array bigger than 64K can be uses
+       20 //
+       30 nr#:=20000
+       40 DIM a(nr#)
+       50 //
+       60 FOR f#:=1 TO nr# DO
+       70   a(f#):=f#
+       80   IF f# MOD 100=0 THEN PRINT "Filling: ";f#
+       90 ENDFOR
+      100 //
+      110 FOR f#:=1 TO nr# DO
+      120   IF a(f#)<>f# THEN STOP
+      130   IF f# MOD 100=0 THEN PRINT "Checking: ";f#
+      140 ENDFOR
+      150 //
+      160 PRINT "All ok"

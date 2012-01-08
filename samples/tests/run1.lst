@@ -1,0 +1,4 @@
+       10 // RUN sample program
+       20 //
+       30 PRINT "Hello from run1"
+       40 RUN "run1a.sq"

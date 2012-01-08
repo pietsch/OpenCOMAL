@@ -1,0 +1,12 @@
+       10 org$:=DIR$
+       20 IF SYS$(host)="Linux" THEN CHDIR "/tmp"
+       30 PRINT "Directory of ";DIR$
+       40 DIR 
+       50 MKDIR "a"
+       60 CHDIR "a"
+       70 PRINT "Directory of ";DIR$
+       80 DIR 
+       90 CHDIR ".."
+      100 RMDIR "a"
+      110 CHDIR org$
+      120 PRINT "All ok"

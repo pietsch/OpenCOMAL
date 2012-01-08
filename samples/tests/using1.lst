@@ -1,0 +1,12 @@
+       10 // PRINT USING sample program
+       20 joesing("####", -10)
+       30 joesing("####", 4.500000)
+       40 joesing("#.##", 4.500000)
+       50 joesing("##.##", 4.500000)
+       60 joesing("#.#", 100.001000)
+       70 //
+       80 PROC joesing(format$, num)
+       90   PRINT format$;"  >";
+      100   PRINT USING format$: num;
+      110   PRINT "<   ";num
+      120 ENDPROC

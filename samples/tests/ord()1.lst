@@ -1,0 +1,12 @@
+       10 // ORD() sample program
+       20 // REM: ASCII DEPENDENCY!
+       30 //
+       40 WHILE NOT(EOD) DO
+       50   READ a$, o
+       60   PRINT ORD(a$)
+       70   IF ORD(a$)<>o THEN STOP
+       80 ENDWHILE
+       90 //
+      100 PRINT "All ok"
+      110 //
+      120 DATA "0", 48, "9", 57, "A", 65, "Z", 90, "a", 97, "z", 122

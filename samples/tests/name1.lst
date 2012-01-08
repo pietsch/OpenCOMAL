@@ -1,0 +1,20 @@
+       10 // NAME sample program
+       20 //
+       30 a$:="Visser"
+       40 aap(naam$+" "+a$)
+       50 //
+       60 PROC aap(NAME fullname$)
+       70   naam$:="Jos"
+       80   PRINT fullname$
+       90   naam$:="Patrick"
+      100   PRINT fullname$
+      110   naam$:="Piet"
+      120   PRINT fullname$
+      130   naam$:="Yvonne"
+      140   olifant("The name is "+fullname$)
+      150 ENDPROC
+      160 //
+      170 PROC olifant(NAME f$) CLOSED
+      180   naam$:="Tosca"
+      190   PRINT f$  // Remember, NAMEs are evaluated IN THEIR CALLING ENVIRONMENT!
+      200 ENDPROC

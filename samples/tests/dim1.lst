@@ -1,0 +1,39 @@
+       10 // DIM sample program
+       20 //
+       30 DIM a(4), b(-1:1, -1:1)
+       40 //
+       50 FOR f:=1 TO 4 DO a(f):=f
+       60 //
+       70 FOR f:=-1 TO 1 DO
+       80   FOR g:=-1 TO 1 DO
+       90     b(f, g):=f*g
+      100   ENDFOR
+      110 ENDFOR
+      120 //
+      130 trep(a(0))
+      140 trep(a(5))
+      150 trep(b(-2, 0))
+      160 trep(b(0, -2))
+      170 trep(b(-2, -2))
+      180 trep(b(2, 0))
+      190 trep(b(0, 2))
+      200 trep(b(2, 2))
+      210 //
+      220 FOR f:=4 DOWNTO 1 DO
+      230   IF a(f)<>f THEN STOP
+      240 ENDFOR
+      250 //
+      260 FOR f:=1 DOWNTO -1 DO
+      270   FOR g:=-1 TO 1 DO
+      280     IF b(f, g)<>f*g THEN STOP
+      290   ENDFOR
+      300 ENDFOR
+      310 //
+      320 PRINT "All ok"
+      330 //
+      340 PROC trep(NAME x)
+      350   TRAP
+      360     dummy:=x
+      370     STOP
+      380   ENDTRAP
+      390 ENDPROC

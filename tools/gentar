@@ -1,0 +1,9 @@
+#!/bin/bash
+
+VERSION=$(<src/VERSION)
+cd ..
+mv opencomal opencomal-$VERSION
+tar czvf opencomal-$VERSION.tar.gz --exclude=CVS opencomal-$VERSION
+mv opencomal-$VERSION opencomal
+mv opencomal-$VERSION.tar.gz html
+ls -l html/opencomal-$VERSION.tar.gz

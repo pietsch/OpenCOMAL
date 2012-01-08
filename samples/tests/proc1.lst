@@ -1,0 +1,17 @@
+       10 // PROC sample program
+       20 //
+       30 a:=0
+       40 hallo
+       50 IF a<>2 THEN STOP
+       60 PRINT "All ok"
+       70 //
+       80 PROC hallo
+       90   a:+1
+      100   PRINT "Hello ";
+      110   bob
+      120 ENDPROC
+      130 //
+      140 PROC bob
+      150   a:+1
+      160   PRINT "Bob"
+      170 ENDPROC

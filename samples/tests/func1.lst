@@ -1,0 +1,22 @@
+       10 // FUNC sample program
+       20 //
+       30 IF aap(2)<>4 THEN STOP
+       40 IF aap#(3)<>9 THEN STOP
+       50 IF aap$(4)<>"16" THEN STOP
+       60 //
+       70 PRINT "All ok"
+       80 //
+       90 FUNC aap(num#)
+      100   PRINT "FUNC aap active"
+      110   RETURN num#*2
+      120 ENDFUNC
+      130 //
+      140 FUNC aap#(num#)
+      150   PRINT "FUNC aap# active"
+      160   RETURN num#*3
+      170 ENDFUNC
+      180 //
+      190 FUNC aap$(num#)
+      200   PRINT "FUNC aap$ active"
+      210   RETURN STR$(num#*4)
+      220 ENDFUNC

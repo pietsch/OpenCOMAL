@@ -1,0 +1,18 @@
+       10 // LOOP sample program
+       20 //
+       30 i:=1
+       40 LOOP
+       50   i:+1
+       60   EXIT WHEN i=10
+       70 ENDLOOP
+       80 //
+       90 IF i<>10 THEN STOP
+      100 //
+      110 LOOP
+      120   i:-1
+      130   IF i=0 THEN EXIT
+      140 ENDLOOP
+      150 //
+      160 IF i<>0 THEN STOP
+      170 //
+      180 PRINT "All ok"

@@ -1,0 +1,17 @@
+       10 // LN() sample program
+       20 //
+       30 PAGE
+       40 PRINT "Natural logarithm"
+       50 FOR f:=0.050000 TO 4 STEP 0.050000 DO
+       60   plot(f, LN(f))
+       70 ENDFOR
+       80 //
+       90 CURSOR 1,23
+      100 PRINT "If the above looks like a natural logarithm curve, all might be ok"
+      110 //
+      120 PROC plot(x, y)
+      130   x#:=INT(x*20)
+      140   y#:=11-5*y
+      150   CURSOR x#,y#
+      160   PRINT "*";
+      170 ENDPROC

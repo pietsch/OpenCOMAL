@@ -1,0 +1,33 @@
+       10 // op_assign
+       20 // Test assignment operators
+       30 //
+       40 PROC check EXTERNAL "check.prc"
+       50 //
+       60 a:=1
+       70 check(a=1)
+       80 a:+4
+       90 check(a=5)
+      100 a:-8
+      110 check(a=-3)
+      120 //
+      130 b#:=2
+      140 check(b#=2)
+      150 b#:+8
+      160 check(b#=10)
+      170 b#:-10
+      180 check(b#=0)
+      190 //
+      200 c$:="jos"
+      210 check(c$="jos")
+      220 c$:+" visser"
+      230 check(c$="jos visser")
+      240 //
+      250 DIM d$ OF 3
+      260 d$:="jos visser"
+      270 check(d$="jos")
+      280 d$:="j"
+      290 check(d$="j")
+      300 d$:+"os visser"
+      310 check(d$="jos")
+      320 //
+      330 PRINT "All ok"

@@ -1,0 +1,28 @@
+       10 // FOR sample program
+       20 //
+       30 toe(1, 4, 1, "Van 1 tot 4")
+       40 toe(4, 1, 1, "Niets")
+       50 downtoe(4, 1, 1, "Van 4 tot 1")
+       60 downtoe(1, 4, 1, "Niets")
+       70 toe(1, 4, 2, "Van 1 tot 4 step 2")
+       80 toe(4, 1, 2, "Niets")
+       90 downtoe(4, 1, 2, "Van 4 tot 1 step 2")
+      100 downtoe(1, 4, 2, "Niets")
+      110 toe(1, 4, -1, "Niets")
+      120 toe(4, 1, -1, "Van 4 tot 1 step -1")
+      130 downtoe(4, 1, -1, "Niets")
+      140 downtoe(1, 4, -1, "Van 1 tot 4")
+      150 //
+      160 PROC toe(van, tot, stap, title$)
+      170   PRINT title$;"   ";
+      180   FOR f:=van TO tot STEP stap DO PRINT f;" ";
+      190   PRINT 
+      200 ENDPROC
+      210 //
+      220 PROC downtoe(van, tot, stap, title$)
+      230   PRINT title$;"   ";
+      240   FOR f:=van DOWNTO tot STEP stap DO
+      250     PRINT f;" ";
+      260   ENDFOR
+      270   PRINT 
+      280 ENDPROC

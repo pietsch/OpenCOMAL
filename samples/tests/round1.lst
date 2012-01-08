@@ -1,0 +1,13 @@
+       10 DIM dice(1:6)
+       20 dice():=0
+       30 FOR f#:=1 TO 100000 DO
+       40   a:=rand(1, 6)
+       50   dice(a):+1
+       60 ENDFOR f#
+       70 PRINT dice()
+       80 
+       90 FUNC rand(x, y)
+      100   d:=RND
+      110   IF d<>FRAC(d) THEN STOP "Arfle barfle gloop?"
+      120   RETURN ROUND((y-x)*d+x)
+      130 ENDFUNC rand

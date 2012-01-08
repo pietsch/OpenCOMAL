@@ -1,0 +1,29 @@
+       10 // DEL sample program
+       20 //
+       30 SELECT OUTPUT "sel.out"
+       40 PRINT "Hello"  // is moved into file
+       50 SELECT OUTPUT ""
+       60 //
+       70 DELETE "sel.out"
+       80 //
+       90 CASE SYS$(host) OF
+      100 WHEN "MsDos"
+      110   OS "dir sel.out >temp"
+      120 WHEN "Linux"
+      130   OS "ls -l sel.out >temp"
+      140 OTHERWISE
+      150   PRINT "Unknown host"
+      160   STOP
+      170 ENDCASE
+      180 //
+      190 OS "echo '*** finito ***' >>temp"
+      200 //
+      210 SELECT INPUT "temp"
+      220 REPEAT
+      230   INPUT a$
+      240   IF "sel.out" IN a$ THEN STOP
+      250 UNTIL "*** finito ***" IN a$
+      260 SELECT INPUT ""
+      270 //
+      280 DELETE "temp"
+      290 PRINT "All ok"

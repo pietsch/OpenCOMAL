@@ -1,0 +1,31 @@
+       10 // TRAP/HANDLER/ENDTRAP sample program
+       20 //
+       30 TRAP
+       40   PRINT "1. Hello"
+       50 ENDTRAP
+       60 //
+       70 TRAP
+       80   PRINT "2. Hello"
+       90   PRINT 1/0
+      100   STOP
+      110 ENDTRAP
+      120 //
+      130 TRAP
+      140   PRINT "3. Hello"
+      150 HANDLER
+      160   STOP
+      170 ENDTRAP
+      180 //
+      190 TRAP
+      200   PRINT "4. Hello"
+      210   PRINT 1/0
+      220 HANDLER
+      230   PRINT "5. Hello"
+      240   PRINT "   Error    : ";ERR
+      250   PRINT "   @ line   : ";ERRLINE
+      260   PRINT "   Errtext  : ";ERRTEXT$
+      270 ENDTRAP
+      280 //
+      290 PRINT "6. Hello"
+      300 //
+      310 PRINT "All ok"

@@ -1,0 +1,18 @@
+       10 // TRAP ESC sample program
+       20 //
+       30 PAGE
+       40 PRINT "ESCAPE is now disabled, TRY IT!!"
+       50 TRAP ESC-
+       60 loopje(2)
+       70 PRINT 
+       80 PRINT "ESCAPE is now enabled, TRY IT!!"
+       90 TRAP ESC+
+      100 loopje(4)
+      110 PRINT 
+      120 //
+      130 PROC loopje(y#)
+      140   FOR f#:=0 TO 500 DO
+      150     CURSOR 1,y#
+      160     PRINT f#;
+      170   ENDFOR
+      180 ENDPROC

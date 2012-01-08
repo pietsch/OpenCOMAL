@@ -1,0 +1,96 @@
+       10 // General demonstration program for US-NAVY like decompression
+       20 // calculations to be used for divers
+       30 //
+       40 PAGE
+       50 PRINT "US Navy decompressiemodel"
+       60 PRINT 
+       70 //
+       80 READ aantalweefsels
+       90 DIM halfwaarde(aantalweefsels), pweefsel(aantalweefsels)
+      100 FOR f:=1 TO aantalweefsels DO READ halfwaarde(f)
+      110 //
+      120 DATA 6  // aantal weefsels
+      130 DATA 5, 10, 20, 40, 80, 120  // halfwaardetijden per weefsel
+      140 //
+      150 INPUT "Luchtdruk op waterniveau  (in bar)  : ": luchtdruk
+      160 INPUT "Soortelijk gewicht van water (kg/l) : ": sgh2o
+      170 pn2:=0.8*luchtdruk  // partiele stikstofdruk op 0m diepte
+      180 dt:=1/60  // delta t van 1 seconde
+      190 PRINT 
+      200 PRINT "De partiele stikstofdruk op 0 meter is ";pn2;" bar"
+      210 PRINT 
+      220 //
+      230 pweefsel:=pn2  // initiele stikstofdruk in elk weefsel
+      240 diepte:=0
+      250 //
+      260 REPEAT
+      270   PRINT 
+      280   PRINT "Diepte is ";diepte;" meter"
+      290   REPEAT
+      300     INPUT "Nieuwe diepte (in meter)         : ": nd
+      310     IF nd<0 THEN PRINT "Fout, nieuwe diepte moet >= 0 zijn"
+      320   UNTIL nd>=0
+      330   IF nd=diepte THEN
+      340     REPEAT
+      350       INPUT "Tijd op deze diepte (in min)     : ": tijd
+      360       IF tijd<0 THEN PRINT "Fout, tijd moet >=0 zijn"
+      370     UNTIL tijd>=0
+      380   ELSE
+      390     REPEAT
+      400       INPUT "Stijg/daal snelheid (in m/min)   : ": snelheid
+      410       IF snelheid<0 THEN PRINT "Fout, snelheid moet >=0 zijn"
+      420     UNTIL snelheid>=0
+      430     IF snelheid=0 THEN
+      440       tijd:=0
+      450       PRINT "Tijdloze afdaling/opstijging"
+      460     ELSE
+      470       tijd:=ABS(diepte-nd)/snelheid
+      480       PRINT "Afdaling/opstijging duurt ";
+      490       PRINT USING "##.###": tijd;
+      500       PRINT " minuten"
+      510     ENDIF
+      520   ENDIF
+      530   //
+      540   IF tijd>0 THEN
+      550     stap:=SGN(nd-diepte)
+      560     IF stap=0 THEN
+      570       calc'weefsel(diepte, tijd)
+      580     ELSE
+      590       z:=tijd/dt
+      600       FOR f:=1 TO aantalweefsels DO
+      610         pweefsel(f):=pweefsel(f)+stap*((dt*snelheid)/10)*(1-0.5^(dt/halfwaarde(f)))
+      620       ENDFOR
+      630     ENDIF
+      640   ENDIF
+      650   diepte:=nd
+      660   PRINT 
+      670   print'weefsels("Partiele stikstofdrukken")
+      680 UNTIL diepte=0
+      690 //
+      700 PROC calc'weefsel(diepte, min) CLOSED
+      710   IMPORT pweefsel(), halfwaarde(), pn2, luchtdruk, sgh2o
+      720   IMPORT aantalweefsels
+      730   //
+      740   pn2d:=0.8*(luchtdruk+sgh2o*diepte/10)  // part. n2 druk op diepte
+      750   //
+      760   FOR f:=1 TO aantalweefsels DO
+      770     n:=min/halfwaarde(f)  // aantal verstreken halfwaardeperiodes
+      780     gd:=1-0.5^n  // gecompenseerd drukverschil factor
+      790     drukverschil:=pn2d-pweefsel(f)
+      800     pweefsel(f):=pweefsel(f)+gd*drukverschil
+      810   ENDFOR
+      820 ENDPROC
+      830 //
+      840 PROC print'weefsels(title$) CLOSED
+      850   IMPORT aantalweefsels, halfwaarde(), pweefsel()
+      860   PRINT title$
+      870   PRINT 
+      880   //
+      890   FOR f:=1 TO aantalweefsels DO
+      900     PRINT "Weefsel ";f;" (";
+      910     PRINT USING "###": halfwaarde(f);
+      920     PRINT " min) = ";
+      930     PRINT USING "##.###": pweefsel(f);
+      940     PRINT " bar"
+      950   ENDFOR
+      960 ENDPROC

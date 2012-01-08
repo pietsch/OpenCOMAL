@@ -1,0 +1,21 @@
+       10 // CLOSE sample program
+       20 //
+       30 oopen
+       40 CLOSE
+       50 //
+       60 oopen
+       70 CLOSE FILE 1
+       80 CLOSE FILE 2
+       90 //
+      100 oopen
+      110 CLOSE FILE 1, 2
+      120 //
+      130 oopen
+      140 CLOSE
+      150 //
+      160 PRINT "All ok"
+      170 //
+      180 PROC oopen
+      190   OPEN FILE 1, "ofile4", WRITE 
+      200   OPEN FILE 2, "ofile5", WRITE 
+      210 ENDPROC

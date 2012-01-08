@@ -1,0 +1,39 @@
+       10 // lst2sq
+       20 // Convert ASCII shipped programs to PDComal SAVE format
+       30 //
+       40 TRAP
+       50   DELETE "convert.in"
+       60 ENDTRAP
+       70 //
+       80 convert(".lst", ".sq")
+       90 convert(".prl", ".prc")
+      100 SYS sysin, "convert.in"
+      110 //
+      120 PROC convert(f$, t$)
+      130   CASE SYS$(host) OF
+      140   WHEN "MsDos"
+      150     OS "dir *"+f$+" >temp"
+      160   WHEN "Linux"
+      170     OS "ls *"+f$+" >temp"
+      180     OS "echo finito >>temp"
+      190   OTHERWISE
+      200     PRINT "Unknown host"
+      210     STOP
+      220   ENDCASE
+      230   SELECT INPUT "temp"
+      240   //
+      250   REPEAT
+      260     INPUT filename$
+      270   UNTIL f$ IN filename$ AND NOT("*" IN filename$)
+      280   //
+      290   SELECT OUTPUT "convert.in"
+      300   WHILE f$ IN filename$ DO
+      310     filename$:=filename$(1:f$ IN filename$-1)
+      320     PRINT "print \"Processing "+filename$
+      330     PRINT "enter \""+filename$+f$
+      340     PRINT "save \""+filename$+t$
+      360     PRINT "new"
+      370     INPUT filename$
+      380   ENDWHILE
+      390   SELECT OUTPUT ""
+      400 ENDPROC

@@ -1,0 +1,857 @@
+       10 // SLPL/SCOR - Simple List Processsing Language
+       20 //             Shock Course On Recursion
+       30 // Written in COMAL by Jos Visser 1987
+       40 // Adapted for PDComal by Jos Visser 1993
+       45 // OpenComal sample as of 2002
+       50 //
+       60 PRINT 
+       70 PRINT "SLPL/SCOR -- Initialising...",
+       80 //
+       90 noids#:=100  // Number of identifiers
+      100 memsize#:=1500  // number of words in memory
+      110 //
+      120 DIM ident$(noids#) OF 32
+      130 DIM idtable#(noids#)
+      140 DIM memory#(memsize#)
+      150 DIM errmsg$ OF 80
+      160 DIM memmap$ OF memsize#
+      170 //
+      180 waserr#:=FALSE
+      190 quitslpl#:=FALSE
+      200 nofree#:=FALSE
+      210 //
+      220 list#:=0; atom#:=1
+      230 //
+      240 idlistptr#:=-1; firstptr#:=-2; restptr#:=-3
+      250 plusptr#:=-4; subtractptr#:=-5; multiplyptr#:=-6
+      260 divideptr#:=-7; quoteptr#:=-9; quitptr#:=-10
+      270 setptr#:=-11; evaluateptr#:=-12; saveptr#:=-14
+      280 loadptr#:=-15; makelistptr#:=-16; appendptr#:=-17
+      290 progptr#:=-18; ifptr#:=-19; greaterptr#:=-20; lessptr#:=-21
+      300 leqptr#:=-22; eqlptr#:=-23; geqptr#:=-24; neqptr#:=-25
+      310 andptr#:=-26; orptr#:=-27; printptr#:=-28; inputptr#:=-29
+      320 //
+      330 enteridentifier("IDLIST", idlistptr#)
+      340 enteridentifier("QUIT", quitptr#)
+      350 enteridentifier("FIRST", firstptr#)
+      360 enteridentifier("REST", restptr#)
+      370 enteridentifier("+", plusptr#)
+      380 enteridentifier("-", subtractptr#)
+      390 enteridentifier("*", multiplyptr#)
+      400 enteridentifier("/", divideptr#)
+      410 enteridentifier("QUOTE", quoteptr#)
+      420 enteridentifier("SET", setptr#)
+      430 enteridentifier("EVALUATE", evaluateptr#)
+      440 enteridentifier("SAVE", saveptr#)
+      450 enteridentifier("LOAD", loadptr#)
+      460 enteridentifier("MAKELIST", makelistptr#)
+      470 enteridentifier("APPEND", appendptr#)
+      480 enteridentifier("PROG", progptr#)
+      490 enteridentifier("IF", ifptr#)
+      500 enteridentifier(">", greaterptr#)
+      510 enteridentifier("<", lessptr#)
+      520 enteridentifier("=", eqlptr#)
+      530 enteridentifier(">=", geqptr#)
+      540 enteridentifier("<=", leqptr#)
+      550 enteridentifier("<>", neqptr#)
+      560 enteridentifier("OR", orptr#)
+      570 enteridentifier("AND", andptr#)
+      580 enteridentifier("PRINT", printptr#)
+      590 enteridentifier("INPUT", inputptr#)
+      600 //
+      610 build'free'space'managment
+      620 mainloop
+      630 //
+      640 PROC enteridentifier(id$, ptr#) CLOSED
+      650   IMPORT noids#, ident$(), idtable#()
+      660   pos#:=lookforidentifier#(id$)
+      670   IF pos#<>0 THEN
+      680     freestructure(idtable#(pos#))
+      690     idtable#(pos#):=ptr#
+      700   ELSE
+      710     pos#:=1
+      720     WHILE pos#<=noids# AND THEN ident$(pos#)<>"" DO pos#:+1
+      730     IF pos#<=noids# THEN
+      740       ident$(pos#):=id$
+      750       idtable#(pos#):=ptr#
+      760     ENDIF
+      770   ENDIF
+      780 ENDPROC
+      790 //
+      800 FUNC lookforidentifier#(id$) CLOSED
+      810   IMPORT noids#, ident$()
+      820   IF id$="" THEN RETURN 0
+      830   pos#:=1
+      840   WHILE pos#<=noids# AND THEN ident$(pos#)<>id$ DO pos#:+1
+      850   IF pos#>noids# THEN pos#:=0
+      860   RETURN pos#
+      870 ENDFUNC
+      880 //
+      890 PROC deleteidentifier(id$) CLOSED
+      900   IMPORT ident$(), idtable#, noids#
+      910   pos#:=lookforidentifier(id$)
+      920   ident$(pos#):=""
+      930   idtable#(pos#):=0
+      940 ENDPROC
+      950 //
+      960 PROC skipspaces(REF inv$) CLOSED
+      970   WHILE inv$<>"" AND THEN inv$(1:1)=" " DO getrest(inv$)
+      980 ENDPROC
+      990 //
+     1000 PROC build'free'space'managment CLOSED
+     1010   IMPORT memsize#, memmap$
+     1020   memmap$:=""
+     1030   FOR f#:=1 TO memsize# DO memmap$:+"0"
+     1040 ENDPROC
+     1050 //
+     1060 FUNC getblock#(blksize#) CLOSED
+     1070   IMPORT memmap$
+     1080   DIM alloc$ OF blksize#
+     1090   alloc$:=""
+     1100   FOR f#:=1 TO blksize# DO alloc$:+"0"
+     1110   blkstart#:=alloc$ IN memmap$
+     1120   IF blkstart#=0 THEN
+     1130     error("Cannot allocate "+STR$(blksize#)+" word(s) of contiguous storage")
+     1140     RETURN 0
+     1150   ENDIF
+     1160   FOR f#:=1 TO blksize# DO memmap$(blkstart#+f#-1:blkstart#+f#-1):="1"
+     1170   RETURN blkstart#
+     1180 ENDFUNC
+     1190 //
+     1200 PROC freeblock(ptr#) CLOSED
+     1210   IMPORT memmap$
+     1220   IF ptr#>0 THEN
+     1230     IF isatom#(ptr#) THEN
+     1240       blksize#:=2+getmem#(ptr#+1)
+     1250     ELSE
+     1260       blksize#:=3
+     1270     ENDIF
+     1280     FOR f#:=1 TO blksize# DO memmap$(ptr#+f#-1:ptr#+f#-1):="0"
+     1290   ENDIF
+     1300 ENDPROC
+     1310 //
+     1320 PROC freestructure(ptr#) CLOSED
+     1330   IF ptr#>0 THEN
+     1340     IF NOT(isatom#(ptr#)) THEN
+     1350       freestructure(getmem#(ptr#+1))
+     1360       freestructure(getmem#(ptr#+2))
+     1370     ENDIF
+     1380     freeblock(ptr#)
+     1390   ENDIF
+     1400 ENDPROC
+     1410 //
+     1420 FUNC nextitem$(REF inv$, level#, prompt$) CLOSED
+     1430   DIM result$ OF 32
+     1440   skipspaces(inv$)
+     1450   WHILE inv$="" DO
+     1460     IF level#=0 THEN
+     1470       PRINT prompt$,
+     1480     ELSE
+     1490       PRINT ">>>>>>>>>>>>>>>>>>>>>>>>"(1:level#),
+     1500     ENDIF
+     1510     INPUT "": inv$
+     1520     skipspaces(inv$)
+     1530   ENDWHILE
+     1540   CASE inv$(1:1) OF
+     1550   WHEN "("
+     1560     result$:="("
+     1570     getrest(inv$)
+     1580   WHEN ")"
+     1590     result$:=")"
+     1600     getrest(inv$)
+     1610   WHEN "'"
+     1620     result$:="'"
+     1630     getrest(inv$)
+     1640   OTHERWISE
+     1650     WHILE inv$<>"" AND THEN (NOT(inv$(1:1) IN " )(")) DO
+     1660       result$:+inv$(1:1)
+     1670       getrest(inv$)
+     1680     ENDWHILE
+     1690   ENDCASE
+     1700   RETURN result$
+     1710 ENDFUNC
+     1720 //
+     1730 FUNC scaninput#(REF inv$, level#, prompt$) CLOSED
+     1740   IMPORT list#
+     1750   DIM item$ OF 32
+     1760   item$:=nextitem$(inv$, level#, prompt$)
+     1770   IF item$="(" THEN
+     1780     level#:+1
+     1790     item$:=nextitem$(inv$, level#, prompt$)
+     1800     root#:=0; lasto#:=0
+     1810     WHILE item$<>")" DO
+     1820       work#:=getblock#(3)
+     1830       putmem(work#, list#)
+     1840       putmem(work#+2, 0)
+     1850       inv$:=item$+" "+inv$
+     1860       putmem(work#+1, scaninput#(inv$, level#, prompt$))
+     1870       IF lasto#=0 THEN
+     1880         root#:=work#
+     1890       ELSE
+     1900         putmem(lasto#+2, work#)
+     1910       ENDIF
+     1920       lasto#:=work#
+     1930       item$:=nextitem$(inv$, level#, prompt$)
+     1940     ENDWHILE
+     1950     level#:-1
+     1960   ELIF item$="'"
+     1970     workitem#:=scaninput#(inv$, level#, prompt$)
+     1980     work1#:=getblock#(3)
+     1990     work2#:=getblock#(3)
+     2000     putmem(work1#, list#)
+     2010     putmem(work2#, list#)
+     2020     putmem(work1#+1, storeatom#("QUOTE"))
+     2030     putmem(work2#+1, workitem#)
+     2040     putmem(work1#+2, work2#)
+     2050     putmem(work2#+2, 0)
+     2060     root#:=work1#
+     2070   ELSE
+     2080     root#:=storeatom#(item$)
+     2090   ENDIF
+     2100   RETURN root#
+     2110 ENDFUNC
+     2120 //
+     2130 PROC mainloop CLOSED
+     2140   IMPORT waserr#, errmsg$, quitslpl#, nofree#, memmap$
+     2150   DIM dummy$ OF 254
+     2160   dummy$:=""
+     2170   signon
+     2180   WHILE NOT(quitslpl#) DO
+     2190     waserr#:=FALSE
+     2200     errmsg$:=" ** Noerr **"
+     2210     inptr#:=scaninput#(dummy$, 0, "Evaluate : ")
+     2220     evalptr#:=evaluate#(inptr#)
+     2230     PRINT 
+     2240     IF waserr# THEN
+     2250       NULL
+     2260     ELSE
+     2270       PRINT "Value is : ",
+     2280       printstructure(evalptr#)
+     2290     ENDIF
+     2300     PRINT 
+     2310     PRINT 
+     2320     IF NOT(nofree#) THEN
+     2330       freestructure(evalptr#)
+     2340       freestructure(inptr#)
+     2350     ENDIF
+     2360     //   PRINT memmap$
+     2370     nofree#:=FALSE
+     2380   ENDWHILE
+     2390 ENDPROC
+     2400 //
+     2410 PROC printstructure(ptr#) CLOSED
+     2420   IMPORT list#
+     2430   IF ptr#<0 THEN
+     2440     PRINT "Internal#",-ptr#,
+     2450   ELIF ptr#=0
+     2460     PRINT "NIL ",
+     2470   ELIF isatom#(ptr#)
+     2480     PRINT getatom$(ptr#),
+     2490     PRINT " ",
+     2500   ELSE
+     2510     PRINT "( ",
+     2520     WHILE ptr#<>0 DO
+     2530       printstructure(getmem#(ptr#+1))
+     2540       ptr#:=getmem#(ptr#+2)
+     2550     ENDWHILE
+     2560     PRINT ") ",
+     2570   ENDIF
+     2580 ENDPROC
+     2590 //
+     2600 //
+     2610 FUNC getatom$(ptr#) CLOSED
+     2620   IF ptr#<=0 THEN RETURN ""
+     2630   DIM res$ OF 32
+     2640   FOR f#:=1 TO getmem#(ptr#+1) DO res$:+CHR$(getmem#(ptr#+f#+1))
+     2650   RETURN res$
+     2660 ENDFUNC
+     2670 //
+     2680 FUNC storeatom#(atomm$) CLOSED
+     2690   IMPORT atom#
+     2700   ptr#:=getblock#(LEN(atomm$)+2)
+     2710   putmem(ptr#, atom#)
+     2720   putmem(ptr#+1, LEN(atomm$))
+     2730   FOR f#:=1 TO LEN(atomm$) DO putmem(ptr#+1+f#, ORD(atomm$(f#:f#)))
+     2740   RETURN ptr#
+     2750 ENDFUNC
+     2760 //
+     2770 PROC error(msg$) CLOSED
+     2780   IMPORT waserr#, errmsg$
+     2790   waserr#:=TRUE
+     2800   errmsg$:=msg$
+     2810   PRINT 
+     2820   PRINT "Error     : ",msg$
+     2830   PRINT "Traceback : "
+     2840 ENDPROC
+     2850 //
+     2860 FUNC evaluate#(ptr#) CLOSED
+     2870   IMPORT atom#, idtable#(), waserr#
+     2880   DIM atomm$ OF 32
+     2890   IF waserr# THEN
+     2900     RETURN 0
+     2910   ELSE
+     2920     IF ptr#=0 THEN
+     2930       result#:=0
+     2940     ELSE
+     2950       IF isatom#(ptr#) THEN
+     2960         atomm$:=getatom$(ptr#)
+     2970         IF isnumeric#(atomm$) THEN
+     2980           result#:=copystruc#(ptr#)
+     2990         ELSE
+     3000           index#:=lookforidentifier#(atomm$)
+     3010           IF index#=0 THEN
+     3020             error("Identifier '"+atomm$+"' not found")
+     3030             result#:=0
+     3040           ELSE
+     3050             result#:=copystruc#(idtable#(index#))
+     3060           ENDIF
+     3070         ENDIF
+     3080       ELSE
+     3090         result#:=listevaluate#(ptr#)
+     3100       ENDIF
+     3110     ENDIF
+     3120     IF waserr# THEN
+     3130       PRINT "Arg       : ",
+     3140       printstructure(ptr#)
+     3150       PRINT 
+     3160       PRINT "Value     : ",
+     3170       printstructure(result#)
+     3180       PRINT 
+     3190       PRINT 
+     3200     ENDIF
+     3210     RETURN result#
+     3220   ENDIF
+     3230 ENDFUNC
+     3240 //
+     3250 FUNC isnumeric#(num$) CLOSED
+     3260   error#:=FALSE
+     3270   TRAP
+     3280     valu#:=VAL(num$)
+     3290   HANDLER
+     3300     error#:=TRUE
+     3310   ENDTRAP
+     3320   RETURN NOT(error#)
+     3330 ENDFUNC
+     3340 //
+     3350 FUNC listevaluate#(ptr#) CLOSED
+     3360   IMPORT atom#, idtable#()
+     3370   DIM atomm$ OF 32
+     3380   IF ptr#=0 THEN
+     3390     RETURN 0
+     3400   ELSE
+     3410     ptr#:+1
+     3420     IF NOT(isatom#(getmem#(ptr#))) THEN
+     3430       error("Illegal function call -- Atom expected")
+     3440       RETURN 0
+     3450     ENDIF
+     3460     atomm$:=getatom$(getmem#(ptr#))
+     3470     index#:=lookforidentifier#(atomm$)
+     3480     IF index#=0 THEN
+     3490       error("Identifier '"+atomm$+"' not found")
+     3500       RETURN 0
+     3510     ELIF idtable#(index#)<0
+     3520       RETURN sysexec#(idtable#(index#), getmem#(ptr#+1))
+     3530     ELSE
+     3540       RETURN slplcall#(getmem#(ptr#+1), idtable#(index#))
+     3550     ENDIF
+     3560   ENDIF
+     3570 ENDFUNC
+     3580 //
+     3590 FUNC sysexec#(function#, params#) CLOSED
+     3600   IMPORT memsize#, noids#, ident$(), idtable#(), memory#(), memmap$
+     3610   IMPORT atom#, list#, quitslpl#
+     3620   IMPORT idlistptr#, firstptr#, restptr#, plusptr#, subtractptr#
+     3630   IMPORT multiplyptr#, divideptr#, quoteptr#, quitptr#, setptr#
+     3640   IMPORT evaluateptr#, saveptr#, loadptr#, makelistptr#, appendptr#
+     3650   IMPORT progptr#, ifptr#, eqlptr#, lessptr#, greaterptr#
+     3660   IMPORT leqptr#, geqptr#, neqptr#, andptr#, orptr#, printptr#, inputptr#
+     3670   DIM parptr#(31)
+     3680   DIM atomm$ OF 32
+     3690   aantalpars#:=1
+     3700   WHILE params#<>0 AND aantalpars#<=31 DO
+     3710     parptr#(aantalpars#):=getmem#(params#+1)
+     3720     params#:=getmem#(params#+2)
+     3730     aantalpars#:+1
+     3740   ENDWHILE
+     3750   aantalpars#:-1
+     3760   IF aantalpars#=31 THEN
+     3770     error("Too many parameters specified")
+     3780     RETURN 0
+     3790   ENDIF
+     3800   CASE function# OF
+     3810   WHEN idlistptr#
+     3820     IF notpars#(0, "IDLIST", aantalpars#) THEN RETURN 0
+     3830     root#:=0; lasto#:=0
+     3840     FOR f#:=1 TO noids# DO
+     3850       IF ident$(f#)<>"" THEN
+     3860         work#:=getblock#(3)
+     3870         putmem(work#, list#)
+     3880         putmem(work#+1, storeatom#(ident$(f#)))
+     3890         putmem(work#+2, 0)
+     3900         IF root#=0 THEN
+     3910           root#:=work#
+     3920         ELSE
+     3930           putmem(lasto#+2, work#)
+     3940         ENDIF
+     3950         lasto#:=work#
+     3960       ENDIF
+     3970     ENDFOR
+     3980     RETURN root#
+     3990   WHEN quitptr#
+     4000     IF notpars#(0, "QUIT", aantalpars#) THEN RETURN 0
+     4010     quitslpl#:=TRUE
+     4020     RETURN storeatom#("Bye-Bye")
+     4030   WHEN plusptr#, subtractptr#, multiplyptr#, divideptr#
+     4040     RETURN arithop#(function#, aantalpars#, parptr#)
+     4050   WHEN eqlptr#
+     4060     IF aantalpars#<2 THEN
+     4070       error("At least 2 parameters needed for '='")
+     4080       RETURN 0
+     4090     ENDIF
+     4100     work#:=evaluate#(parptr#(1))
+     4110     eq#:=TRUE
+     4120     f#:=2
+     4130     WHILE eq#=TRUE AND f#<=aantalpars# DO
+     4140       work1#:=evaluate#(parptr#(f#))
+     4150       eq#:=equal2#(work#, work1#)
+     4160       freestructure(work1#)
+     4170       f#:+1
+     4180     ENDWHILE
+     4190     freestructure(work#)
+     4200     IF eq# THEN
+     4210       RETURN storeatom#("TRUE")
+     4220     ELSE
+     4230       RETURN storeatom#("FALSE")
+     4240     ENDIF
+     4250   WHEN greaterptr#, lessptr#, geqptr#, leqptr#, neqptr#
+     4260     RETURN compare#(function#, aantalpars#, parptr#)
+     4270   WHEN orptr#, andptr#
+     4280     RETURN logical#(function#, aantalpars#, parptr#)
+     4290   WHEN quoteptr#
+     4300     IF notpars#(1, "QUOTE", aantalpars#) THEN RETURN 0
+     4310     RETURN copystruc#(parptr#(1))
+     4320   WHEN setptr#
+     4330     IF notpars#(2, "SET", aantalpars#) THEN RETURN 0
+     4340     parptr#(1):=evaluate#(parptr#(1))
+     4350     parptr#(2):=evaluate#(parptr#(2))
+     4360     IF isatom#(parptr#(1)) THEN
+     4370       work#:=parptr#(2)
+     4380       enteridentifier(getatom$(parptr#(1)), work#)
+     4390     ELSE
+     4400       error("SET - 1st parameter must evaluate to an atom")
+     4410       work#:=0
+     4420     ENDIF
+     4430     freestructure(parptr#(1))
+     4440     RETURN copystruc#(work#)
+     4450   WHEN firstptr#, restptr#
+     4460     IF notpars#(1, "FIRST/REST", aantalpars#) THEN RETURN 0
+     4470     work#:=evaluate#(parptr#(1))
+     4480     IF work#=0 THEN RETURN 0
+     4490     IF work#<0 THEN
+     4500       error("Parameter should be a list")
+     4510       RETURN 0
+     4520     ENDIF
+     4530     IF isatom#(getmem#(work#)) THEN
+     4540       error("Parameter should be a list")
+     4550       RETURN 0
+     4560     ENDIF
+     4570     IF function#=firstptr# THEN
+     4580       fwork#:=copystruc#(getmem#(work#+1))
+     4590     ELSE
+     4600       fwork#:=copystruc#(getmem#(work#+2))
+     4610     ENDIF
+     4620     freestructure(work#)
+     4630     RETURN fwork#
+     4640   WHEN evaluateptr#
+     4650     IF notpars#(1, "EVALUATE", aantalpars#) THEN RETURN 0
+     4660     work#:=evaluate#(parptr#(1))
+     4670     work1#:=evaluate#(work#)
+     4680     freestructure(work#)
+     4690     RETURN work1#
+     4700   WHEN loadptr#, saveptr#
+     4710     IF notpars#(1, "LOAD/SAVE", aantalpars#) THEN RETURN 0
+     4720     work#:=evaluate#(parptr#(1))
+     4730     IF NOT(isatom#(work#)) THEN
+     4740       error("Filename should be an atom")
+     4750       RETURN 0
+     4760     ENDIF
+     4770     IF diskio#(function#, getatom$(work#)) THEN
+     4780       RETURN storeatom#("Ok")
+     4790     ELSE
+     4800       RETURN 0
+     4810     ENDIF
+     4820   WHEN makelistptr#
+     4830     IF notpars#(1, "MAKELIST", aantalpars#) THEN RETURN 0
+     4840     work2#:=getblock#(3)
+     4850     putmem(work2#, list#)
+     4860     putmem(work2#+1, evaluate#(parptr#(1)))
+     4870     putmem(work2#+2, 0)
+     4880     RETURN work2#
+     4890   WHEN progptr#
+     4900     FOR f#:=1 TO aantalpars#-1 DO freestructure(evaluate#(parptr#(f#)))
+     4910     RETURN evaluate#(parptr#(aantalpars#))
+     4920   WHEN ifptr#
+     4930     DIM truth$ OF 5
+     4940     IF aantalpars#>3 THEN
+     4950       error("Not more than 3 parameters for IF")
+     4960       RETURN 0
+     4970     ENDIF
+     4980     work#:=evaluate#(parptr#(1))
+     4990     truth$:=getatom$(work#)
+     5000     freestructure(work#)
+     5010     IF truth$="TRUE" THEN
+     5020       RETURN evaluate#(parptr#(2))
+     5030     ELIF truth$="FALSE"
+     5040       RETURN evaluate#(parptr#(3))
+     5050     ELSE
+     5060       error("IF -- 1st parameter evaluation should result in TRUE or FALSE")
+     5070       RETURN 0
+     5080     ENDIF
+     5090   WHEN appendptr#
+     5100     IF notpars#(2, "APPEND", aantalpars#) THEN RETURN 0
+     5110     work1#:=evaluate#(parptr#(1))
+     5120     work2#:=evaluate#(parptr#(2))
+     5130     IF isatom#(work1#) OR isatom#(work2#) THEN
+     5140       error("APPEND - both parameters should be lists")
+     5150       RETURN 0
+     5160     ENDIF
+     5170     traverse#:=work1#; lastptr#:=0
+     5180     WHILE traverse#<>0 DO
+     5190       lastptr#:=traverse#
+     5200       traverse#:=getmem#(traverse#+2)
+     5210     ENDWHILE
+     5220     IF lastptr#=0 THEN
+     5230       RETURN work2#
+     5240     ELSE
+     5250       putmem(lastptr#+2, work2#)
+     5260       RETURN work1#
+     5270     ENDIF
+     5280   WHEN printptr#
+     5290     work#:=0
+     5300     FOR f#:=1 TO aantalpars# DO
+     5310       work#:=evaluate#(parptr#(f#))
+     5320       printstructure(work#)
+     5330       IF f#<aantalpars# THEN freestructure(work#)
+     5340     ENDFOR
+     5350     PRINT 
+     5360     RETURN work#
+     5370   WHEN inputptr#
+     5380     DIM dummy$ OF 160
+     5390     dummy$:=""
+     5400     RETURN scaninput#(dummy$, 0, "Input : ")
+     5410   OTHERWISE
+     5420     error("Illegal 'Internal#xx' pointer")
+     5430     RETURN 0
+     5440   ENDCASE
+     5450 ENDFUNC
+     5460 //
+     5470 FUNC isptrnumeric#(ptr#) CLOSED
+     5480   IF ptr#=0 THEN RETURN FALSE
+     5490   DIM atomm$ OF 32
+     5500   IF isatom#(ptr#) THEN
+     5510     RETURN isnumeric#(getatom$(ptr#))
+     5520   ELSE
+     5530     RETURN FALSE
+     5540   ENDIF
+     5550 ENDFUNC
+     5560 //
+     5570 FUNC arithop#(operator#, aantalpars#, REF parptr#()) CLOSED
+     5580   IMPORT waserr#, plusptr#, divideptr#, subtractptr#, multiplyptr#
+     5590   FOR f#:=1 TO aantalpars# DO parptr#(f#):=evaluate#(parptr#(f#))
+     5600   result#:=0
+     5610   IF aantalpars#>1 THEN
+     5620     IF isptrnumeric#(parptr#(1)) THEN
+     5630       result#:=VAL(getatom$(parptr#(1)))
+     5640     ELSE
+     5650       error("Nonnumeric parameter in parameterlist")
+     5660     ENDIF
+     5670     f#:=2
+     5680     WHILE f#<=aantalpars# AND NOT(waserr#) DO
+     5690       IF isptrnumeric#(parptr#(f#)) THEN
+     5700         TRAP
+     5710           number#:=VAL(getatom$(parptr#(f#)))
+     5720           CASE operator# OF
+     5730           WHEN plusptr#
+     5740             result#:+number#
+     5750           WHEN subtractptr#
+     5760             result#:-number#
+     5770           WHEN multiplyptr#
+     5780             result#:=result#*number#
+     5790           WHEN divideptr#
+     5800             result#:=result# DIV number#
+     5810           ENDCASE
+     5820         HANDLER
+     5830           result#:=1
+     5840           error(ERRTEXT$)
+     5850         ENDTRAP
+     5860       ELSE
+     5870         error("Nonnumeric parameter in parameterlist")
+     5880       ENDIF
+     5890       f#:+1
+     5900     ENDWHILE
+     5910     FOR f#:=1 TO aantalpars# DO freestructure(parptr#(f#))
+     5920   ENDIF
+     5930   RETURN storeatom#(STR$(result#))
+     5940 ENDFUNC
+     5950 //
+     5960 FUNC notpars#(wanted#, function$, received#) CLOSED
+     5970   IF wanted#=received# THEN
+     5980     RETURN FALSE
+     5990   ELSE
+     6000     error(STR$(wanted#)+" parameter(s) needed for "+function$)
+     6010     RETURN TRUE
+     6020   ENDIF
+     6030 ENDFUNC
+     6040 //
+     6050 FUNC isatom#(ptr#) CLOSED
+     6060   IMPORT atom#
+     6070   IF ptr#<=0 THEN RETURN FALSE
+     6080   IF getmem#(ptr#)=atom# THEN
+     6090     RETURN TRUE
+     6100   ELSE
+     6110     RETURN FALSE
+     6120   ENDIF
+     6130 ENDFUNC
+     6140 //
+     6150 FUNC copystruc#(ptr#) CLOSED
+     6160   IMPORT atom#, list#
+     6170   IF ptr#<=0 THEN
+     6180     RETURN ptr#
+     6190   ELSE
+     6200     IF isatom#(ptr#) THEN
+     6210       RETURN storeatom#(getatom$(ptr#))
+     6220     ELSE
+     6230       root#:=0
+     6240       lasto#:=0
+     6250       WHILE ptr#<>0 DO
+     6260         work#:=getblock#(3)
+     6270         IF work#=0 THEN
+     6280           freeblock(root)
+     6290           RETURN 0
+     6300         ENDIF
+     6310         putmem(work#, list#)
+     6320         putmem(work#+2, 0)
+     6330         putmem(work#+1, copystruc#(getmem#(ptr#+1)))
+     6340         IF lasto#=0 THEN
+     6350           root#:=work#
+     6360         ELSE
+     6370           putmem(lasto#+2, work#)
+     6380         ENDIF
+     6390         lasto#:=work#
+     6400         ptr#:=getmem#(ptr#+2)
+     6410       ENDWHILE
+     6420       RETURN root#
+     6430     ENDIF
+     6440   ENDIF
+     6450 ENDFUNC
+     6460 //
+     6470 PROC putmem(addr#, word#) CLOSED
+     6480   IMPORT memory#(), memmap$
+     6490   IF memmap$(addr#:addr#)="0" THEN
+     6500     PRINT 
+     6510     PRINT "Attempt writing unallocated memory at ",addr#
+     6520     STOP
+     6530   ELSE
+     6540     memory#(addr#):=word#
+     6550   ENDIF
+     6560 ENDPROC
+     6570 //
+     6580 FUNC getmem#(addr#) CLOSED
+     6590   IMPORT memory#(), memmap$
+     6600   IF memmap$(addr#:addr#)="0" THEN
+     6610     PRINT 
+     6620     PRINT "Attempt reading unallocated memory at ",addr#
+     6630     STOP
+     6640   ELSE
+     6650     RETURN memory#(addr#)
+     6660   ENDIF
+     6670 ENDFUNC
+     6680 //
+     6690 FUNC diskio#(function#, filnam$) CLOSED
+     6700   IMPORT noids#, memsize#, memory#(), ident$(), idtable#(), memmap$, nofree#
+     6710   IMPORT loadptr#, saveptr#
+     6720   TRAP
+     6730     IF function#=loadptr# THEN
+     6740       OPEN FILE 1, filnam$, READ 
+     6750       READ FILE 1: snoids#, smemsize#
+     6760       IF snoids#<>noids# THEN
+     6770         PRINT "Idtable sizes unequal : Current = ",noids#," File = ",snoids#
+     6780       ENDIF
+     6790       IF smemsize#<>memsize# THEN
+     6800         PRINT "Memsized unequal : Current = ",memsize#," File = ",smemsize#
+     6810       ENDIF
+     6820       IF snoids#<>noids# OR smemsize#<>memsize# THEN
+     6830         CLOSE FILE 1
+     6840         error("Workspace LOAD failed")
+     6850         RETURN FALSE
+     6860       ENDIF
+     6870       READ FILE 1: ident$, idtable#, memory#, memmap$
+     6880       CLOSE FILE 1
+     6890       nofree#:=TRUE
+     6900       RETURN TRUE
+     6910     ELSE
+     6920       OPEN FILE 1, filnam$, WRITE 
+     6930       WRITE FILE 1: noids#, memsize#
+     6940       WRITE FILE 1: ident$, idtable#, memory#, memmap$
+     6950       CLOSE FILE 1
+     6960       RETURN TRUE
+     6970     ENDIF
+     6980   HANDLER
+     6990     error(ERRTEXT$+" - Current workspace may be corrupt")
+     7000     CLOSE FILE 1
+     7010     RETURN FALSE
+     7020   ENDTRAP
+     7030 ENDFUNC
+     7040 //
+     7050 FUNC equal2#(ptr1#, ptr2#) CLOSED
+     7060   IF isatom#(ptr1#) AND isatom#(ptr2#) THEN
+     7070     RETURN getatom$(ptr1#)=getatom$(ptr2#)
+     7080   ELIF NOT(isatom#(ptr1#)) AND NOT(isatom#(ptr2#))
+     7090     IF ptr1#=ptr2# THEN RETURN TRUE
+     7100     IF ptr1#<=0 OR ptr2#<=0 THEN RETURN FALSE
+     7110     RETURN equal2#(getmem#(ptr1#+1), getmem#(ptr2#+1)) AND equal2#(getmem#(ptr1#+2), getmem#(ptr2#+2))
+     7120   ELSE
+     7130     RETURN FALSE
+     7140   ENDIF
+     7150 ENDFUNC
+     7160 //
+     7170 PROC signon
+     7180   PAGE
+     7190   PRINT "+-------------------------------------------------+"
+     7200   PRINT "|                                                 |"
+     7210   PRINT "|                SLPL/SCOR                        |"
+     7220   PRINT "|                                                 |"
+     7230   PRINT "|     SLPL - Simple List Processing Language      |"
+     7240   PRINT "|     SCOR - Shock Course On Recursion            |"
+     7250   PRINT "|                                                 |"
+     7260   PRINT "|     1987: Written in IBM COMAL-80 by Jos Visser |"
+     7270   PRINT "|     1993: Adapted for PDComal                   |"
+     7275   PRINT "|     2002: Released with OpenComal               |"
+     7280   PRINT "|                                                 |"
+     7290   PRINT "+-------------------------------------------------+"
+     7300   PRINT 
+     7310 ENDPROC
+     7320 //
+     7330 FUNC slplcall#(pars#, defi#) CLOSED
+     7340   IMPORT idtable#()
+     7350   DIM parname$(32) OF 32, parval#(32), atomm$ OF 32
+     7360   perr#:=isatom#(defi#)
+     7370   IF defi#=0 THEN perr#:=TRUE
+     7380   IF NOT(perr#) AND THEN getmem#(defi#+2)=0 THEN perr#:=TRUE
+     7390   IF perr# THEN
+     7400     error("Function should be a list containing 2 lists")
+     7410     RETURN 0
+     7420   ENDIF
+     7430   parlist#:=getmem#(defi#+1)
+     7440   body#:=getmem#(getmem#(defi#+2)+1)
+     7450   work#:=parlist#; parno#:=0
+     7460   WHILE work#<>0 DO
+     7470     parno#:+1
+     7480     IF NOT(isatom#(getmem#(work#+1))) THEN
+     7490       error("Parameters should be a list consisting of atoms only")
+     7500       RETURN 0
+     7510     ENDIF
+     7520     atomm$:=getatom$(getmem#(work#+1))
+     7530     index#:=lookforidentifier#(atomm$)
+     7540     IF index#=0 THEN
+     7550       enteridentifier(atomm$, 0)
+     7560       index#:=lookforidentifier#(atomm$)
+     7570     ENDIF
+     7580     parname$(parno#):=atomm$
+     7590     parval#(parno#):=copystruc#(idtable#(index#))
+     7600     IF pars#=0 THEN
+     7610       enteridentifier(atomm$, 0)
+     7620     ELSE
+     7630       enteridentifier(atomm$, evaluate#(getmem#(pars#+1)))
+     7640       pars#:=getmem#(pars#+2)
+     7650     ENDIF
+     7660     work#:=getmem#(work#+2)
+     7670   ENDWHILE
+     7680   retval#:=evaluate#(body#)
+     7690   FOR f#:=1 TO parno# DO enteridentifier(parname$(f#), parval#(f#))
+     7700   RETURN retval#
+     7710 ENDFUNC
+     7720 //
+     7730 FUNC logical#(function#, aantalpars#, parptr#()) CLOSED
+     7740   IMPORT orptr#, andptr#
+     7750   f#:=1
+     7760   IF function#=andptr# THEN
+     7770     retval#:=TRUE
+     7780   ELSE
+     7790     retval#:=FALSE
+     7800   ENDIF
+     7810   WHILE f#<=aantalpars# AND ((retval#=TRUE AND function#=andptr#) OR function#=orptr#) DO
+     7820     work#:=evaluate#(parptr#(f#))
+     7830     thisval#:=getatom$(work#)="TRUE"
+     7840     freestructure(work#)
+     7850     CASE function# OF
+     7860     WHEN orptr#
+     7870       retval#:=retval# OR thisval#
+     7880     WHEN andptr#
+     7890       retval#:=retval# AND thisval#
+     7900     ENDCASE
+     7910     f#:+1
+     7920   ENDWHILE
+     7930   IF retval#=TRUE THEN
+     7940     RETURN storeatom#("TRUE")
+     7950   ELSE
+     7960     RETURN storeatom#("FALSE")
+     7970   ENDIF
+     7980 ENDFUNC
+     7990 //
+     8000 FUNC compare#(function#, aantalpars#, parptr#()) CLOSED
+     8010   IMPORT greaterptr#, lessptr#, leqptr#, geqptr#, neqptr#, waserr#
+     8020   IF aantalpars#=0 THEN
+     8030     error(">,<,>=,<=,<> should have at least one parameter")
+     8040     RETURN storeatom#("FALSE")
+     8050   ENDIF
+     8060   FOR f#:=1 TO aantalpars# DO parptr#(f#):=evaluate#(parptr#(f#))
+     8070   result#:=TRUE
+     8080   IF isptrnumeric#(parptr#(1)) THEN
+     8090     compareval#:=VAL(getatom$(parptr#(1)))
+     8100   ELSE
+     8110     error("Nonnumeric parameter in parameterlist")
+     8120     RETURN storeatom#("FALSE")
+     8130   ENDIF
+     8140   f#:=2
+     8150   WHILE f#<=aantalpars# AND NOT(waserr#) AND result#=TRUE DO
+     8160     IF isptrnumeric#(parptr#(f#)) THEN
+     8170       TRAP
+     8180         number#:=VAL(getatom$(parptr#(f#)))
+     8190         CASE function# OF
+     8200         WHEN greaterptr#
+     8210           result#:=result# AND (number#<compareval#)
+     8220         WHEN lessptr#
+     8230           result#:=result# AND (number#>compareval#)
+     8240         WHEN leqptr#
+     8250           result#:=result# AND (number#>=compareval#)
+     8260         WHEN geqptr#
+     8270           result#:=result# AND (number#<=compareval#)
+     8280         WHEN neqptr#
+     8290           result#:=result# AND (number#<>compareval#)
+     8300         ENDCASE
+     8310         compareval#:=number#
+     8320       HANDLER
+     8330         result#:=FALSE
+     8340         error(ERRTEXT$)
+     8350       ENDTRAP
+     8360     ELSE
+     8370       error("Nonnumeric parameter in parameterlist")
+     8380     ENDIF
+     8390     f#:+1
+     8400   ENDWHILE
+     8410   FOR f#:=1 TO aantalpars# DO freestructure(parptr#(f#))
+     8420   IF result#=TRUE THEN
+     8430     RETURN storeatom#("TRUE")
+     8440   ELSE
+     8450     RETURN storeatom#("FALSE")
+     8460   ENDIF
+     8470 ENDFUNC
+     8480 //
+     8490 PROC getrest(REF a$)
+     8500   IF LEN(a$)=1 THEN
+     8510     a$:=""
+     8520   ELSE
+     8530     a$:=a$(2:)
+     8540   ENDIF
+     8550 ENDPROC

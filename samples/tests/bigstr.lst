@@ -1,0 +1,23 @@
+       10 // Checking whether a string bigger than 64K can be used
+       20 //
+       30 a$:="x"
+       40 l:=LEN(a$)
+       50 WHILE l<70000 DO
+       60   a$:=a$+a$
+       70   l:=l*2
+       80   PRINT l
+       90 ENDWHILE
+      100 //
+      110 IF LEN(a$)<>l THEN STOP
+      120 //
+      130 FOR f:=1 TO l DO
+      140   IF f MOD 20000=0 THEN PRINT "Setting ";f
+      150   a$(f:f):=CHR$(f MOD 26+ORD("A"))
+      160 ENDFOR
+      170 //
+      180 FOR f:=1 TO l DO
+      190   IF f MOD 20000=0 THEN PRINT "Checking ";f
+      200   IF a$(f:f)<>CHR$(f MOD 26+ORD("A")) THEN STOP
+      210 ENDFOR
+      220 //
+      230 PRINT "All ok"

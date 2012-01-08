@@ -1,0 +1,120 @@
+       10 // General sample program
+       20 //
+       30 WHILE NOT(EOD) DO
+       40   READ a
+       50   PRINT a;"  ";verbaal$(a)
+       60 ENDWHILE
+       70 //
+       80 DATA 1, 12, 34, 112, 1009, 1234567890
+       90 //
+      100 FUNC verbaal$(getal#) CLOSED
+      110   //
+      120   //   ************************************
+      130   //   **    FUNC Verbaal$ ( Integer )   **
+      140   //   ************************************
+      150   //
+      160   // Geschreven door Jos Visser, 25-06-1987
+      170   // Aangepast voor PDCOMAL,     10-9-92
+      180   //
+      190   //
+      200   // Functie :
+      210   //            Deze functie neemt als parameter een integer getal,
+      220   //            positief danwel negatief, en geeft een string terug
+      230   //            die weergeeft hoe dat getal op zijn Nederlands
+      240   //            geschreven kan worden.
+      250   //
+      260   // Parameters in :
+      270   //            Integer getal
+      280   //
+      290   // Parameters uit :
+      300   //            String, maximaal 132 karakters lang
+      310   //
+      320   // Packages ed.   :
+      330   //            Geen
+      340   //
+      350   PROC skipspaces(REF a$) CLOSED
+      360     IF a$<>"" THEN
+      370       WHILE a$(LEN(a$):LEN(a$))=" " DO a$:=a$(1:LEN(a$)-1)
+      380     ENDIF
+      390   ENDPROC
+      400   //
+      410   FUNC cijfer$(nr#) CLOSED
+      420     DIM a$ OF 5
+      430     a$:="nul  een  twee drie vier vijf zes  zevenacht negentien   "(1+nr#*5:5+nr#*5)
+      440     skipspaces(a$)
+      450     RETURN a$
+      460   ENDFUNC
+      470   //
+      480   FUNC t'11'19$(nr#) CLOSED
+      490     DIM a$ OF 10
+      500     a$:="tien     elf      twaalf   dertien  veertien vijftien zestien  zeventienachtien  negentien"(1+(nr#-10)*9:9+(nr#-10)*9)
+      510     skipspaces(a$)
+      520     RETURN a$
+      530   ENDFUNC
+      540   //
+      550   FUNC tiental$(nr#) CLOSED
+      560     DIM a$ OF 10
+      570     nr#:=nr# DIV 10
+      580     a$:="twintig dertig  veertig vijftig zestig  zeventigtachtig negentig"(1+(nr#-2)*8:8+(nr#-2)*8)
+      590     skipspaces(a$)
+      600     RETURN a$
+      610   ENDFUNC
+      620   //
+      630   FUNC duizend$(nr#) CLOSED
+      640     honderd#:=nr# DIV 100
+      650     rest#:=nr# MOD 100
+      660     IF honderd#>1 THEN
+      670       result$:=cijfer$(honderd#)+"honderd"
+      680     ELIF honderd#=1
+      690       result$:="honderd"
+      700     ELSE
+      710       result$:=""
+      720     ENDIF
+      730     IF rest#<=10 THEN
+      740       IF rest#<>0 OR honderd#=0 THEN result$:+cijfer$(rest#)
+      750     ELIF rest#<20
+      760       result$:+t'11'19$(rest#)
+      770     ELSE
+      780       IF rest# MOD 10<>0 THEN result$:=result$+cijfer$(rest# MOD 10)+"en"
+      790       IF rest# DIV 10>0 THEN result$:+tiental$(rest#)
+      800     ENDIF
+      810     RETURN result$
+      820   ENDFUNC
+      830   //
+      840   DIM result$ OF 132, subresult$ OF 40
+      850   result$:=""
+      860   IF getal#<0 THEN
+      870     negatief#:=TRUE
+      880     getal#:=-getal#
+      890   ELSE
+      900     result$:=""
+      910     negatief#:=FALSE
+      920   ENDIF
+      930   FOR macht#:=9 DOWNTO 0 STEP 3 DO
+      940     subgetal#:=getal# DIV 10^macht#
+      950     getal#:=getal# MOD 10^macht#
+      960     IF subgetal#>0 OR (macht#=0 AND result$="") THEN
+      970       subresult$:=duizend$(subgetal#)
+      980       IF macht#<>3 OR subgetal#<>1 THEN
+      990         result$:=result$+", "+subresult$
+     1000       ELSE
+     1010         IF result$="" THEN result$:="  "
+     1020       ENDIF
+     1030       CASE macht# OF
+     1040       WHEN 9
+     1050         result$:+" miljard "
+     1060       WHEN 6
+     1070         result$:+" miljoen "
+     1080       WHEN 3
+     1090         result$:+"duizend "
+     1100       OTHERWISE
+     1110         NULL
+     1120       ENDCASE
+     1130     ENDIF
+     1140     skipspaces(result$)
+     1150   ENDFOR
+     1160   result$:=result$(3:)
+     1170   IF negatief# THEN result$:="min "+result$
+     1180   RETURN result$
+     1190 ENDFUNC
+     1200 //

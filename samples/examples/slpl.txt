@@ -1,0 +1,337 @@
+----------------------------
+Documentation with SLPL/SCOR
+----------------------------
+
+SLPL/SCOR is an implementation of a simple list processing language à
+la LISP. This implementation, in Comal, should not be regarded for any
+serious use except studying the source of the interpreter.  SLPL stands
+for Simple List Processing Language; SCOR means Shock Course on
+Recursion :-)
+
+The world of SLPL is made up of two things : LISTs and ATOMs.
+
+An atom is a character string (maximum length 31) consisting of
+numbers, letters and other characters not containing space, (, ) and '.
+
+Valid atoms are :
+
+	COMPUTER
+	45
+	THIS-IS-A-LONG-ATOM
+	CAR78-O
+
+As you see atoms can represent names, numbers and the like. The other
+concept in SLPL is the list. A list is an ordered structure made up of
+atoms and other lists.
+
+Valid lists are :
+
+	( THIS IS A LIST )
+	( A LIST ( WITH SUBLISTS ) )
+	( 1 2 3 )
+
+A list contains a number of elements. The first list contains 4
+elements. The second list contains 3 elements, two atoms and a list.
+As you can see a list in SLPL is represented by a '(' and a ')' with
+inbetween the elements. You can look upon the list as a nephew of the
+well known 'set' which is a concept from mathematics. The difference is
+that lists are ordered, whilst sets are not: The set {a,b,c} is equal
+to the set {c,a,b},  whilst the list (A B C) is different from the list
+(C A B).
+
+The list containing no elements () is referred to as the null list or
+NIL
+
+So the list and the atom are the data structures SLPL can handle. With
+them you have enough power to do anything you want. With lists and
+atoms you can represent array's (mono and multidimensional), binary
+trees, sparse matrices etc. etc.
+
+The power of list processing languages lies in the evaluation engine.
+The evaluation engine is the heart of the SLPL interpreter and its sole
+purpose is the evaluation of lists.  SLPL will always try to evaluate
+something. The result of this: evaluation will be handed back to the
+requester as a function result.
+
+When you start up SLPL you'll get a introductory message followed
+by the prompt 'Evaluate :'. SLPL wants you to present it with
+an input line it can evaluate. After the evaluation it'll respond
+'Value is : ....'.
+
+Now just enter:
+
+	(+ 4 5)   [return]
+
+SLPL will think some time and then say 'Value is : 9'. This value
+is the result of the evaluation of the list (+ 4 5).
+
+When you request SLPL to evaluate a list it looks upon that list as a
+function call. The first element of the list is the function and the
+rest are its parameters. It then starts evaluating all parameters (2nd,
+3rd ... elements of the list) and after that hands over the control to
+the requested function.
+
+So when you type:
+
+	(* 2 5 6)
+
+SLPL sees the '*' as the requested function. It evaluates the 2, 5 and
+6 as parameters and tells '*' to do its work. '*' multiplies the
+numbers and hands back the result. Voila!
+
+Now you know that the evaluation engine evaluates all of the
+parameters you will not be surprised that you can build some quite
+complex function calls :
+
+	(- (* 2 2) (* 4 1 8))
+
+Can be used to partially solve an equation X^2+2X+8=0 by determining
+the value b^2-4ac. SLPL first evaluates (* 2 2) and stores the value,
+then looks at (* 4 1 8) ans stores that value and after this subtracts
+the two values.
+
+So much for the evaluation of lists. Now a view of how SLPL evaluates
+atoms.
+
+When the evaluation engine discovers that is has to evaluate an atom it
+first looks whether the character string making up the atom can be
+re.g.:rded as a valid number. Is this so then it returns that number. If
+the atom is not numeric it starts looking in its in its variable tables
+whether it can find a variable with the same.  name. If it finds one
+then it returns the value of the variable, otherwise an error condition
+is raised and you will get a message and a trace of the offending
+structures.
+
+In yonder paragraph I said that SLPL knows about variables. These
+variables have names which are atom like. You can give a variable a
+value with the function SET:
+
+	(SET 'MONKEY 1)
+
+is the appropiate thing to type when you want to set a variable
+names MONKEY to the value 1. (Don't bother about the ' yet)
+
+When you now type:
+
+	(+ MONKEY 3)
+
+SLPL responds with the message that the value is '4'. It has been
+asked to evaluate MONKEY, looked in its variable tables and
+found that MONKEY was equal to 1.
+
+Note that in order to set a variable you must do a function call. SET
+is an ordinary SLPL function. So to set a variable you must request
+SLPL to evaluate a function call to SET.
+
+Now more complex SLPL statements can be written:
+
+	(SET 'A 1)
+	(SET 'B 2)
+	(SET 'C 3)
+	(SET 'D (- (* B B) (* 4 A C)))
+
+You might be bothered a bit by the quote that SET seems to require:
+
+As said before the evaluation engine always wants to evaluate
+the parameters of a function call. In the case of SET however you
+do not want to evaluate the first parameter because that is the
+variable name to which you want to tie a value.
+
+By putting a ' before a structure the evaluation engine does not
+evaluate that structure but leaves it "untouched". So if you type :
+
+	MONKEY
+
+the evaluation engine starts looking in its tables to find a variable
+with the name of MONKEY and returns that value. But if you type :
+
+	'MONKEY
+
+SLPL will just return the atom MONKEY as its value.
+
+Rather complicated eh?
+
+An example:
+
+	(SET 'A MONKEY)
+	(SET 'A 'MONKEY)
+
+Suppose that MONKEY was set to 1 by (SET 'MONKEY 1), in the first
+case the variable A is set to 1 whilst in the second case A is set
+to MONKEY.
+
+Or, to stay in Comal terms :
+
+	(SET 'MONKEY 1)      <-->  monkey:=1
+	(SET 'A MONKEY)      <-->  a:=monkey
+	(SET 'A 'MONKEY)     <-->  a:="monkey"  (or a$)
+
+The quote (') is also valid for lists. The function call
+
+	(SET 'PP '(COMAL PASCAL C))
+
+will make variable PP equal to the list (COMAL PASCAL C). SLPL will not
+try to evaluate this list. If you forget the quote the& evaluation
+engine will start to look for the function COMAL en tries to evaluate
+the atoms PASCAL en C and hand their values over to the named function.
+
+Now for functions:
+
+SLPL knows two types of functions : Internal and user ones.
+Internal functions are represented by a special value and the
+evaluation engine gives control to a special part of the interpreter
+as soon as it starts evaluating such an internal function.
+
+User functions are written by the user to perform a specific task.
+They are represented by variables whose values are lists making up the
+function. A user function is a list containing two lists as its
+elements. The first list contain the local names of its parameters and
+the second list forms the function body.
+
+A function PLUS to add two number could have the following definition:
+
+	( ( A B ) (+ A B ) )
+
+The first element is the list (A B). These are the parameters of the
+function. The second element is the list that is evaluated after
+the parameters are tied to their values.
+
+To define the function PLUS you'll have to set the variable PLUS
+to its value:
+
+	(SET 'PLUS '( (A B) (+ A B) ) )
+
+Now you have defined a function PLUS. You can call PLUS as follows:
+
+	(PLUS 6 7)
+
+SLPL starts looking for the variable PLUS. It is then returned the
+list ((A B) (+ A B)). The evaluation engine ties the variable A to 6
+and B to 7. Then it evaluates the list (+ A B). The result of this
+evaluation is handed back to the caller.
+
+So now you can define your own functions to do the things you want:
+
+	(SET 'DIS '( (A B C) (- (* B B) (* 4 A C))))
+
+Calling this as
+
+	(DIS 1 2 8)
+
+calculates the value of b^2-4ac for the specified polynome.
+
+The following internal functions are currently built into SLPL/SCOR:
+
+IDLIST       : Returns a list containing all known variables in theL
+		system.
+QUIT         : Quits SLPL
+FIRST        : Returns the first element of a list.
+		e.g.: (FIRST '(A B C)) returns A
+REST         : Returns the rest of the list.
+		e.g.: (REST '(A B C)) returns (B C))
++,-,*,/      : Built in arithmetic. Can have more than 2 parameters.
+		e.g.: (* 7 6 5), (- 10 4 5) etc.
+SET          : Sets variable to value.
+		e.g.: (SET 'VAR (DIS 5 6 7))
+EVALUATE     : Evaluates its parameter.
+		e.g.: (SET 'A '(* 1 2))
+			(EVALUATE A)
+SAVE         : Saves current workspace to disk
+		e.g.: (SAVE 'WS1)
+LOAD         : Loads a workspace from disk.
+		e.g.: (LOAD 'WS1)  (All other definitions lost)
+MAKELIST     : Makes a list of its parameter
+		e.g.: (MAKELIST 'HAI) returns ( HAI )
+APPEND       : Appends two lists.
+		e.g.: (APPEND '( LIST 1) '(LIST 2)) = (LIST 1 LIST 2)
+PROG         : Evaluates all of its parameters(
+		e.g.: (PROG st1 st2 st3)
+		Can be used to evaluate more than 1 list where only
+		one is allowed
+IF           : Used as (IF expr st1 st2)
+		If expr is TRUE then evaluates st1 else evaluates st2
+>,<
+>=,<=
+=,<>         : Comparision operatorsx
+		e.g.: (< 7 6)
+OR, AND      : Logical functions
+		e.g.: (AND (= A B) (< T 6))
+PRINT        : Prints parameter
+		e.g.: (PRINT 'Hello 'There)
+INPUT        : Inputs a structure from keyboard.
+		e.g.: (SET 'A INPUT)
+
+Above descriptions are quite short but the reader is invited to play 
+around a bit with them. As said before SLPL/SCOR is not intended for 
+any serious programming use.
+
+Some examples :
+
+Counting how many elements there are in a list ":
+
+	(SET 'COUNT '(
+		( LIST )
+		( IF (= LIST ())
+			0
+			(+ 1
+				(COUNT (REST LIST))
+			)
+		)
+	))
+
+This definition can be roughly compared to the following COMAL
+function which determines the length of a string :
+
+	FUNC count ( a$ )
+		IF a$="" THEN
+			RETURN 0
+		ELSE
+			RETURN 1+count(a$(2:))
+		ENDIF
+	ENDFUNC
+
+	
+Pick the Nth element out of a list :
+
+	(SET 'PICK '(
+		(N LIST)
+		( IF (= N 0)
+			(FIRST LIST)
+			(PICK (- N 1) (REST LIST))
+		)
+	))
+
+This function as well can be written as a COMAL definition:
+
+	FUNC pick$(n,a$)
+		IF n=0 THEN
+			RETURN a$(1:1)
+		ELSE
+			RETURN pick$(n-1,a$(2:))
+		ENDIF
+	ENDFUNC
+
+Determining the hexadecimal equivalent of a 0<=number<=15
+
+	(SET 'HEXDIGIT '(
+		( DIGIT )
+		( PICK DIGIT '(0 1 2 3 4 5 6 7 8 9 A B C D E F))
+	))
+
+However, the following also works :
+
+	(SET 'HEXDIGIT2 '(
+		( DIGIT )
+		( IF (< DIGIT 10)
+			DIGIT
+			(PICK (- DIGIT 10) '(A B C D E F))
+		)
+	))
+
+Because of the recursive nature of PICK in the first definitionz
+of HEXDIGIT nesting can become as deep as 16. You might get
+a COMAL 'Out of Memory' error because the interpreter which uses
+recursion as much as SLPL fills available stack memory rather quickly.
+
+SLPL/SCOR was conceived of, designed and implemented by Jos Visser
+<josv@osp.nl>

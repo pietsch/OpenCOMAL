@@ -1,0 +1,15 @@
+       10 // DEG() sample program
+       20 //
+       30 FOR f:=0 TO 2 STEP 1/4 DO
+       40   PRINT USING "#.##": f;
+       50   PRINT " PI = ";
+       60   d:=DEG(f*PI)
+       70   PRINT USING "###": d;
+       80   PRINT " degrees"
+       90   READ e
+      100   IF d<>e THEN STOP
+      110 ENDFOR
+      120 //
+      130 PRINT "All ok"
+      140 //
+      150 DATA 0, 45, 90, 135, 180, 225, 270, 315, 360

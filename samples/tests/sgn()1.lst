@@ -1,0 +1,6 @@
+       10 // SGN() sample program
+       20 //
+       30 IF SGN(-4.500000)<>-1 THEN STOP
+       40 IF SGN(4.600000)<>1 THEN STOP
+       50 IF SGN(0)<>0 THEN STOP
+       60 PRINT "All ok"

@@ -1,0 +1,25 @@
+       10 // IMPORT sample program
+       20 //   
+       30 a$:="main program"
+       40 aap
+       50 PRINT "Ex main: a$=";a$
+       60 //
+       70 PROC aap CLOSED
+       80   a$:="proc aap"
+       90   aap1
+      100   aap2
+      110   PRINT "Ex aap : a$=";a$
+      120   //
+      130   PROC aap1 CLOSED
+      140     IMPORT a$
+      150     PRINT "In aap1: a$=";a$
+      160     a$:="Modified in aap1"
+      170   ENDPROC
+      180   //
+      190   PROC aap2 CLOSED
+      200     IMPORT _program: a$
+      210     PRINT "In aap2: a$=";a$
+      220     a$:="Modified in aap2"
+      230   ENDPROC
+      240   //
+      250 ENDPROC

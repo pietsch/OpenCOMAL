@@ -1,0 +1,12 @@
+       10 // STOP sample program
+       20 //
+       30 deliet("temp")
+       40 SELECT OUTPUT "temp"
+       50 PRINT "con"
+       60 SELECT OUTPUT ""
+       70 SYS sysin, "temp"
+       80 STOP
+       90 PRINT "Resumed"
+      100 PRINT "All ok"
+      110 //
+      120 PROC deliet EXTERNAL "deliet.prc"

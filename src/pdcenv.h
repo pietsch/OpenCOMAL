@@ -1,0 +1,16 @@
+/*
+ * OpenComal -- a free Comal implementation
+ *
+ * This file is part of the OpenComal package.
+ * (c) Copyright 1992-2002 Jos Visser <josv@osp.nl>
+ *
+ * The OpenComal package is covered by the GNU General Public
+ * License. See doc/LICENSE for more information.
+ */
+
+/* OpenComal environment handling header file */
+
+extern struct comal_env *env_new(char *name);
+extern struct comal_env *env_find(char *name);
+extern void clean_runenv(struct comal_env *env);
+extern void clear_env(struct comal_env *env);

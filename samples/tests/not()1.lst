@@ -1,0 +1,6 @@
+       10 // NOT() sample program
+       20 //
+       30 a:=TRUE=NOT(FALSE)
+       40 b:=FALSE=NOT(TRUE)
+       50 IF a<>b OR a<>1 THEN STOP
+       60 PRINT "All ok"

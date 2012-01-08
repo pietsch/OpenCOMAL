@@ -1,0 +1,11 @@
+       10 // EOD sample program
+       20 //
+       30 WHILE NOT(EOD) DO
+       40   READ a
+       50   PRINT a
+       60 ENDWHILE
+       70 //
+       80 IF a<>25 THEN STOP
+       90 PRINT "All ok"
+      100 // 
+      110 DATA 1, 4, 9, 16, 25

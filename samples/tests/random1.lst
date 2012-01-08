@@ -1,0 +1,21 @@
+       10 // RANDOM sample program
+       20 //
+       30 TRAP
+       40   DELETE "ofile7"
+       50 ENDTRAP
+       60 //
+       70 OPEN FILE 1, "ofile7", RANDOM 10
+       80 FOR f#:=1 TO 50 DO PRINT FILE 1,f#: 2*f#,2*f#+1
+       90 CLOSE FILE 1
+      100 //
+      110 OPEN FILE 1, "ofile7", RANDOM 5
+      120 FOR f#:=100 DOWNTO 1 DO
+      130   READ FILE 1,f#: g#
+      140   PRINT USING "####": g#;
+      150   IF g#<>f#+1 THEN STOP
+      160   IF g#<>f#+1 THEN STOP
+      170 ENDFOR
+      180 CLOSE FILE 1
+      190 //
+      200 PRINT 
+      210 PRINT "All ok"

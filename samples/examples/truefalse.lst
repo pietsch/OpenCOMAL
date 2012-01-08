@@ -1,0 +1,14 @@
+       10 // TRUE-FALSE sample program
+       20 
+       30 DIM type$(FALSE:TRUE) OF 5
+       40 
+       50 type$(FALSE):="false"; type$(TRUE):="true "
+       60 PRINT "AND CHART / OR CHART"
+       70 PRINT "--------------------"
+       80 FOR a:=FALSE TO TRUE DO
+       90   FOR b:=FALSE TO TRUE DO
+      100     PRINT "A = ",type$(a),"  B = ",type$(b),"   ",
+      110     PRINT "A and B = ",type$(a AND b),"   ",
+      120     PRINT "A or B = ",type$(a OR b)
+      130   ENDFOR b
+      140 ENDFOR a

@@ -1,0 +1,22 @@
+       10 // PROC sample program
+       20 //
+       30 DIM a$(5), b$(5)
+       40 a$:="String a"
+       50 b$:="String b"
+       60 aap(a$, b$)
+       70 PRINT "----"
+       80 FOR f:=1 TO 5 DO
+       90   IF a$(f)<>"String a" THEN STOP
+      100 ENDFOR
+      110 FOR f:=1 TO 5 DO
+      120   IF b$(f)<>"A$" THEN STOP
+      130 ENDFOR
+      140 //
+      150 PRINT "All ok"
+      160 //
+      170 PROC aap(b$(), REF a$())
+      180   PRINT b$(1)
+      190   PRINT a$(1)
+      200   b$:="B$"
+      210   a$:="A$"
+      220 ENDPROC

@@ -1,0 +1,6 @@
+       10 // PI sample program
+       20 //
+       30 PRINT "Pi = ";
+       40 PRINT USING "#.################": PI
+       50 IF INT(PI*100)<>314 THEN STOP
+       60 PRINT "All ok"

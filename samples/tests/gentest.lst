@@ -1,0 +1,56 @@
+       10 // Generate Sysinp file to run all test programs
+       20 //
+       30 DIM filename$ OF 12
+       40 //
+       50 TRAP
+       60   DELETE "runit.in"
+       70 ENDTRAP
+       80 //
+       90 REPEAT
+      100   INPUT "Should I generate an attended or an unattended test? (A/U) ": a$
+      110 UNTIL a$="A" OR a$="U"
+      120 //
+      130 genrun(".sq")
+      140 SYS sysin, "runit.in"
+      150 //
+      160 PROC genrun(f$)
+      170   CASE SYS$(host) OF
+      180   WHEN "MsDos"
+      190     OS "dir *"+f$+" >temp"
+      200   WHEN "Linux"
+      210     OS "ls *"+f$+" >temp"
+      220     OS "echo Finito >>temp"
+      230   OTHERWISE
+      240     PRINT "Unknown host"
+      250     STOP
+      260   ENDCASE
+      270   //
+      280   SELECT INPUT "temp"
+      290   //
+      300   REPEAT
+      310     INPUT filename$
+      320   UNTIL f$ IN filename$
+      330   //     
+      340   SELECT OUTPUT "runit.in"
+      350   IF a$="U" THEN PRINT "sys sysout,\"runit.out"
+      360   //
+      370   WHILE f$ IN filename$ DO
+      380     filename$:=filename$(1:f$ IN filename$-1)
+      390     IF NOT(filename$ IN "gentest.sq2lst,lst2sq,slpl") THEN
+      400       IF a$="A" THEN
+      410         PRINT "10 // Force question to proceed with next program"
+      420       ENDIF
+      430       PRINT "print \"About to process test program "+filename$
+      440       PRINT "load \"";filename$;f$
+      450       PRINT "list"
+      460       PRINT "run"
+      470     ENDIF
+      480     INPUT filename$
+      490   ENDWHILE
+      500   //
+      510   //
+      520   IF a$="U" THEN PRINT "sys sysout,\"\""
+      530   SELECT INPUT ""
+      540   SELECT OUTPUT ""
+      550   //
+      560 ENDPROC

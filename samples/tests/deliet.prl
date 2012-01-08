@@ -1,0 +1,7 @@
+    10000 // deliet external PROCedure
+    10010 //
+    10020 PROC deliet(filename$) CLOSED
+    10030   TRAP
+    10040     DELETE filename$
+    10050   ENDTRAP
+    10060 ENDPROC

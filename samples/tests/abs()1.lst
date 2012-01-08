@@ -1,0 +1,4 @@
+       10 // ABS() sample program
+       20 //
+       30 PRINT ABS(-4.5)
+       40 PRINT ABS(4.6)

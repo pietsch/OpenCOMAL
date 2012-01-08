@@ -1,0 +1,4 @@
+       10 // NULL sample program
+       20 //
+       30 FOR f:=1 TO 100 DO NULL
+       40 PRINT "All ok"

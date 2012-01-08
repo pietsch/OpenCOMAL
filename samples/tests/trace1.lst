@@ -1,0 +1,8 @@
+       10 // TRACE sample program
+       20 //
+       30 TRACE on
+       40 // These lines are traced
+       50 PRINT "Hello World"
+       60 TRACE off
+       70 // These lines are NOT traced
+       80 PRINT "Goodbye"

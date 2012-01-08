@@ -1,0 +1,10 @@
+       10 // SQR() sample program
+       20 //
+       30 WHILE NOT(EOD) DO
+       40   READ a, b
+       50   IF SQR(a)-b>0.000010 THEN STOP
+       60 ENDWHILE
+       70 //
+       80 PRINT "All ok"
+       90 //
+      100 DATA 1, 1, 2, 1.414210, 3, 1.732050, 4, 2, 9, 3, 16, 4, 25, 5, 625, 25, 100, 10

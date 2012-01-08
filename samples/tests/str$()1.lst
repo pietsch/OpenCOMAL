@@ -1,0 +1,8 @@
+       10 // STR$() sample program
+       20 //
+       30 WHILE NOT(EOD) DO
+       40   READ a
+       50   PRINT "Number is >"+STR$(a)+"<"
+       60 ENDWHILE
+       70 //
+       80 DATA 1, -1, 4.500000, -7.800000, 1000, 0.000100, 20

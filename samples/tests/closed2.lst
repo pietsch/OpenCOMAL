@@ -1,0 +1,18 @@
+       10 // CLOSED sample program
+       20 //
+       30 a:=1
+       40 aap
+       50 PRINT a
+       60 IF a<>1 THEN STOP
+       70 //
+       80 PRINT "All ok"
+       90 //
+      100 PROC aap CLOSED
+      110   a:=9
+      120   olifant
+      130 ENDPROC
+      140 //
+      150 PROC olifant  // Not CLOSED == OPEN!
+      160   PRINT a
+      170   IF a<>1 THEN STOP
+      180 ENDPROC

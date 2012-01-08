@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if test $# -ne 1; then
+	echo Arfle Barfle Gloop?
+	exit 1
+fi
+
+N=$(<$1)
+let N=N+1
+echo $N >$1
+echo Build number is $N

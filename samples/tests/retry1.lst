@@ -1,0 +1,22 @@
+       10 // RETRY test program
+       20 a:=0
+       30 ok:=FALSE
+       40 TRAP
+       50   PRINT 1/a
+       60   PRINT b
+       70 HANDLER
+       80   IF a=0 THEN
+       90     a:=2
+      100     RETRY
+      110   ELSE
+      120     PRINT "Expected other error occurred: ";ERRTEXT$
+      130     ok:=TRUE
+      140   ENDIF
+      150 ENDTRAP
+      160 //
+      170 CASE ok OF
+      180 WHEN TRUE
+      190   PRINT "All ok"
+      200 OTHERWISE
+      210   PRINT "Not ok"
+      220 ENDCASE

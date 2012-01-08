@@ -1,0 +1,11 @@
+       10 // END sample program
+       20 //
+       30 SELECT OUTPUT "temp"
+       40 PRINT "con"
+       50 PRINT "; \"If error 40 has occurred, all is ok"
+       60 SELECT OUTPUT ""
+       70 SYS sysin, "temp"
+       80 PRINT "CON won't help now"
+       90 END
+      100 PRINT "See, no continuation possible"
+      110 STOP

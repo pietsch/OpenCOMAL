@@ -1,0 +1,9 @@
+       10 DIM a$ OF 26
+       20 DIM letter$(26) OF 1
+       30 FOR char#:=1 TO 26 DO
+       40   letter$(char#):=CHR$(char#+ORD("A")-1)
+       50   a$(:char#:):=letter$(char#)
+       60 ENDFOR char#
+       70 PRINT a$
+       80 IF a$<>"ABCDEFGHIJKLMNOPQRSTUVWXYZ" THEN STOP "Not OK!"
+       90 PRINT "All ok"

@@ -1,0 +1,30 @@
+       10 // IF sample program
+       20 //
+       30 a:=4
+       40 b:=8
+       50 //
+       60 IF a=b THEN PRINT "4=8, something is wrong"
+       70 //
+       80 IF a<>b THEN
+       90   PRINT "4<>8"
+      100 ENDIF
+      110 //
+      120 IF a=b THEN
+      130   PRINT "4=8?"
+      140 ELSE
+      150   PRINT "4<>8"
+      160 ENDIF
+      170 //
+      180 IF a=b THEN
+      190   PRINT "4=8?"
+      200 ELIF a>b
+      210   PRINT "4>8?"
+      220 ELIF a<b
+      230   PRINT "4<8"
+      240 ELIF a<=b
+      250   PRINT "This will not be processed"
+      260 ELSE
+      270   PRINT "This will not be processed"
+      280 ENDIF
+      290 
+      300 PRINT "If the above makes sense, it might be ok"

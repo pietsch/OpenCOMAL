@@ -1,0 +1,23 @@
+       10 // Identifier sample program
+       20 //
+       30 aap:=aap
+       40 aap#:=2
+       50 aap$:="Hallo allemaal"
+       60 aap
+       70 //
+       80 FUNC aap
+       90   PRINT "Hello from func aap"
+      100   RETURN 3
+      110 ENDFUNC
+      120 //
+      130 PROC aap
+      140   PRINT "Hello from proc aap"
+      150   PRINT aap
+      160   PRINT aap#
+      170   PRINT aap$
+      180   olifant
+      190 ENDPROC
+      200 //
+      210 PROC olifant CLOSED
+      220   PRINT aap
+      230 ENDPROC

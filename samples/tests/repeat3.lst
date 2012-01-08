@@ -1,0 +1,9 @@
+       10 i:=1
+       20 REPEAT NULL UNTIL fun
+       30 IF i<>21 THEN STOP "Not ok"
+       40 PRINT "all ok"
+       50 //
+       60 FUNC fun
+       70   i:=i+1
+       80   RETURN i>20
+       90 ENDFUNC fun

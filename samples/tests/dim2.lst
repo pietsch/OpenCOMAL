@@ -1,0 +1,16 @@
+       10 // DIM sample program
+       20 //
+       30 DIM b$(3)
+       40 //
+       50 FOR f:=1 TO 3 DO
+       60   b$(f):="Number = "+STR$(f)
+       70 ENDFOR
+       80 //
+       90 FOR f:=1 TO 3 DO
+      100   READ a$
+      110   IF a$<>b$(f) THEN STOP
+      120 ENDFOR
+      130 //
+      140 PRINT "All ok"
+      150 //
+      160 DATA "Number = 1", "Number = 2", "Number = 3"

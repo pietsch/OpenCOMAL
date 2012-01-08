@@ -1,0 +1,18 @@
+       10 // DIM sample program
+       20 //
+       30 DIM a$ OF 4, b$(-10:10) OF 1
+       40 //
+       50 a$:="1234567890"
+       60 PRINT a$
+       70 IF a$<>"1234" THEN STOP
+       80 //
+       90 FOR f:=-10 TO 10 DO
+      100   b$(f):=STR$(f)
+      110   PRINT b$(f)
+      120 ENDFOR
+      130 //
+      140 FOR f:=10 DOWNTO -10 DO
+      150   IF b$(f)<>STR$(f)(1:1) THEN STOP
+      160 ENDFOR
+      170 //
+      180 PRINT "All ok"

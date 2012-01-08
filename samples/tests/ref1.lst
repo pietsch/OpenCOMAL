@@ -1,0 +1,18 @@
+       10 // REF sample program
+       20 //
+       30 DIM reeks(3)
+       40 reeks:=8
+       50 a$:="a$"
+       60 aap(reeks, a$)
+       70 FOR f:=1 TO 3 DO
+       80   IF reeks(f)<>1 THEN STOP
+       90 ENDFOR
+      100 //
+      110 IF a$<>"b$" THEN STOP
+      120 //
+      130 PRINT "All ok"
+      140 //
+      150 PROC aap(REF a(), REF b$)
+      160   a:=1
+      170   b$:="b$"
+      180 ENDPROC

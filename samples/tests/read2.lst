@@ -1,0 +1,13 @@
+       10 // READ/DATA sample program
+       20 //
+       30 a:=1
+       40 a$:="Jos "
+       50 READ b, b$
+       60 PRINT b
+       70 IF b<>2 THEN STOP
+       80 PRINT b$
+       90 IF b$<>"Jos Visser" THEN STOP
+      100 //
+      110 PRINT "All ok"
+      120 //
+      130 DATA a+1, a$+"Visser"

@@ -1,0 +1,25 @@
+       10 // LOCAL sample program
+       20 //
+       30 a:=1
+       40 b$:="Jos Visser"
+       50 DIM reeks(3)
+       60 reeks:=9
+       70 aap
+       80 //
+       90 PRINT a
+      100 IF a<>1 THEN STOP
+      110 PRINT b$
+      120 IF b$<>"Jos Visser" THEN STOP
+      130 FOR f:=1 TO 3 DO
+      140   PRINT reeks(f)
+      150   IF reeks(f)<>9 THEN STOP
+      160 ENDFOR
+      170 //
+      180 PRINT "All ok"
+      190 //
+      200 PROC aap
+      210   LOCAL a, b$, c$ OF 1, reeks(-10:-3)
+      220   a:=99
+      230   b$:="visser, jos"
+      240   reeks:=-100
+      250 ENDPROC

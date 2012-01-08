@@ -1,0 +1,25 @@
+       10 // INPUT sample program
+       20 //
+       30 deliet("ofile2")
+       40 //
+       50 SELECT OUTPUT "ofile2"
+       60 WHILE NOT(EOD) DO
+       70   READ a$
+       80   PRINT a$
+       90 ENDWHILE
+      100 SELECT OUTPUT ""
+      110 //
+      120 SELECT INPUT "ofile2"
+      130 INPUT a, b, c
+      140 PRINT a;" ";b;" ";c
+      150 INPUT a$
+      160 PRINT ">";a$;"<"
+      170 INPUT a$, b, c$
+      180 PRINT a$;" ";b;" ";c$
+      190 SELECT INPUT ""
+      200 //
+      210 DATA "1, 2,     3   "
+      220 DATA "      Dit is een test       "
+      230 DATA "\"deze string bevat een , zie je wel\" , 99, aapje"
+      240 //
+      250 PROC deliet EXTERNAL "deliet.prc"

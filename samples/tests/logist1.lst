@@ -1,0 +1,124 @@
+       10 // General demonstration program 
+       20 // Logistics
+       30 //
+       40 PAGE
+       50 DIM dummy$ OF 1
+       60 //
+       70 PRINT "Logistiek"
+       80 PRINT 
+       90 PRINT "Produktieplanning, variabele bewerkingstijden, vaste volgorde"
+      100 PRINT 
+      110 //
+      120 // Lees gegevens in uit DATA regels aan einde programma
+      130 //
+      140 READ aantalp, aantalb
+      150 PRINT "Aantal produkten=";aantalp;", Aantal bewerkingen=";aantalb
+      160 //
+      170 // Declareer variabelen
+      180 //
+      190 DIM tijden(1:aantalb, 1:aantalp)  // Bewerkingstijden per produkt
+      200 DIM fase(1:aantalp)  // Met welke fase is produkt bezig/afgerond
+      210 DIM bewerking(1:aantalp)  // Hoe lang is produkt nog bezig met bewerking
+      220 DIM machine(1:aantalb)  // Hoe lang is machine nog bezig met bewerking
+      230 DIM produkt_op_machine(1:aantalb)  // Met welke produkt is machine bezig
+      240 bewerking:=0
+      250 fase:=0
+      260 machine:=0
+      270 //    
+      280 // Inlezen bewerkingstijden
+      290 
+      300 FOR p:=1 TO aantalp DO
+      310   PRINT 
+      320   FOR b:=1 TO aantalb DO
+      330     PRINT "Produkt ";p;", Bewerking ";b;"  >";
+      340     READ tijden(b, p)
+      350     PRINT tijden(b, p)
+      360   ENDFOR
+      370 ENDFOR
+      380 //
+      390 INPUT "Return?": dummy$
+      400 PAGE
+      410 //
+      420 tijd:=0  // TijdTeller
+      430 aantalklaar:=0  // Teller aantal produkten klaar
+      440 //
+      450 WHILE aantalklaar<aantalp DO
+      460   tijd:+1  // Verhoog de tijd
+      470   //
+      480   // Verlaag nog-te-bewerken tijden van de machines
+      490   FOR b:=1 TO aantalb DO
+      500     IF machine(b)<>0 THEN  // Is machine bezig?
+      510       machine(b):-1
+      520       IF machine(b)=0 AND b=aantalb THEN aantalklaar:+1  // Was dit de laatste machine voor een produkt?
+      530     ENDIF
+      540   ENDFOR
+      550   //
+      560   // Verlaag nog-te-bewerken tijden van de produkten
+      570   FOR p:=1 TO aantalp DO
+      580     IF bewerking(p)<>0 THEN bewerking(p):-1
+      590   ENDFOR
+      600   //
+      610   // Kijk voor elke machine of we er een bewerking kunnen starten
+      620   FOR b:=1 TO aantalb DO
+      630     IF machine(b)=0 THEN  // machine is leeg, bewerking starten?
+      640       // Zoek het produkt wat hier kan starten met de laagste verwerkingstijd
+      650       produkt:=0
+      660       produkt_tijd:=99999  // heel veel
+      670       FOR p:=1 TO aantalp DO
+      680         // Kan produkt hier starten, dwz fase is goed en produkt is nu niet in bewerking
+      690         IF fase(p)=b-1 AND bewerking(p)=0 THEN
+      700           // Produkt kan hier starten, heeft het ook de laagste tijd?
+      710           IF tijden(b, p)<produkt_tijd THEN
+      720             produkt:=p
+      730             produkt_tijd:=tijden(b, p)
+      740           ENDIF
+      750         ENDIF
+      760       ENDFOR
+      770       // Hebben we een produkt gevonden?
+      780       IF produkt<>0 THEN
+      790         fase(produkt):+1
+      800         bewerking(produkt):=produkt_tijd
+      810         machine(b):=produkt_tijd
+      820         produkt_op_machine(b):=produkt
+      830       ENDIF
+      840     ENDIF
+      850   ENDFOR
+      860   //
+      870   output2
+      880   //
+      890 ENDWHILE
+      900 //
+      910 //
+      920 PRINT 
+      930 PRINT "Tijd=";tijd-1
+      940 //
+      950 PROC output1
+      960   PRINT "t=";
+      970   PRINT USING "###": tijd;
+      980   PRINT "   ";
+      990   FOR b:=1 TO aantalb DO
+     1000     IF machine(b)=0 THEN
+     1010       PRINT "     ";
+     1020     ELSE
+     1030       PRINT USING "#####": produkt_op_machine(b);
+     1040     ENDIF
+     1050   ENDFOR
+     1060   PRINT 
+     1070   IF tijd MOD 20=0 THEN INPUT "Return?": dummy$
+     1080 ENDPROC
+     1090 //
+     1100 PROC output2
+     1110   FOR p:=1 TO aantalp DO
+     1120     CURSOR tijd,p
+     1130     IF bewerking(p)=0 THEN
+     1140       PRINT " ";
+     1150     ELSE
+     1160       PRINT fase(p);
+     1170     ENDIF
+     1180   ENDFOR
+     1190 ENDPROC
+     1200 //
+     1210 DATA 3, 4
+     1220 DATA 4, 3, 3, 2
+     1230 DATA 4, 4, 4, 2
+     1240 DATA 1, 6, 3, 2

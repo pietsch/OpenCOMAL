@@ -1,0 +1,42 @@
+       10 //AUTOREP - a selfreproducing program ------------
+       20 line:=21
+       30 DIM a$(line) OF 50, quote$ OF 2
+       40 pre:=4; after:=5; quote$:=""""
+       50 a$(1):="//AUTOREP - a selfreproducing program ------------"
+       60 a$(2):="line:=21                                          "
+       70 a$(3):="DIM a$(line) OF %), quote$ OF 2                   "
+       80 a$(4):="pre:=4; after:=5; quote$:=""""""""                    "
+       90 a$(5):="FOR t:=1 TO pre DO                                "
+      100 a$(6):="  PRINT a$(t)                                     "
+      110 a$(7):="ENDFOR t                                          "
+      120 a$(8):="FOR t:=1 TO line DO                               "
+      130 a$(9):="  PRINT ""a$("",t,""):=""; quote$                     "
+      140 a$(10):="  FOR i:=1 TO 50 DO                               "
+      150 a$(11):="    IF a$(t)(i:i)=quote$ THEN                     "
+      160 a$(12):="      PRINT quote$,quote$,                        "
+      170 a$(13):="    ELSE                                          "
+      180 a$(14):="      PRINT a$(t)(i:i),                           "
+      190 a$(15):="    ENDIF                                         "
+      200 a$(16):="  ENDFOR i                                        "
+      210 a$(17):="  PRINT quote$                                    "
+      220 a$(18):="ENDFOR t                                          "
+      230 a$(19):="FOR t:=after TO line                              "
+      240 a$(20):="  PRINT a$(t)                                     "
+      250 a$(21):="ENDFOR t                                          "
+      260 FOR t:=1 TO pre DO
+      270   PRINT a$(t)
+      280 ENDFOR t
+      290 FOR t:=1 TO line DO
+      300   PRINT "a$(",t,"):=";quote$;
+      310   FOR i:=1 TO 50 DO
+      320     IF a$(t)(i:i)=quote$ THEN
+      330       PRINT quote$,quote$,
+      340     ELSE
+      350       PRINT a$(t)(i:i),
+      360     ENDIF
+      370   ENDFOR i
+      380   PRINT quote$
+      390 ENDFOR t
+      400 FOR t:=after TO line DO
+      410   PRINT a$(t)
+      420 ENDFOR t

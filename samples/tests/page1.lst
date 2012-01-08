@@ -1,0 +1,4 @@
+       10 // PAGE sample program
+       20 //
+       30 PAGE
+       40 PRINT "This is printed on a new (clear) screen"

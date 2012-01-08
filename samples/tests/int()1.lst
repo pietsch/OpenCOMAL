@@ -1,0 +1,11 @@
+       10 // INT() sample program
+       20 //
+       30 WHILE NOT(EOD) DO
+       40   READ a, b#
+       50   PRINT INT(a)
+       60   IF INT(a)<>b# THEN STOP
+       70 ENDWHILE
+       80 //
+       90 PRINT "All ok"
+      100 //
+      110 DATA 1, 1, -1, -1, 2.500000, 2, -2.500000, -2, 0.001000, 0, -0.001000, 0

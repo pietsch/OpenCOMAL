@@ -1,0 +1,17 @@
+       10 // A recursive definition of SPC$
+       20 //
+       30 FUNC hex$ EXTERNAL "hex.prc"
+       40 //
+       50 FUNC my_spc$(n#) CLOSED
+       60   IF SYS$(host)="Linux" THEN
+       70     PRINT hex$(SYS(sbrk))
+       80   ENDIF
+       90   IF n#=0 THEN RETURN ""
+      100   RETURN " "+my_spc$(n#-1)
+      110 ENDFUNC my_spc$
+      120 
+      130 k:=100
+      140 a$:=my_spc$(k)
+      150 PRINT LEN(a$)
+      160 IF LEN(a$)<>k THEN STOP "Not Ok"
+      170 PRINT "All ok"

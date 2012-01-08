@@ -1,0 +1,11 @@
+       10 // VAL() sample program
+       20 //
+       30 WHILE NOT(EOD) DO
+       40   READ a$, b
+       50   IF VAL(a$)<>b THEN STOP
+       60 ENDWHILE
+       70 //
+       80 PRINT "All ok"
+       90 //
+      100 DATA "1", 1, "-1", -1, "4.5", 4.500000
+      110 DATA "1e2", 100, "0.2e2", 20

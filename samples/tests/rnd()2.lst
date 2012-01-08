@@ -1,0 +1,16 @@
+       10 // RND() sample program
+       20 //
+       30 PAGE
+       40 PRINT "Random number sum test"
+       50 PRINT "(Press ESCAPE to end)"
+       60 //
+       70 sum1:=0; sum2:=0
+       80 WHILE TRUE DO
+       90   num:=RND(0)
+      100   sum1:+num
+      110   sum2:+0.500000
+      120   CURSOR 1,4
+      130   PRINT sum1
+      140   PRINT sum2
+      150   PRINT ABS(sum1-sum2)
+      160 ENDWHILE

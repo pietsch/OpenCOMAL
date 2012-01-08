@@ -1,0 +1,6 @@
+       10 // External PROCedure
+       20 //
+       30 PROC aap
+       40   aap:+1
+       50   PRINT "Inside aap"
+       60 ENDPROC

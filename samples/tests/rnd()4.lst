@@ -1,0 +1,23 @@
+       10 // Random number test program
+       20 //
+       30 PAGE
+       40 samples#:=100000
+       50 DIM a#(0:19)
+       60 FOR f#:=1 TO samples# DO
+       70   n:=INT(RND*100/5)
+       75   IF n=20 THEN n:=19
+       80   a#(n):+1
+       90   IF f# MOD 100=0 THEN update
+      100 ENDFOR f#
+      110 //
+      120 PROC update
+      130   LOCAL n#, k#
+      140   FOR n#:=1 TO 19 DO
+      150     CURSOR 1,n#
+      160     PRINT USING "######": a#(n#);
+      170     PRINT "  ";
+      180     FOR k#:=1 TO a#(n#) DIV 250 DO PRINT "*";
+      190   ENDFOR n#
+      200   CURSOR 1,22
+      210   PRINT "Samples so far: ";f#;
+      220 ENDPROC update

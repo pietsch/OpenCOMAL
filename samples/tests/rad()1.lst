@@ -1,0 +1,16 @@
+       10 // RAD() sample program
+       20 //
+       30 FOR f:=0 TO 360 STEP 30 DO
+       40   PRINT USING "###": f;
+       50   PRINT " degrees = ";
+       60   r:=RAD(f)/PI
+       70   READ q
+       80   IF (r-q>0.000000) THEN STOP
+       90   PRINT USING "#.################": r;
+      100   PRINT " PI radians"
+      110 ENDFOR
+      120 //
+      130 PRINT "All ok"
+      140 //
+      150 DATA 0/12, 2/12, 4/12, 6/12, 8/12, 10/12, 12/12, 14/12, 16/12, 18/12, 20/12
+      160 DATA 22/12, 24/12

@@ -1,0 +1,9 @@
+       10 // REPEAT/UNTIL sample program
+       20 //
+       30 i:=0
+       40 REPEAT
+       50   i:+1
+       60 UNTIL i>10
+       70 //
+       80 IF i<>11 THEN STOP
+       90 PRINT "All ok"

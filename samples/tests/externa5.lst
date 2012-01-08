@@ -1,0 +1,16 @@
+       10 // EXTERNAL sample program
+       20 //
+       30 olifant:=0; tijger:=0
+       40 //
+       50 FOR f:=1 TO 10 DO olifant
+       60 //
+       70 IF olifant<>tijger OR olifant<>10 THEN STOP
+       80 //
+       90 PRINT "All ok"
+      100 //
+      110 PROC olifant EXTERNAL "aap3.prc"
+      120 //
+      130 PROC tijger
+      140   PRINT "In tijger"
+      150   tijger:+1
+      160 ENDPROC

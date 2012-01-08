@@ -1,0 +1,26 @@
+       10 // RESTORE sample program
+       20 //
+       30 base:=1
+       40 lees
+       50 RESTORE
+       60 base:=1
+       70 lees
+       80 RESTORE aap
+       90 base:=3
+      100 lees
+      110 //
+      120 PRINT "All ok"
+      130 //
+      140 DATA 1, 2
+      150 aap:
+      160 DATA 3, 4
+      170 //
+      180 PROC lees
+      190   WHILE NOT(EOD) DO
+      200     READ a
+      210     PRINT a
+      220     IF a<>base THEN STOP
+      230     base:+1
+      240   ENDWHILE
+      250   PRINT "--------"
+      260 ENDPROC

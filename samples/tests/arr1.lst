@@ -1,0 +1,59 @@
+       10 // Simple array test
+       20 //
+       30 n#:=99
+       40 DIM a(100), b#(100), c$(10, 10), d(100), e#(100), f$(100)
+       50 a():=n#
+       60 check(a(), n#, TRUE)
+       70 check(a(), n#-1, FALSE)
+       80 a:=n#-2
+       90 check(a(), n#-2, FALSE)
+      100 TRAP
+      110   a():=b#()
+      120   error
+      130 HANDLER
+      140   NULL
+      150 ENDTRAP
+      160 d():=a()
+      170 check(d(), n#-2, FALSE)
+      180 b#():=42
+      190 e#():=b#()
+      200 check2(e#(), 42, TRUE)
+      210 check2(e#(), 42, FALSE)
+      220 c$():="OpenComal"
+      230 check3(c$(), "OpenComal", 2)
+      240 f$():=c$()
+      250 check3(f$, "OpenComal", 1)
+      260 //
+      270 PROC check(REF a(), value, change#) CLOSED
+      280   FOR f#:=1 TO 100 DO
+      290     IF a(f#)<>value THEN error
+      300     IF change# THEN a(f#):-1
+      310   ENDFOR f#
+      320   PRINT "Passed"
+      330 ENDPROC check
+      340 //
+      350 PROC check2(g#(), value#, change#) CLOSED
+      360   FOR f#:=1 TO 100 DO
+      370     IF g#(f#)<>value# THEN error
+      380     IF change# THEN g#(f#):-1
+      390   ENDFOR f#
+      400   PRINT "Passed"
+      410 ENDPROC check2
+      420 //
+      430 PROC check3(h$(), value$, indices#)
+      440   FOR f#:=0 TO 99 DO
+      450     IF indices#=1 THEN
+      460       a$:=h$(f#+1)
+      470     ELSE
+      480       a$:=h$(f# DIV 10+1, f# MOD 10+1)
+      490     ENDIF
+      500     IF a$<>value$ THEN error
+      510   ENDFOR f#
+      520   PRINT "Passed"
+      530 ENDPROC check3
+      540 //
+      550 PROC error
+      560   STOP "*not ok*"
+      570 ENDPROC error
+      580 //
+      590 PRINT "All ok"

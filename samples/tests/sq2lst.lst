@@ -1,0 +1,43 @@
+       10 // Convert all .SQ files to .LST
+       20 //
+       30 DIM filename$ OF 12
+       40 //
+       50 TRAP
+       60   DELETE "convert.in"
+       70 ENDTRAP
+       80 //
+       90 convert(".sq", ".lst")
+      100 convert(".prc", ".prl")
+      110 SYS sysin, "convert.in"
+      120 //
+      130 PROC convert(f$, t$)
+      140   CASE SYS$(host) OF
+      150   WHEN "MsDos"
+      160     OS "dir *"+f$+" >temp"
+      170   WHEN "Linux"
+      180     OS "ls *"+f$+" >temp"
+      190     OS "echo Finito >>temp"
+      200   OTHERWISE
+      210     PRINT "Unknown host"
+      220     STOP
+      230   ENDCASE
+      240   //
+      250   SELECT INPUT "temp"
+      260   //
+      270   REPEAT
+      280     INPUT filename$
+      290   UNTIL f$ IN filename$ AND NOT("*" IN filename$)
+      300   //     
+      310   SELECT OUTPUT "convert.in"
+      320   WHILE f$ IN filename$ DO
+      330     filename$:=filename$(1:f$ IN filename$-1)
+      340     PRINT "print \"";filename$
+      350     PRINT "load \"";filename$;f$
+      360     PRINT "list \"";filename$;t$
+      370     INPUT filename$
+      380   ENDWHILE
+      390   //
+      400   SELECT INPUT ""
+      410   SELECT OUTPUT ""
+      420   //
+      430 ENDPROC

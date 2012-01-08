@@ -1,0 +1,14 @@
+       10 i:=1
+       20 REPEAT
+       30   i:=i/2
+       40   PRINT i
+       50 UNTIL i<0.000000
+       60 //
+       70 REPEAT
+       80   PRINT i
+       90   i:=i*2
+      100 UNTIL i>=1
+      110 //
+      120 PRINT "Final i = ";i
+      130 IF i<>1 THEN STOP
+      140 PRINT "All ok"

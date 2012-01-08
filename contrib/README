@@ -1,0 +1,11 @@
+----------------------------------
+OpenComal contributed source files
+----------------------------------
+
+I am:	Jos Visser <josv@osp.nl>
+Date:	Sun Sep  8 22:46:26 CEST 2002
+
+This directory contains a number of source files that contain the 
+platform dependent sys_ routines for a number of platforms. They
+are out of date a bit and need some work. But, they should
+suffice to give you an idea about what is going on....

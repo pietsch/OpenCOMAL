@@ -1,0 +1,13 @@
+       10 // PROC sample program
+       20 //
+       30 aap(1, 2.500000, "Hallo")
+       40 PRINT "All ok"
+       50 //
+       60 PROC aap(a#, b, c$)
+       70   PRINT a#
+       80   IF a#<>1 THEN STOP
+       90   PRINT b
+      100   IF b<>2.500000 THEN STOP
+      110   PRINT c$
+      120   IF c$<>"Hallo" THEN STOP
+      130 ENDPROC

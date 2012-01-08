@@ -1,0 +1,9 @@
+       10 // A function for converting a number to hex
+       20 FUNC hex$(n#) CLOSED
+       30   FUNC hexdigit$(n#)
+       40     RETURN "0123456789ABCDEF"(n#+1:n#+1)
+       50   ENDFUNC
+       60   //
+       70   IF n#<16 THEN RETURN hexdigit$(n#)
+       80   RETURN hex$(n# DIV 16)+hexdigit$(n# MOD 16)
+       90 ENDFUNC

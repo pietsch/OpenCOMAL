@@ -1,0 +1,38 @@
+-------------
+OpenComal 0.2
+-------------
+
+I am:	Jos Visser <josv@osp.nl>
+Date: 	Sun Sep  8 09:51:32 CEST 2002
+
+Thou art looking at the README file of OpenComal. Before you continue, 
+thank you very much for downloading my software and taking the time to 
+investigate it. Your interest and feedback is much appreciated...
+
+OpenComal is a free implementation of the Comal programming language. 
+For more information on (Open)Comal, check out the high quality 
+documentation in the doc/ subdirectory... :-)
+
+This release of OpenComal has been built and tested on the Linux 
+operating system. OpenComal is very much platform independent, but for 
+each platform a special "glue" module must be written. I am currently 
+doing most of my work and development on Linux, hence the Linux bias in 
+OpenComal 0.2. I do have glue modules for MsDos (16 bit :-), SunOS, 
+FreeBSD and HP-UX, but they are not distributed with this release 
+because they need some work.
+
+The OpenComal package is covered by the GNU General Public License. 
+You can find a copy of that license in the doc/LICENSE file.
+
+For more potential interesting information on OpenComal, please check 
+out my OpenComal page at http://www.josvisser.nl/opencomal.
+
+After reading this README, why not read:
+
+	doc/QUICKSTART
+	doc/BUILD
+	doc/OpenComal.txt
+
+Thanks again for your interest.
+
+Jos Visser

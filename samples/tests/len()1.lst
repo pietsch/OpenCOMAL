@@ -1,0 +1,11 @@
+       10 // LEN() sample program
+       20 //
+       30 WHILE NOT(EOD) DO
+       40   READ a$, b
+       50   PRINT ">";a$;"< Length = ";LEN(a$)
+       60   IF LEN(a$)<>b THEN STOP
+       70 ENDWHILE
+       80 //
+       90 PRINT "All ok"
+      100 //
+      110 DATA "Jos", 3, "Visser", 6, "", 0

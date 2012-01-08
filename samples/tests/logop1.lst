@@ -1,0 +1,40 @@
+       10 p("and", t AND t, res_normal)
+       20 p("or", t OR t, res_normal)
+       30 p("eor", t EOR t, res_normal)
+       40 p("and then", t AND THEN t, res_andthen)
+       50 p("or then", t OR THEN t, res_orthen)
+       60 //
+       70 PROC p(op$, NAME logexp, PROC restore_proc)
+       80   restore_proc
+       90   FOR i:=1 TO 4 DO
+      100     PRINT op$;"  ";logexp
+      110   ENDFOR
+      120 ENDPROC
+      130 //
+      140 FUNC t CLOSED
+      150   READ k
+      160   PRINT k;" ";
+      170   RETURN k
+      180 ENDFUNC
+      190 //
+      200 normal:
+      210 DATA 0, 0, 0, 1, 1, 0, 1, 1
+      220 //
+      230 andthen:
+      240 DATA 0, 1, 0, 1, 1, 0
+      250 //
+      260 orthen:
+      270 DATA 0, 0, 0, 1, 1, 1
+      280 //
+      290 PROC res_normal
+      300   RESTORE normal
+      310 ENDPROC
+      320 //
+      330 PROC res_andthen
+      340   RESTORE andthen
+      350 ENDPROC
+      360 //
+      370 PROC res_orthen
+      380   RESTORE orthen
+      390 ENDPROC
+      400 //

@@ -1,0 +1,12 @@
+       10 // WHILE/ENDWHILE sample program
+       20 //
+       30 i:=10
+       40 WHILE i>0 DO i:-1
+       50 IF i<>0 THEN STOP
+       60 //
+       70 WHILE i<10 DO
+       80   i:+1
+       90 ENDWHILE
+      100 IF i<>10 THEN STOP
+      110 //
+      120 PRINT "All ok"

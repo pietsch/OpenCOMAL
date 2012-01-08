@@ -1,0 +1,17 @@
+       10 // EXP() sample program
+       20 //
+       30 PAGE
+       40 PRINT "Exponential (e^x)"
+       50 FOR f:=-1 TO 3 STEP 0.050000 DO
+       60   plot(f, EXP(f))
+       70 ENDFOR
+       80 //
+       90 CURSOR 1,23
+      100 PRINT "If the above looks like an exponential curve, all might be ok"
+      110 //
+      120 PROC plot(x, y)
+      130   x#:=1+(x+1)*20
+      140   y#:=22-y
+      150   CURSOR x#,y#
+      160   PRINT "*";
+      170 ENDPROC

@@ -1,0 +1,75 @@
+#
+# OpenComal -- a free Comal implementation
+#
+# This file is part of the OpenComal package.
+# (c) Copyright 1992-2002 Jos Visser <josv@osp.nl>
+#
+# The OpenComal package is covered by the GNU General Public
+# License. See doc/LICENSE for more information.
+#
+
+TARG1=../bin/opencomal
+OBJ1=pdcpars.tab.o lex.yy.o pdcmain.o pdcmisc.o pdccmd.o  pdclexs.o  \
+	pdcid.o  pdcscan.o pdcparss.o pdcenv.o pdcsym.o pdcexec.o pdclist.o \
+	pdcfree.o pdcexp.o pdcmem.o pdcsqash.o pdcstr.o pdcprog.o pdcext.o \
+	pdcseg.o pdcval.o pdccloop.o
+
+TARG2=../bin/opencomalrun
+OBJ2=pdcmain.o pdcmisc.o \
+	pdcid.o  pdcscan.o pdcenv.o pdcsym.o pdcexec.o pdcfree.o \
+	pdcexp.o pdcmem.o pdcsqash.o pdcstr.o pdcprog.o pdcext.o pdcseg.o \
+	pdcval.o pdcrun.o
+OS=pdclinux.o 
+OSLIB=-lncurses -lreadline
+STATIC=
+#PROFILE=-pg
+PROFILE=
+
+COPTS=-c -ggdb -pedantic -Wall -DOS_LINUX $(PROFILE)
+LIBS=-lm $(OSLIB)
+
+LDOPTS=$(STATIC) $(LIBS) 
+
+all:		build $(TARG1) $(TARG2)
+
+$(TARG1):	 $(OBJ1) $(OS)
+		gcc $(PROFILE) -o $(TARG1) $(OBJ1) $(OS) $(LDOPTS)
+
+$(TARG2):	 $(OBJ2) $(OS)
+		gcc $(PROFILE) -o $(TARG2) $(OBJ2) $(OS) $(LDOPTS)
+
+build:		
+		../tools/bumpbuild BUILD
+		../tools/genversion
+
+pdcpars.tab.c:	pdcpars.y
+		bison -vd pdcpars.y
+
+lex.yy.c:	pdclex.l
+		flex pdclex.l
+
+almostclean:	
+		-rm *.o *.obj *.map *.OBJ *~
+		-rm lex.yy.c pdcpars.tab.* pdcpars.output
+		-rm pdcpars.c pdclex.c pdcpars.h
+		
+clean:		almostclean
+		-rm $(TARG1) $(TARG2)
+		-rm ../bin/*.exe ../bin/*.EXE
+
+.c.o:
+		gcc $(COPTS) $*.c 
+# DO NOT DELETE
+
+pdcpars.o: pdcglob.h pdcconst.h pdcsys.h pdcdsys.h pdcdef.h
+pdcpars.o: /usr/include/stdio.h /usr/include/features.h
+pdcpars.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
+pdcpars.o: /usr/lib/gcc-lib/i586-pc-linux-gnu/2.95.3/include/stddef.h
+pdcpars.o: /usr/include/bits/types.h /usr/include/libio.h
+pdcpars.o: /usr/include/_G_config.h /usr/include/wchar.h
+pdcpars.o: /usr/include/bits/wchar.h /usr/include/gconv.h
+pdcpars.o: /usr/lib/gcc-lib/i586-pc-linux-gnu/2.95.3/include/stdarg.h
+pdcpars.o: /usr/include/bits/stdio_lim.h pdcmem.h pdcerr.h pdcmsg.h pdcfunc.h
+pdcpars.o: /usr/include/stdlib.h /usr/include/setjmp.h
+pdcpars.o: /usr/include/bits/setjmp.h /usr/include/bits/sigset.h pdcparss.h
+pdcpars.o: pdcmisc.h pdcid.h pdcprog.h /usr/include/string.h

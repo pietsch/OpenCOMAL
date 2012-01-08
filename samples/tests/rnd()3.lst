@@ -1,0 +1,24 @@
+       10 // Test of random generator 
+       15 // Courtesy of Dick Klingens
+       20 //
+       30 maxend#:=8
+       40 FOR end#:=1 TO maxend# DO
+       50   nloop#:=0
+       60   REPEAT
+       70     nloop#:+1
+       80     k#:=RND(end#)
+       90     error#:=(k#>end#)
+      100   UNTIL error# OR nloop#=50000
+      110
+      120   PRINT "Passed value = ",end#
+      130   IF error# THEN
+      140     PRINT ">>> Unexpected value for RND(",end#,")"
+      150     PRINT "    Value = ",k#,
+      155     STOP "Not ok"
+      160   ELSE
+      170     PRINT "No errors",
+      180   ENDIF
+      190   PRINT " after ",nloop#," loops"
+      200 ENDFOR end#
+      210 PRINT "All ok"
+

@@ -1,0 +1,23 @@
+       10 // Jos' SPC$ function
+       20 // -------------------------------------
+       30 FUNC my_spc$(n#) CLOSED
+       40   a$(n#:n#):=" "
+       50   RETURN a$
+       60 ENDFUNC my_spc$
+       70 //
+       80 b$:=SPC$(16384)
+       90 check(b$)
+      100 b$:=my_spc$(16384)
+      110 check(b$)
+      120 //
+      130 PROC check(REF b$) CLOSED
+      140   PRINT LEN(b$)
+      150   PRINT ">";b$(1:10);"< "
+      160   FOR f#:=1 TO LEN(b$) DO
+      170     IF b$(f#:f#)<>" " THEN STOP "Not ok!"
+      180     IF f# MOD 256=0 THEN PRINT ".";
+      190   ENDFOR f#
+      200   PRINT 
+      210 ENDPROC
+      220 //
+      230 PRINT "All ok"

@@ -1,0 +1,11 @@
+       10 // READ/DATA sample program
+       20 //
+       30 READ b, b$
+       40 PRINT b
+       50 IF b<>5 THEN STOP
+       60 PRINT b$
+       70 IF b$<>"Test READ/DATA" THEN STOP
+       80 //
+       90 PRINT "All ok"
+      100 //
+      110 DATA 5, "Test READ/DATA"

@@ -1,0 +1,15 @@
+       10 // Identifier sample program
+       20 //
+       30 aap:=1
+       40 aap_aap:=1
+       50 aap'aap:=1
+       60 //
+       70 // Now for some weird consequences
+       80 //
+       90 'aap':=2
+      100 _aap_:=3
+      110 _:=1
+      120 ':=1
+      130 ''_'':=9
+      140 '$:="hallo"
+      150 _$:="hello"

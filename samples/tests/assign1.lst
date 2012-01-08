@@ -1,0 +1,19 @@
+       10 // Assignment sample program
+       20 //
+       30 a:=1
+       40 b$:="a"
+       50 c$:="abcdefghijklmnopqrstuvwxyz"
+       60 //
+       70 a:+1
+       80 a:-1
+       90 b$:+"b"
+      100 c$(1:4):="ABC"
+      110 //
+      120 PRINT a
+      130 PRINT b$
+      140 PRINT c$
+      150 //
+      160 IF a<>1 THEN STOP
+      170 IF b$<>"ab" THEN STOP
+      180 IF c$<>"ABC efghijklmnopqrstuvwxyz" THEN STOP
+      190 PRINT "All ok"

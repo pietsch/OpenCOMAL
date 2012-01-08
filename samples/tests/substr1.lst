@@ -1,0 +1,21 @@
+       10 // Substring sample program
+       20 //
+       30 a$:="abcdefghijklmnopqrstuvwxyz"
+       40 //
+       50 IF a$(4:8)<>"defgh" THEN STOP
+       60 a$(4:8):="X"
+       70 IF a$<>"abcX    ijklmnopqrstuvwxyz" THEN STOP
+       80 //
+       90 IF "Hallo"(1:2)<>"Ha" THEN STOP
+      100 IF aap$(1:2)<>"aa" THEN STOP
+      110 IF aap2$("AB")(2:3)<>"BA" THEN STOP
+      120 //
+      130 PRINT "All ok"
+      140 //
+      150 FUNC aap$
+      160   RETURN "aap"
+      170 ENDFUNC
+      180 //
+      190 FUNC aap2$(a$)
+      200   RETURN a$+a$
+      210 ENDFUNC
