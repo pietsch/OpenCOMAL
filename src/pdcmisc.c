@@ -20,6 +20,8 @@
 
 #include <math.h>
 #include <fcntl.h>
+#include <string.h>
+#include <stdarg.h>
 
 
 struct int_trace {
@@ -58,8 +60,11 @@ PUBLIC void my_put(int stream, char *buf, long len)
 PUBLIC void my_printf(int stream, int newline, char *s, ...)
 {
 	char buf[MAX_LINELEN];
+	va_list ap;
 
-	vsprintf(buf, s, (char *) &s + sizeof(s));
+	va_start(ap, s);
+	va_end(ap);
+	vsprintf(buf, s, ap);
 	my_put(stream, buf, -1L);
 
 	if (newline)
@@ -70,8 +75,11 @@ PUBLIC void my_printf(int stream, int newline, char *s, ...)
 PUBLIC void fatal(char *s, ...)
 {
 	char buf[140];
+	va_list ap;
 
-	vsprintf(buf, s, (char *) &s + sizeof(s));
+	va_start(ap, s);
+	va_end(ap);
+	vsprintf(buf, s, ap);
 	my_printf(MSG_ERROR, 1, "FATAL error: %s", buf);
 
 	longjmp(RESTART, ERR_FATAL);

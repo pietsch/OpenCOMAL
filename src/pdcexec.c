@@ -28,6 +28,8 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <stdarg.h>
+
 
 #ifdef MSDOS
 #include <io.h>
@@ -44,8 +46,12 @@ PUBLIC void run_error(int error, char *s, ...)
 {
 	char *buf;
 	char buf2[MAX_LINELEN];
+	va_list ap;
 
-	vsprintf(buf2, s, (char *) &s + sizeof(s));
+	va_start(ap, s);
+	va_end(ap);
+
+	vsprintf(buf2, s, ap);
 
 	curenv->error = curenv->lasterr = error;
 	mem_free(curenv->lasterrmsg);
