@@ -46,5 +46,5 @@ description and readable code.
 * [Børge R. Christensen's COMAL Reference Guide (for COMAL 0.14 on the C-64)](http://www.c64-wiki.de/index.php/COMAL_Reference_Guide)
 * Wikipedia has useful COMAL entries in
   [German](https://de.wikipedia.org/wiki/COMAL),
-  [English](https://en.wikipedia.org/wiki/Comal), and
+  [English](https://en.wikipedia.org/wiki/COMAL), and
   [Polish](https://pl.wikipedia.org/wiki/Comal).
