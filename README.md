@@ -1,13 +1,13 @@
-# About this COMAL implementation
+# OpenCOMAL
 
 This is a slightly patched version of [Jos Visser](http://www.josvisser.nl/)'s
 [OpenComal](http://www.josvisser.nl/opencomal/)
 [0.2.6](http://www.josvisser.nl/opencomal/opencomal-0.2.6.tar.gz) (stable branch).
 
 
-# FAQ
+## FAQ
 
-## Why this fork?
+### Why this fork?
 
 When trying to run the latest stable or instable OpenComal on more or
 less recent versions of Linux (Ubuntu 8.04 and Ubuntu 10.04), the
@@ -20,12 +20,12 @@ So after 3 or 5 years of being unavailable on new Linux distributions,
 the year 2012 starts with the return of COMAL, the much improved,
 PASCAL-flavoured dialect of the (in)famous BASIC programming language.
 
-## I do not see a new line number after entering `auto`. Is this wrong?
+### I do not see a new line number after entering `auto`. Is this wrong?
 
 Never mind, just type anything, and it will appear. Or hit the
 backspace key first (kudos to Harald Arnesen for this hint).
 
-## When will you implement feature X?
+### When will you implement feature X?
 
 I will not. As far as I am concerned, OpenCOMAL is just a fun
 retrocomputing project that allows you to run old COMAL code on Linux
@@ -35,14 +35,14 @@ said that, I will consider pull requests that come with a nice
 description and readable code.
 
 
-# Further Reading
+## Further Reading
 
-## included:
+### included:
 * [original README](https://github.com/pietsch/OpenCOMAL/blob/master/README.orig)
 * [original TODO](https://github.com/pietsch/OpenCOMAL/blob/master/doc/TODO)
 * [original documentation](https://github.com/pietsch/OpenCOMAL/tree/master/doc)
 
-## external:
+### external:
 * [Børge R. Christensen's COMAL Reference Guide (for COMAL 0.14 on the C-64)](http://www.c64-wiki.de/index.php/COMAL_Reference_Guide)
 * Wikipedia has useful COMAL entries in
   [German](https://de.wikipedia.org/wiki/COMAL),
