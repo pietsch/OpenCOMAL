@@ -30,7 +30,7 @@ STATIC=
 #PROFILE=-pg
 PROFILE=
 
-COPTS=-c -ggdb -pedantic -Wall -DOS_LINUX $(PROFILE)
+COPTS=-c -ggdb -pedantic -Wall -std=gnu99 -DOS_LINUX $(PROFILE)
 LIBS=-lm $(OSLIB)
 
 LDOPTS=$(STATIC) $(LIBS) 
@@ -65,7 +65,7 @@ almostclean:
 		-rm *.o *.obj *.map *.OBJ *~ *.d
 		-rm lex.yy.c pdcpars.tab.* pdcpars.output
 		-rm pdcpars.c pdclex.c pdcpars.h
-		
+
 clean:		almostclean
 		-rm $(TARG1) $(TARG2)
 		-rm ../bin/*.exe ../bin/*.EXE
