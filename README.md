@@ -20,6 +20,11 @@ So after 3 or 5 years of being unavailable on new Linux distributions,
 the year 2012 starts with the return of COMAL, the much improved,
 PASCAL-flavoured dialect of the (in)famous BASIC programming language.
 
+### Does Jos Visser, the original author, endorse this fork?
+
+I don't know. He did not answer my e-mail. Legally there should not
+be any problem because OpenComal is licensed under the GPL.
+
 ### I do not see a new line number after entering `auto`. Is this wrong?
 
 Never mind, just type anything, and it will appear. Or hit the
@@ -38,9 +43,9 @@ description and readable code.
 ## Further Reading
 
 ### included:
-* [original README](https://github.com/pietsch/OpenCOMAL/blob/master/README.orig)
-* [original TODO](https://github.com/pietsch/OpenCOMAL/blob/master/doc/TODO)
-* [original documentation](https://github.com/pietsch/OpenCOMAL/tree/master/doc)
+* [original README](README.orig)
+* [original TODO](doc/TODO)
+* [original documentation](doc/)
 
 ### external:
 * [Børge R. Christensen's COMAL Reference Guide (for COMAL 0.14 on the C-64)](http://www.c64-wiki.de/index.php/COMAL_Reference_Guide)
