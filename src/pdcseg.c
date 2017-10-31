@@ -122,7 +122,7 @@ PUBLIC struct seg_des *seg_dynamic_load(struct comal_line *line)
 
 PUBLIC struct seg_des *seg_static_free(struct seg_des *seg)
 {
-	prog_del(&seg->lineroot, 0, MAXINT, 0);
+	prog_del(&seg->lineroot, 0, INT_MAX, 0);
 	seg->extdef->lc.pfrec.localproc = seg->save_localproc;
 
 	return mem_free(seg);

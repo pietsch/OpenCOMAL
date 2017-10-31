@@ -25,6 +25,6 @@
 
 #define HAS_ROUND
 
-#include <values.h>
+#include <limits.h>
 #include <unistd.h>
 #include <errno.h>

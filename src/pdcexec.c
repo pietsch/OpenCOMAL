@@ -49,9 +49,9 @@ PUBLIC void run_error(int error, char *s, ...)
 	va_list ap;
 
 	va_start(ap, s);
-	va_end(ap);
 
 	vsprintf(buf2, s, ap);
+	va_end(ap);
 
 	curenv->error = curenv->lasterr = error;
 	mem_free(curenv->lasterrmsg);
@@ -342,7 +342,7 @@ PRIVATE void decode_parmlist(struct sym_env *env, struct parm_list *plist,
 				calc_exp(elist->exp, &result, &type);
 				var =
 				    var_newvar(plist->id->type, NULL,
-					       MAXINT);
+					       INT_MAX);
 				val_copy(&var->data, result, var->type,
 					 type);
 				val_free(result, type);
@@ -631,7 +631,7 @@ PRIVATE void do_calc_fromto(struct two_exp *twoexp, long *from, long *to)
 			else
 				*to = calc_intexp(twoexp->exp2);
 		else
-			*to = MAXINT;
+			*to = INT_MAX;
 
 		if (*from > *to)
 			err = "Substring specifier incorrect (from>to)";

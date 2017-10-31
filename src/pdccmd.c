@@ -104,7 +104,7 @@ PRIVATE int cmd_list(struct comal_line *line)
 		if (curline)
 			to = curline->ld->lineno;
 		else
-			to = MAXINT;
+			to = INT_MAX;
 
 		cmd_list_horse(line->lc.listrec.str, from, to);
 
@@ -244,7 +244,7 @@ PRIVATE int cmd_auto(struct comal_line *line)
 
 	while (!direct_cmd) {
 		if (nr < 0)
-			return 0;	/* nr<0 after nr+=step past MAXINT */
+			return 0;	/* nr<0 after nr+=step past INT_MAX */
 
 		work = search_line(nr, 1);
 
@@ -293,7 +293,7 @@ PRIVATE int cmd_del(struct comal_line *line)
 	long from = line->lc.twonum.num1;
 	long to = line->lc.twonum.num2;
 
-	if (from == 0 && to == MAXINT)
+	if (from == 0 && to == INT_MAX)
 		run_error(CMD_ERR,
 			  "Please mention a line number range with DEL");
 
@@ -316,7 +316,7 @@ PRIVATE int cmd_edit(struct comal_line *line)
 
 	while (result == 0) {
 		if (nr > to || nr < 0)
-			return 0;	/* nr<0 after nr++ at MAXINT */
+			return 0;	/* nr<0 after nr++ at INT_MAX */
 
 		work = search_line(nr, 0);
 

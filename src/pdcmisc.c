@@ -63,8 +63,8 @@ PUBLIC void my_printf(int stream, int newline, char *s, ...)
 	va_list ap;
 
 	va_start(ap, s);
-	va_end(ap);
 	vsprintf(buf, s, ap);
+	va_end(ap);
 	my_put(stream, buf, -1L);
 
 	if (newline)
@@ -78,8 +78,8 @@ PUBLIC void fatal(char *s, ...)
 	va_list ap;
 
 	va_start(ap, s);
-	va_end(ap);
 	vsprintf(buf, s, ap);
+	va_end(ap);
 	my_printf(MSG_ERROR, 1, "FATAL error: %s", buf);
 
 	longjmp(RESTART, ERR_FATAL);
@@ -187,8 +187,8 @@ PUBLIC int nr_items(struct my_list *list)
 
 PUBLIC long d2int(double x, int whole)
 {
-	double max = MAXINT;
-#ifdef __bsdi__
+	double max = INT_MAX;
+#if defined(__bsdi__) || (defined(__APPLE__) && defined(__MACH__))
 	double min = INT_MIN;
 #else
 	double min = MININT;

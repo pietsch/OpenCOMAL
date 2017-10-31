@@ -286,14 +286,14 @@ PUBLIC void pars_error(char *s, ...)
 {
 	va_list ap;
 
-	va_start(ap, s);
-	va_end(ap);
-
 	if (pars_error_happened)
 		return;
 
+	va_start(ap, s);
+
 	pars_error_happened = lex_pos();
 	vsprintf(pars_errtxt, s, ap);
+	va_end(ap);
 }
 
 
