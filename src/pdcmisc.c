@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdarg.h>
+#include <assert.h>
 
 
 struct int_trace {
@@ -39,7 +40,7 @@ PUBLIC void my_nl(int stream)
 		if (fputc('\n', sel_outfile) == EOF)
 			run_error(SELECT_ERR,
 				  "Error when writing to SELECT OUTPUT file %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 	} else
 		sys_nl(stream);
 }
@@ -51,7 +52,7 @@ PUBLIC void my_put(int stream, char *buf, long len)
 		if (fputs(buf, sel_outfile) == EOF)
 			run_error(SELECT_ERR,
 				  "Error when writing to SELECT OUTPUT file %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 	} else
 		sys_put(stream, buf, len);
 }
@@ -484,7 +485,7 @@ PRIVATE struct {
 	, {
 	idSYM, sizeof(c_line.lc.id)}
 	, {
-	-1 - 1}
+	-1, -1}
 };
 
 
@@ -717,8 +718,9 @@ PUBLIC void strlwr(char *s)
 
 #ifdef UNIX
 
-PUBLIC char *ltoa(long num, char *buf, int len)
+PUBLIC char *ltoa(long num, char *buf, int radix)
 {
+        assert(radix == 10);
 	sprintf(buf, "%ld", num);
 
 	return buf;

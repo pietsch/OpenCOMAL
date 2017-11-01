@@ -10,6 +10,8 @@
 
 /* OpenComal SYS routines for LINUX */
 
+#define _XOPEN_SOURCE 600
+
 #include "pdcglob.h"
 #include "pdcmisc.h"
 #include "pdcext.h"
@@ -21,6 +23,7 @@
 #include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -486,7 +489,7 @@ PUBLIC void sys_chdir(char *dir)
 
 PUBLIC void sys_mkdir(char *dir)
 {
-	if (!mkdir(dir,0777)<0)
+	if (mkdir(dir,0777)<0)
 		run_error(DIR_ERR,strerror(errno));
 } 
 

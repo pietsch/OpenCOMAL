@@ -21,6 +21,7 @@
 #include "pdclist.h"
 #include "pdcsqash.h"
 #include "pdcenv.h"
+#include <string.h>
 
 
 PRIVATE void cmd_list_horse(struct string *filename, long from, long to)
@@ -35,7 +36,7 @@ PRIVATE void cmd_list_horse(struct string *filename, long from, long to)
 
 		if (!listfile)
 			run_error(OPEN_ERR, "File open error %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 
 		setvbuf(listfile, NULL, _IOFBF, TEXT_BUFSIZE);
 	} else {
@@ -125,7 +126,7 @@ PRIVATE int cmd_enter(struct comal_line *line)
 
 	if (!yyenter)
 		run_error(OPEN_ERR, "File open error: %s",
-			  sys_errlist[errno]);
+			  strerror(errno));
 
 	setvbuf(yyenter, NULL, _IOFBF, TEXT_BUFSIZE);
 	++entering;
@@ -137,7 +138,7 @@ PRIVATE int cmd_enter(struct comal_line *line)
 			if (!feof(yyenter))
 				run_error(CMD_ERR,
 					  "Error when reading ENTER file: %s",
-					  sys_errlist[errno]);
+					  strerror(errno));
 		} else {
 			aline = crunch_line(tline);
 

@@ -22,6 +22,7 @@
 
 
 #include <math.h>
+#include <string.h>
 
 #ifdef HAS_ROUND
 extern double round(double x);
@@ -220,7 +221,7 @@ PRIVATE long my_eof2(long fno)
 
 	if (result == -1)
 		run_error(EOF_ERR, "Error when checking for EOF: %s",
-			  sys_errlist[errno]);
+			  strerror(errno));
 
 	return result;
 }

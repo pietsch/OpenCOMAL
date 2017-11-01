@@ -17,6 +17,7 @@
 #include "pdcexec.h"
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <string.h>
 
 PRIVATE void sqash_exp();
 PRIVATE void sqash_horse();
@@ -38,7 +39,7 @@ PRIVATE void sqash_flush()
 			close(sqash_file);
 			run_error(SQASH_ERR,
 				  "Error when writing to file: %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 		}
 
 		sqash_i = 0;
@@ -538,11 +539,11 @@ PUBLIC void sqash_2file(char *fname)
 
 	sqash_file =
 	    open(fname, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY,
-		 S_IREAD | S_IWRITE);
+		 S_IRUSR | S_IWUSR);
 
 	if (sqash_file < 0)
 		run_error(OPEN_ERR, "File open error: %s",
-			  sys_errlist[errno]);
+			  strerror(errno));
 
 	sqash_buf = mem_alloc(MISC_POOL, SQASH_BUFSIZE);
 	sqash_i = 0;
@@ -567,7 +568,7 @@ PUBLIC void sqash_2file(char *fname)
 
 	if (close(sqash_file) < 0)
 		run_error(CLOSE_ERR, "Error closing file: %s",
-			  sys_errlist[errno]);
+			  strerror(errno));
 }
 
 
@@ -582,7 +583,7 @@ PRIVATE void expand_read()
 	if (sqash_hwm < 0) {
 		close(sqash_file);
 		run_error(SQASH_ERR, "Error when reading from file: %s",
-			  sys_errlist[errno]);
+			  strerror(errno));
 	}
 
 	sqash_i = 0;
@@ -1275,7 +1276,7 @@ PUBLIC struct comal_line *expand_fromfile(char *fname)
 
 	if (sqash_file < 0)
 		run_error(OPEN_ERR, "File open error: %s",
-			  sys_errlist[errno]);
+			  strerror(errno));
 
 	sqash_buf = mem_alloc(MISC_POOL, SQASH_BUFSIZE);
 	sqash_i = MAXUNSIGNED;
@@ -1331,7 +1332,7 @@ PUBLIC struct comal_line *expand_fromfile(char *fname)
 
 	if (close(sqash_file) < 0)
 		run_error(CLOSE_ERR, "Error closing file: %s",
-			  sys_errlist[errno]);
+			  strerror(errno));
 
 	return root;
 }

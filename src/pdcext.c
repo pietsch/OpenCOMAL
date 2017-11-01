@@ -17,6 +17,7 @@
 #include "pdcexp.h"
 #include "pdcval.h"
 #include "version.h"
+#include <string.h>
 
 struct inpfile_stkent {
 	struct inpfile_stkent *next;
@@ -246,7 +247,7 @@ PUBLIC int ext_sys_stat(struct exp_list *exproot)
 				pop_inpfile();
 				run_error(SYS_ERR,
 					  "Error opening sysin: %s",
-					  sys_errlist[errno]);
+					  strerror(errno));
 			}
 		}
 
@@ -278,7 +279,7 @@ PUBLIC int ext_sys_stat(struct exp_list *exproot)
 
 		if (!sys_outfile && name->s[0])
 			run_error(SYS_ERR, "Error opening sysout: %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 
 		return 0;
 	} else if (strcmp(cmd, "memdump") == 0) {
@@ -321,7 +322,7 @@ PUBLIC int ext_get(int stream, char *line, int maxlen, char *prompt)
 
 		if (!eof)
 			run_error(SYS_ERR, "Error reading sysin: %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 
 		return ext_get(stream, line, maxlen, prompt);
 	}
