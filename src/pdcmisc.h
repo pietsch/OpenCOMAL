@@ -44,7 +44,7 @@ extern void trace_add(int *val, char *name);
 extern void trace_remove(void);
 extern void trace_trace(void);
 extern void trace_reset(void);
-extern char *ltoa(long num, char *buf, int len);
+extern char *ltoa(long num, char *buf, int radix);
 
 #ifndef HAS_STRLWR
 extern void strupr(char *s);

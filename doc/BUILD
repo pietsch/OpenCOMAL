@@ -52,3 +52,11 @@ installed:
 
 Then I use Borland make with Makefile.w32 or Makefile.dos to build the
 binaries.
+
+------------------
+Building for macOS
+------------------
+
+Install the "readline" package from Homebrew.
+Then run "make OPSYS=macos".
+This was tested on "High Sierra".

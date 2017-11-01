@@ -25,15 +25,23 @@ OBJ2=pdcmain.o pdcmisc.o \
 	pdcexp.o pdcmem.o pdcsqash.o pdcstr.o pdcprog.o pdcext.o pdcseg.o \
 	pdcval.o pdcrun.o
 OS=pdclinux.o 
-OSLIB=-lncurses -lreadline
+OSLIB=-lncurses -L/usr/local/opt/readline/lib -lreadline
 STATIC=
 #PROFILE=-pg
 PROFILE=
 
-COPTS=-c -ggdb -pedantic -Wall -std=gnu99 -DOS_LINUX $(PROFILE)
-LIBS=-lm $(OSLIB)
+COPTS=-c -Wall -Wextra -std=c11 -DOS_LINUX $(PROFILE) -flto
+ifeq ($(OPSYS),macos)
+COPTS+=-Oz -I/usr/local/opt/readline/include
+else
+COPTS+=-Os -fomit-frame-pointer
+endif
+LIBS=$(OSLIB)
+ifneq ($(OPSYS),macos)
+LIBS+=-lm
+endif
 
-LDOPTS=$(STATIC) $(LIBS) 
+LDOPTS=$(STATIC) $(LIBS) -flto
 
 %.d: %.c
 		set -e; $(CC) -M $(CPPFLAGS) $< \
@@ -46,10 +54,10 @@ all:		build $(TARG1) $(TARG2)
 		makedepend -f .depend *.c *.y *.l
 
 $(TARG1):	 $(OBJ1) $(OS)
-		gcc $(PROFILE) -o $(TARG1) $(OBJ1) $(OS) $(LDOPTS)
+		$(CC) $(PROFILE) -o $(TARG1) $(OBJ1) $(OS) $(LDOPTS)
 
 $(TARG2):	 $(OBJ2) $(OS)
-		gcc $(PROFILE) -o $(TARG2) $(OBJ2) $(OS) $(LDOPTS)
+		$(CC) $(PROFILE) -o $(TARG2) $(OBJ2) $(OS) $(LDOPTS)
 
 build:		
 		../tools/bumpbuild BUILD
@@ -71,7 +79,7 @@ clean:		almostclean
 		-rm ../bin/*.exe ../bin/*.EXE
 
 .c.o:
-		gcc $(COPTS) $*.c 
+		$(CC) $(COPTS) $*.c 
 
 include $(SOURCES:.c=.d)
 

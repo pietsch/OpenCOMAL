@@ -49,9 +49,9 @@ PUBLIC void run_error(int error, char *s, ...)
 	va_list ap;
 
 	va_start(ap, s);
-	va_end(ap);
 
 	vsprintf(buf2, s, ap);
+	va_end(ap);
 
 	curenv->error = curenv->lasterr = error;
 	mem_free(curenv->lasterrmsg);
@@ -342,7 +342,7 @@ PRIVATE void decode_parmlist(struct sym_env *env, struct parm_list *plist,
 				calc_exp(elist->exp, &result, &type);
 				var =
 				    var_newvar(plist->id->type, NULL,
-					       MAXINT);
+					       INT_MAX);
 				val_copy(&var->data, result, var->type,
 					 type);
 				val_free(result, type);
@@ -631,7 +631,7 @@ PRIVATE void do_calc_fromto(struct two_exp *twoexp, long *from, long *to)
 			else
 				*to = calc_intexp(twoexp->exp2);
 		else
-			*to = MAXINT;
+			*to = INT_MAX;
 
 		if (*from > *to)
 			err = "Substring specifier incorrect (from>to)";
@@ -1172,7 +1172,7 @@ PRIVATE void exec_open(struct comal_line *line)
 	enum VAL_TYPE type;
 	struct file_rec *frec;
 	struct open_rec *o = &line->lc.openrec;
-	int flags;
+	int flags = 0;
 
 	calc_exp(o->filename, (void **) &name, &type);
 	frec = mem_alloc(RUN_POOL, sizeof(struct file_rec));
@@ -1217,10 +1217,10 @@ PRIVATE void exec_open(struct comal_line *line)
 		fatal("open filemode switch default action");
 	}
 
-	frec->hfno = open(name->s, flags | O_BINARY, S_IREAD | S_IWRITE);
+	frec->hfno = open(name->s, flags | O_BINARY, S_IRUSR | S_IWUSR);
 
 	if (frec->hfno == -1)
-		run_error(OPEN_ERR, "OPEN error: %s", sys_errlist[errno]);
+		run_error(OPEN_ERR, "OPEN error: %s", strerror(errno));
 
 	frec->next = curenv->fileroot;
 	curenv->fileroot = frec;
@@ -1246,7 +1246,7 @@ PRIVATE void exec_close(struct comal_line *line)
 			if (close(walk->hfno) == -1)
 				run_error(CLOSE_ERR,
 					  "Close error on file %ld: %s",
-					  walk->cfno, sys_errlist[errno]);
+					  walk->cfno, strerror(errno));
 
 			walk = mem_free(walk);
 		}
@@ -1270,7 +1270,7 @@ PRIVATE void exec_close(struct comal_line *line)
 			if (close(walk->hfno) == -1)
 				run_error(CLOSE_ERR,
 					  "CLOSE error on file %ld: %s",
-					  walk->cfno, sys_errlist[errno]);
+					  walk->cfno, strerror(errno));
 			else {
 				if (last)
 					last->next = walk->next;
@@ -1316,7 +1316,7 @@ PRIVATE struct file_rec *pos_file(struct two_exp *r)
 		    -1)
 			run_error(POS_ERR,
 				  "Random file positioning error: %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 	}
 
 	return f;
@@ -1393,7 +1393,7 @@ PRIVATE void read1(struct file_rec *f, struct id_rec *id, void **data,
 
 	if (r < 0)
 		run_error(READ_ERR, "INPUT/READ file error: %s",
-			  sys_errlist[errno]);
+			  strerror(errno));
 }
 
 
@@ -1536,7 +1536,7 @@ PRIVATE void write1(struct file_rec *f, void *data, enum VAL_TYPE type,
 
 	if (w < 0)
 		run_error(WRITE_ERR, "File write error: %s",
-			  sys_errlist[errno]);
+			  strerror(errno));
 }
 
 
@@ -1705,7 +1705,7 @@ PRIVATE void exec_selfile(FILE ** f, struct expression *exp, char *mode)
 		if (fclose(*f))
 			run_error(SELECT_ERR,
 				  "Error when closing current SELECT file: %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 
 	calc_exp(exp, (void **) &result, &type);
 
@@ -1717,7 +1717,7 @@ PRIVATE void exec_selfile(FILE ** f, struct expression *exp, char *mode)
 		if (!*f)
 			run_error(SELECT_ERR,
 				  "Error when opening new SELECT file: %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 	}
 
 	mem_free(result);

@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdarg.h>
+#include <assert.h>
 
 
 struct int_trace {
@@ -39,7 +40,7 @@ PUBLIC void my_nl(int stream)
 		if (fputc('\n', sel_outfile) == EOF)
 			run_error(SELECT_ERR,
 				  "Error when writing to SELECT OUTPUT file %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 	} else
 		sys_nl(stream);
 }
@@ -51,7 +52,7 @@ PUBLIC void my_put(int stream, char *buf, long len)
 		if (fputs(buf, sel_outfile) == EOF)
 			run_error(SELECT_ERR,
 				  "Error when writing to SELECT OUTPUT file %s",
-				  sys_errlist[errno]);
+				  strerror(errno));
 	} else
 		sys_put(stream, buf, len);
 }
@@ -63,8 +64,8 @@ PUBLIC void my_printf(int stream, int newline, char *s, ...)
 	va_list ap;
 
 	va_start(ap, s);
-	va_end(ap);
 	vsprintf(buf, s, ap);
+	va_end(ap);
 	my_put(stream, buf, -1L);
 
 	if (newline)
@@ -78,8 +79,8 @@ PUBLIC void fatal(char *s, ...)
 	va_list ap;
 
 	va_start(ap, s);
-	va_end(ap);
 	vsprintf(buf, s, ap);
+	va_end(ap);
 	my_printf(MSG_ERROR, 1, "FATAL error: %s", buf);
 
 	longjmp(RESTART, ERR_FATAL);
@@ -187,12 +188,8 @@ PUBLIC int nr_items(struct my_list *list)
 
 PUBLIC long d2int(double x, int whole)
 {
-	double max = MAXINT;
-#ifdef __bsdi__
+	double max = INT_MAX;
 	double min = INT_MIN;
-#else
-	double min = MININT;
-#endif
 
 	if (x > max || x < min)
 		run_error(F2INT1_ERR,
@@ -216,7 +213,7 @@ PUBLIC int type_match1(struct id_rec *id, struct expression *exp)
 
 PUBLIC struct id_rec *exp_of_id(struct expression *exp)
 {
-	struct id_rec *id;
+	struct id_rec *id = NULL;
 
 	if (exp->optype != T_EXP_IS_NUM && exp->optype != T_EXP_IS_STRING)
 		fatal("Exp_id() internal error #1");
@@ -488,7 +485,7 @@ PRIVATE struct {
 	, {
 	idSYM, sizeof(c_line.lc.id)}
 	, {
-	-1 - 1}
+	-1, -1}
 };
 
 
@@ -721,8 +718,9 @@ PUBLIC void strlwr(char *s)
 
 #ifdef UNIX
 
-PUBLIC char *ltoa(long num, char *buf, int len)
+PUBLIC char *ltoa(long num, char *buf, int radix)
 {
+        assert(radix == 10);
 	sprintf(buf, "%ld", num);
 
 	return buf;
@@ -766,7 +764,7 @@ PUBLIC double my_round(double x)
 {
 	double d=my_frac(x);
 
-	if (abs(d)>=0.5)
+	if (fabs(d)>=0.5)
 		return ceil(x);
 
 	return floor(x);

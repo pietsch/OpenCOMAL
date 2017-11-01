@@ -354,7 +354,7 @@ list_cmd	:	listSYM line_range
 				$$.cmd=listSYM;
 				$$.lc.listrec.str=$2;
 				$$.lc.listrec.twonum.num1=0;
-				$$.lc.listrec.twonum.num2=MAXINT;
+				$$.lc.listrec.twonum.num2=INT_MAX;
 				$$.lc.listrec.id=NULL;
 			}
 		|	listSYM line_range commaSYM stringSYM
@@ -380,7 +380,7 @@ list_cmd	:	listSYM line_range
 
 line_range	:	/* epsilon */
 			{
-				$$.num1=0;	$$.num2=MAXINT;
+				$$.num1=0;	$$.num2=INT_MAX;
 			}
 		|	intnumSYM
 			{
@@ -392,7 +392,7 @@ line_range	:	/* epsilon */
 			}
 		|	intnumSYM minusSYM
 			{
-				$$.num1=$1;	$$.num2=MAXINT;
+				$$.num1=$1;	$$.num2=INT_MAX;
 			}
 		|	intnumSYM minusSYM intnumSYM
 			{

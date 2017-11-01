@@ -15,6 +15,7 @@
 #include "pdcstr.h"
 #include "pdcseg.h"
 #include "pdcid.h"
+#include <string.h>
 
 PUBLIC struct comal_env *env_new(char *name)
 {
