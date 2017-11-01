@@ -31,13 +31,13 @@ STATIC=
 PROFILE=
 
 COPTS=-c -pedantic -Wall -std=gnu99 -DOS_LINUX $(PROFILE) -flto
-ifeq ($(OS),macos)
+ifeq ($(OPSYS),macos)
 COPTS+=-Oz -I/usr/local/opt/readline/include
 else
 COPTS+=-Os -fomit-frame-pointer
 endif
 LIBS=$(OSLIB)
-ifneq ($(OS),macos)
+ifneq ($(OPSYS),macos)
 LIBS+=-lm
 endif
 
