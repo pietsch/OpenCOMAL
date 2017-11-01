@@ -1172,7 +1172,7 @@ PRIVATE void exec_open(struct comal_line *line)
 	enum VAL_TYPE type;
 	struct file_rec *frec;
 	struct open_rec *o = &line->lc.openrec;
-	int flags;
+	int flags = 0;
 
 	calc_exp(o->filename, (void **) &name, &type);
 	frec = mem_alloc(RUN_POOL, sizeof(struct file_rec));

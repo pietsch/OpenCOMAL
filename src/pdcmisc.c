@@ -213,7 +213,7 @@ PUBLIC int type_match1(struct id_rec *id, struct expression *exp)
 
 PUBLIC struct id_rec *exp_of_id(struct expression *exp)
 {
-	struct id_rec *id;
+	struct id_rec *id = NULL;
 
 	if (exp->optype != T_EXP_IS_NUM && exp->optype != T_EXP_IS_STRING)
 		fatal("Exp_id() internal error #1");
@@ -764,7 +764,7 @@ PUBLIC double my_round(double x)
 {
 	double d=my_frac(x);
 
-	if (abs(d)>=0.5)
+	if (fabs(d)>=0.5)
 		return ceil(x);
 
 	return floor(x);

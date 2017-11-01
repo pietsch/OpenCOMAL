@@ -509,7 +509,7 @@ PUBLIC char *sys_key(long delay)
 	 */
 	if (delay<0) {
 		while (c==ERR && !escape) 
-			c=my_getch_horse(0);
+			c=my_getch_horse();
 	} else if (delay==0) {
 		raw();
 		nodelay(win,TRUE);

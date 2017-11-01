@@ -118,7 +118,7 @@ PUBLIC void val_free(void *result, enum VAL_TYPE type)
 PUBLIC double val_double(struct expression *exp) {
 	void *result;
 	enum VAL_TYPE type;
-	double d;
+	double d = 0.0;
 
 	calc_exp(exp,&result,&type);
 
@@ -314,7 +314,7 @@ PUBLIC void val_intdiv(long *v1, long *v2, void **result, enum VAL_TYPE
 
 PUBLIC long val_mustbelong(void *value, enum VAL_TYPE type, int freeit) 
 {
-	long n;
+	long n = 0;
 
 	if (type==V_INT) 
 		n=*(long *)value;

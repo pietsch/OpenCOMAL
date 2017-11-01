@@ -772,7 +772,7 @@ PRIVATE struct two_exp *expand_alloc_twoexp() {
 PRIVATE struct expression *expand_exp()
 {
 	char c = expand_getc();
-	struct expression *exp;
+	struct expression *exp = NULL;
 	enum optype o;
 
 	if (c == SQ_EMPTYEXP) {

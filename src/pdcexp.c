@@ -50,7 +50,7 @@ PUBLIC void *exp_lval(struct expression *exp, enum VAL_TYPE *type,
 	struct exp_list *walke;
 	struct arr_dim *walkd;
 	union var_data HUGE_POINTER *vdata;
-	void HUGE_POINTER *lval;
+	void HUGE_POINTER *lval = NULL;
 
 	if (exp->optype == T_EXP_IS_NUM || exp->optype == T_EXP_IS_STRING)
 		exp = exp->e.exp;
@@ -792,7 +792,7 @@ PRIVATE void exp_binary(struct expression *exp, void **result,
 {
 	void *result1, *result2;
 	enum VAL_TYPE type1, type2;
-	void (*func) ();
+	void (*func) () = NULL;
 	int cmp;
 
 	if (logop(exp->op))
@@ -1105,7 +1105,7 @@ PUBLIC void calc_exp(struct expression *exp, void **result,
 
 PUBLIC long calc_intexp(struct expression *exp)
 {
-	long num;
+	long num = 0;
 	void *result;
 	enum VAL_TYPE type;
 
@@ -1128,7 +1128,7 @@ PUBLIC int calc_logexp(struct expression *exp)
 {
 	void *result;
 	enum VAL_TYPE type;
-	int log;
+	int log = 0;
 
 	calc_exp(exp, &result, &type);
 
