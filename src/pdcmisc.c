@@ -188,11 +188,7 @@ PUBLIC int nr_items(struct my_list *list)
 PUBLIC long d2int(double x, int whole)
 {
 	double max = INT_MAX;
-#if defined(__bsdi__) || (defined(__APPLE__) && defined(__MACH__))
 	double min = INT_MIN;
-#else
-	double min = MININT;
-#endif
 
 	if (x > max || x < min)
 		run_error(F2INT1_ERR,

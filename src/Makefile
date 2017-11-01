@@ -30,12 +30,17 @@ STATIC=
 #PROFILE=-pg
 PROFILE=
 
-CC=clang
-#COPTS=-c -gmodules -pedantic -Wall -std=gnu99 -DOS_LINUX $(PROFILE) -I/usr/local/opt/readline/include
-COPTS=-c -pedantic -Wall -std=gnu99 -DOS_LINUX $(PROFILE) -Oz -flto -I/usr/local/opt/readline/include
+COPTS=-c -pedantic -Wall -std=gnu99 -DOS_LINUX $(PROFILE) -flto
+ifeq ($(OS),macos)
+COPTS+=-Oz -I/usr/local/opt/readline/include
+else
+COPTS+=-Os -fomit-frame-pointer
+endif
 LIBS=$(OSLIB)
+ifneq ($(OS),macos)
+LIBS+=-lm
+endif
 
-#LDOPTS=$(STATIC) $(LIBS)
 LDOPTS=$(STATIC) $(LIBS) -flto
 
 %.d: %.c
