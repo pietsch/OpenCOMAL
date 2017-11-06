@@ -111,8 +111,8 @@ exp			[Ee][\-\+]?{number}+
 \;						RETURN(semicolonSYM);
 \,						RETURN(commaSYM);
 \#						RETURN(fileSYM);
-\/\/[^\r?\n]*					RETURN(lex_rem());
-\"(\"\"|\\\"|[^\"\n])*\"?			RETURN(lex_string_flatten());
+\/\/[^\r\n]*					RETURN(lex_rem());
+\"([^\\]\"\"|\\\"|[^\"\n])*\"?			RETURN(lex_string_flatten());
 {letter}{netter}*				RETURN(lex_id(idSYM));
 {letter}{netter}*\#				RETURN(lex_id(intidSYM));
 {letter}{netter}*\$				RETURN(lex_id(stringidSYM));
