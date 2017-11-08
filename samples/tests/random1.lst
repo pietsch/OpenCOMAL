@@ -1,4 +1,6 @@
        10 // RANDOM sample program
+       13 // This test has a dependency on the machine word size
+       16 // For 32-bit machines, 18 & 9 below must be replaced with 10 & 5
        20 //
        30 TRAP
        40   DELETE "ofile7"

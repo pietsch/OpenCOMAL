@@ -30,7 +30,11 @@ STATIC=
 #PROFILE=-pg
 PROFILE=
 
+ifeq ($(CC),c++)
+COPTS=-c -Wall -Wextra -Weffc++ -std=c++14 -DOS_LINUX $(PROFILE) -flto
+else
 COPTS=-c -Wall -Wextra -std=c11 -DOS_LINUX $(PROFILE) -flto
+endif
 ifeq ($(OPSYS),macos)
 COPTS+=-Oz -I/usr/local/opt/readline/include
 else
