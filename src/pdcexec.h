@@ -10,7 +10,7 @@
 
 /* Line execution routines header file */
 
-extern void run_error(int error, char *s, ...);
+extern void run_error(int error, const char *s, ...);
 extern void exec_call(struct expression *exp, int calltype, void **result,
 		      enum VAL_TYPE *type);
 extern int exec_trap(struct comal_line *line);

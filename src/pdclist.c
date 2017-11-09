@@ -18,13 +18,13 @@
 
 PUBLIC int show_exec = 0;
 
-PRIVATE void list_horse();
-PRIVATE void list_explist();
-PUBLIC void list_exp();
+PRIVATE void list_horse(char **buf, struct comal_line *line);
+PRIVATE void list_explist(char **buf, struct exp_list *exproot, int parens);
+PUBLIC void list_exp(char **buf, struct expression *exp);
 PRIVATE void list_char(char **buf, char c);
 
 
-PRIVATE void list_text(char **buf, char *txt)
+PRIVATE void list_text(char **buf, const char *txt)
 {
 	strcpy(*buf, txt);
 	(*buf) += strlen(txt);
@@ -106,7 +106,7 @@ PRIVATE void list_string(char **buf, char str[])
 }
 
 
-PRIVATE void list_twoexp(char **buf, struct two_exp *twoexp, char
+PRIVATE void list_twoexp(char **buf, struct two_exp *twoexp, const char
 			 *inter, int compuls)
 {
 	/* 

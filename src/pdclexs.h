@@ -15,8 +15,8 @@ extern int lex_floatnum(void);
 extern int lex_intnum(void);
 extern int lex_id(int sym);
 extern int lex_rem(void);
-extern char *lex_sym(int sym);
-extern char *lex_opsym(int sym);
+extern const char *lex_sym(int sym);
+extern const char *lex_opsym(int sym);
 
 /* These are defined in pdclex.l */
 extern int lex_leng();

@@ -412,7 +412,7 @@ PRIVATE int cmd_env(struct comal_line *line)
 
 PRIVATE struct {
 	int sym;
-	int (*func) ();
+	int (*func) (struct comal_line *line);
 } cmdtab[] = {
 	{
 	listSYM, cmd_list}, {

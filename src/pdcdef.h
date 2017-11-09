@@ -65,17 +65,19 @@ struct arr_des {
 	long nritems;
 };
 
+union var_data {
+	long num[1];
+	double fnum[1];
+	struct string *str[1];
+	void *vref;
+};
+
 struct var_item {
 	enum VAL_TYPE type;
 	int ref;
 	struct arr_des *array;
 	long strlen;
-	union var_data {
-		long num[1];
-		double fnum[1];
-		struct string *str[1];
-		void *vref;
-	} data;
+	union var_data data;
 };
 
 
@@ -319,33 +321,35 @@ struct comal_line_data {
 	struct string *rem;
 };
 
+union line_contents {
+	struct string *str;
+	int inum;
+	struct id_rec *id;
+	struct two_num twonum;
+	struct two_exp twoexp;
+	struct list_cmd listrec;
+	struct expression *exp;
+	struct exp_list *exproot;
+	struct dim_list *dimroot;
+	struct for_rec forrec;
+	struct ifwhile_rec ifwhilerec;
+	struct import_rec importrec;
+	struct input_rec inputrec;
+	struct open_rec openrec;
+	struct print_rec printrec;
+	struct proc_func_rec pfrec;
+	struct trap_rec traprec;
+	struct read_rec readrec;
+	struct when_list *whenroot;
+	struct write_rec writerec;
+	struct assign_list *assignroot;
+};
+
 struct comal_line {
 	struct comal_line_data *ld;
 	struct comal_line *lineptr;
 	int cmd;
-	union line_contents {
-		struct string *str;
-		int inum;
-		struct id_rec *id;
-		struct two_num twonum;
-		struct two_exp twoexp;
-		struct list_cmd listrec;
-		struct expression *exp;
-		struct exp_list *exproot;
-		struct dim_list *dimroot;
-		struct for_rec forrec;
-		struct ifwhile_rec ifwhilerec;
-		struct import_rec importrec;
-		struct input_rec inputrec;
-		struct open_rec openrec;
-		struct print_rec printrec;
-		struct proc_func_rec pfrec;
-		struct trap_rec traprec;
-		struct read_rec readrec;
-		struct when_list *whenroot;
-		struct write_rec writerec;
-		struct assign_list *assignroot;
-	} lc;			/* line contents */
+	union line_contents lc;
 };
 
 

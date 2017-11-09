@@ -61,7 +61,7 @@ PRIVATE char *my_strncpy(char *s1, char *s2, long n)
 
 
 
-PUBLIC char *my_strdup(int pool, char *s)
+PUBLIC char *my_strdup(int pool, const char *s)
 {
 	char *t = mem_alloc(pool, my_strlen(s) + 1);
 

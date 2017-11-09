@@ -10,7 +10,7 @@
 
 /* String routines header file */
 
-extern char *my_strdup(int pool, char *s);
+extern char *my_strdup(int pool, const char *s);
 extern char *my_strcpy(char HUGE_POINTER *to, char HUGE_POINTER *from);
 extern int str_cmp(struct string *s1, struct string *s2);
 extern struct string *str_make(int pool, char *s);

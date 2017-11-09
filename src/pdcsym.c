@@ -244,7 +244,7 @@ PUBLIC struct sym_env *sym_freeenv(struct sym_env *env, int recur)
 			work = free_symitem(work);
 
 		mem_free(env->name);
-		env = mem_free(env);
+		env = (struct sym_env *)mem_free(env);
 	}
 	while (env && recur);
 
@@ -290,7 +290,7 @@ PUBLIC struct var_item *var_newvar(enum VAL_TYPE type,
 	}
 
 	work =
-	    mem_alloc(RUN_POOL,
+	    (struct var_item *)mem_alloc(RUN_POOL,
 		      sizeof(struct var_item) - sizeof(union var_data) +
 		      type_size(type) * nritems);
 
@@ -314,7 +314,7 @@ PUBLIC struct var_item *var_refvar(struct var_item *lvar, enum VAL_TYPE type, lo
 		my_printf(MSG_DEBUG, 1, "NEW RefVar pointing at %p", vref);
 
 	work =
-	    mem_alloc(RUN_POOL,
+	    (struct var_item *)mem_alloc(RUN_POOL,
 		      sizeof(struct var_item) - sizeof(union var_data) +
 		      sizeof(void *));
 
@@ -336,7 +336,7 @@ PUBLIC struct name_rec *name_new(struct sym_env *env,
 				 struct expression *exp)
 {
 	struct name_rec *work =
-	    mem_alloc(RUN_POOL, sizeof(struct name_rec));
+	    (struct name_rec *)mem_alloc(RUN_POOL, sizeof(struct name_rec));
 
 	work->env = env;
 	work->exp = exp;

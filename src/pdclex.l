@@ -127,8 +127,7 @@ PUBLIC int yywrap()
 		return 1;
 	}
 
-PRIVATE void pdc_unput(c)
-	char c;
+PRIVATE void pdc_unput(char c)
 	{
 
 		#ifdef PDCLEX_DEBUG
@@ -169,8 +168,7 @@ PUBLIC int lex_pos()
 	}
 
 
-PUBLIC void lex_setinput(line)
-	char *line;
+PUBLIC void lex_setinput(char *line)
 	{
 		#ifdef FLEX
 			yyrestart(NULL);

@@ -335,7 +335,7 @@ PUBLIC void sys_screen_readjust()
 }
 
 
-PUBLIC int sys_yn(int stream, char *prompt)
+PUBLIC int sys_yn(int stream, const char *prompt)
 {
 	char c;
 
@@ -379,7 +379,7 @@ PRIVATE int do_get(int stream, char *line, int maxlen, char *prompt,
 }
 
 
-PUBLIC int sys_get(int stream, char *line, int maxlen, char *prompt)
+PUBLIC int sys_get(int stream, char *line, int maxlen, const char *prompt)
 {
 	if (ext_get(stream, line, maxlen, prompt))
 		return 0;
@@ -450,7 +450,7 @@ PUBLIC char *sys_dir_string()
 	}
 }
 
-PUBLIC void sys_dir(char *pattern) {
+PUBLIC void sys_dir(const char *pattern) {
 	FILE *f;
 	int l=strlen(pattern);
 	char *buf=malloc(8+l);

@@ -26,14 +26,16 @@ PRIVATE struct {
 } scan_stack[SCAN_STACK_SIZE];
 PRIVATE int scan_sp;
 
+enum scan_entry_special { NOT_SPECIAL, SHORT_FORM, EXIT, PROCFUNC, EPROCFUNC,
+	DATA_STAT, CASE, RETRY
+};
+
 struct scan_entry {
 	int sym;
 	int leavessym;
 	int expectsym1;
 	int expectsym2;
-	enum { NOT_SPECIAL, SHORT_FORM, EXIT, PROCFUNC, EPROCFUNC,
-		DATA_STAT, CASE, RETRY
-	} special;
+	enum scan_entry_special special;
 };
 
 
@@ -168,7 +170,7 @@ PRIVATE int scan_pass2(struct seg_des *seg, char *errtxt,
 	struct comal_line *walk;
 	struct parm_list *pwalk;
 	struct exp_id *proccall;
-	char *err = NULL;
+	const char *err = NULL;
 	int dummy;
 	int procfound;
 	int sp;
@@ -642,7 +644,7 @@ PUBLIC int scan_nescessary(struct comal_line *line)
 
 PUBLIC int assess_scan(struct comal_line *line)
 {
-	char *msg = NULL;
+	const char *msg = NULL;
 
 	if (entering)
 		return 0;

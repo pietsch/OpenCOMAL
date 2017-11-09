@@ -12,8 +12,8 @@
 
 extern void my_nl(int stream);
 extern void my_put(int stream, char *buf, long len);
-extern void my_printf(int stream, int newline, char *s, ...);
-extern void fatal(char *s, ...);
+extern void my_printf(int stream, int newline, const char *s, ...);
+extern void fatal(const char *s, ...);
 extern void *my_reverse(void *root);
 extern void free_list(struct my_list *root);
 extern int exp_list_of_nums(struct exp_list *root);
@@ -51,6 +51,6 @@ extern void strupr(char *s);
 extern void strlwr(char *s);
 #endif
 
-extern void remove_trailing(char *s, char *trailing, char *subst);
+extern void remove_trailing(char *s, const char *trailing, const char *subst);
 extern double my_round(double x);
 extern double my_frac(double x);

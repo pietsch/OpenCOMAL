@@ -58,7 +58,7 @@ PUBLIC void my_put(int stream, char *buf, long len)
 }
 
 
-PUBLIC void my_printf(int stream, int newline, char *s, ...)
+PUBLIC void my_printf(int stream, int newline, const char *s, ...)
 {
 	char buf[MAX_LINELEN];
 	va_list ap;
@@ -73,7 +73,7 @@ PUBLIC void my_printf(int stream, int newline, char *s, ...)
 }
 
 
-PUBLIC void fatal(char *s, ...)
+PUBLIC void fatal(const char *s, ...)
 {
 	char buf[140];
 	va_list ap;
@@ -110,7 +110,7 @@ PUBLIC void free_list(struct my_list *root)
 		return;
 
 	while (root)
-		root = mem_free(root);
+		root = (struct my_list *)mem_free(root);
 }
 
 
@@ -643,7 +643,7 @@ PUBLIC struct comal_line *stat_dup(struct comal_line *stat)
 	char *to;
 	char *from;
 
-	work = mem_alloc(PARSE_POOL, memsize);
+	work = (struct comal_line *)mem_alloc(PARSE_POOL, memsize);
 
 	for (to = (char *) work, from = (char *) stat; memsize > 0;
 	     memsize--, to++, from++)
@@ -656,7 +656,7 @@ PUBLIC struct comal_line *stat_dup(struct comal_line *stat)
 PUBLIC void trace_add(int *val, char *name)
 {
 	struct int_trace *work =
-	    mem_alloc(MISC_POOL, sizeof(struct int_trace));
+	    (struct int_trace *)mem_alloc(MISC_POOL, sizeof(struct int_trace));
 
 	work->next = tr_root;
 	work->value = val;
@@ -668,7 +668,7 @@ PUBLIC void trace_add(int *val, char *name)
 PUBLIC void trace_remove()
 {
 	if (tr_root)
-		tr_root = mem_free(tr_root);
+		tr_root = (struct int_trace *)mem_free(tr_root);
 }
 
 
@@ -689,7 +689,7 @@ PUBLIC void trace_reset()
 	struct int_trace *work = tr_root;
 
 	while (work)
-		work = mem_free(work);
+		work = (struct int_trace *)mem_free(work);
 }
 
 #ifndef EVIL32
@@ -739,7 +739,7 @@ PUBLIC int eof(int f)
 }
 #endif
 
-PUBLIC void remove_trailing(char *s, char *trailer, char *subst) 
+PUBLIC void remove_trailing(char *s, const char *trailer, const char *subst) 
 {
 	int l=strlen(s);
 	int m=strlen(trailer);

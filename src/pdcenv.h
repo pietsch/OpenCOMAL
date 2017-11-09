@@ -10,7 +10,7 @@
 
 /* OpenComal environment handling header file */
 
-extern struct comal_env *env_new(char *name);
+extern struct comal_env *env_new(const char *name);
 extern struct comal_env *env_find(char *name);
 extern void clean_runenv(struct comal_env *env);
 extern void clear_env(struct comal_env *env);

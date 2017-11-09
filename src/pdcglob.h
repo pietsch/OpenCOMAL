@@ -66,7 +66,7 @@ EXTERN int comal_debug;		/* Internal debugging switch */
 EXTERN FILE *sel_outfile;	/* For select output */
 EXTERN FILE *sel_infile;	/* For select input */
 
-EXTERN char *copyright;
+EXTERN const char *copyright;
 EXTERN char *runfilename;
 
 EXTERN struct env_list *env_root;
