@@ -20,7 +20,7 @@
 #include "pdclexs.h"
 
 
-PUBLIC char *sys_interpreter()
+PUBLIC const char *sys_interpreter()
 {
 	return "OpenComal";
 }

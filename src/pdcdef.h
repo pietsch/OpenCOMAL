@@ -24,9 +24,9 @@ struct env_list {
 	struct comal_env *env;
 };
 
-#define	STR_ALLOC(p,x)		mem_alloc(p,sizeof(struct string)+x)
-#define	STR_ALLOC_PRIVATE(p,x)	mem_alloc_private(p,sizeof(struct string)+x)
-#define STR_REALLOC(s,l)	mem_realloc(s,sizeof(struct string)+l)
+#define	STR_ALLOC(p,x)		(struct string *)mem_alloc(p,sizeof(struct string)+x)
+#define	STR_ALLOC_PRIVATE(p,x)	(struct string *)mem_alloc_private(p,sizeof(struct string)+x)
+#define STR_REALLOC(s,l)	(struct string *)mem_realloc(s,sizeof(struct string)+l)
 
 struct string {
 	long len;
@@ -151,20 +151,22 @@ struct dubbel {
 	char *text;
 };
 
+union exp_data {
+        long num;
+        struct dubbel fnum;
+        struct string *str;
+        struct expression *exp;
+        struct two_exp twoexp;
+        struct exp_id expid;
+        struct exp_sid expsid;
+        struct exp_substr expsubstr;
+        struct exp_list *exproot;
+};
+
 struct expression {
 	enum optype optype;
 	int op;
-	union exp_data {
-		long num;
-		struct dubbel fnum;
-		struct string *str;
-		struct expression *exp;
-		struct two_exp twoexp;
-		struct exp_id expid;
-		struct exp_sid expsid;
-		struct exp_substr expsubstr;
-		struct exp_list *exproot;
-	} e;
+	union exp_data e;
 };
 
 struct two_num {

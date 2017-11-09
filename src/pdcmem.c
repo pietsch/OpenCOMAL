@@ -43,9 +43,9 @@ PRIVATE int poolcount = 0;
 
 PRIVATE void cell_init(unsigned pool)
 {
-	CELL_HDR *c = mem_alloc(MISC_POOL, sizeof(CELL_HDR));
+	CELL_HDR *c = (CELL_HDR *)mem_alloc(MISC_POOL, sizeof(CELL_HDR));
 
-	c->addr = mem_alloc(MISC_POOL, CELL_POOLSIZE * CELL_SIZE(pool));
+	c->addr = (CELL *)mem_alloc(MISC_POOL, CELL_POOLSIZE * CELL_SIZE(pool));
 
 	cell_hdr[pool] = c;
 	cell_freepool(pool);
@@ -90,7 +90,7 @@ PUBLIC void mem_tini()
 }
 
 
-PRIVATE void mem_error(char *action, long size)
+PRIVATE void mem_error(const char *action, long size)
 {
 	if (curenv->running == RUNNING)
 		run_error(MEM_ERR, "Out of memory while %s %ld bytes",
@@ -120,7 +120,7 @@ PUBLIC void *cell_alloc(unsigned pool)
 		if (comal_debug)
 			my_printf(MSG_DEBUG, 1, " handing out from heap");
 
-		cell = mem_alloc(RUN_POOL, CELL_SIZE(pool));
+		cell = (CELL *)mem_alloc(RUN_POOL, CELL_SIZE(pool));
 		cell->c.marker = CELL_IN_MEM;
 	}
 
@@ -144,7 +144,7 @@ PUBLIC void *mem_alloc_private(struct mem_pool *pool, long size)
 			  "Mem_alloc block in pool %d, size %ld", pool->id,
 			  size);
 
-	p = sys_alloc(size + sizeof(struct mem_block));
+	p = (struct mem_block *)sys_alloc(size + sizeof(struct mem_block));
 
 	if (!p)
 		mem_error("allocating", size);
@@ -169,12 +169,12 @@ PUBLIC void *mem_alloc_private(struct mem_pool *pool, long size)
 
 PUBLIC void *mem_realloc(void *block, long newsize)
 {
-	struct mem_block *memblock = block;
+	struct mem_block *memblock = (struct mem_block *)block;
 
 	--memblock;
 
 	memblock =
-	    sys_realloc(memblock, newsize + sizeof(struct mem_block));
+	    (struct mem_block *)sys_realloc(memblock, newsize + sizeof(struct mem_block));
 
 	if (!memblock)
 		mem_error("reallocating", newsize);
@@ -196,7 +196,7 @@ PUBLIC void *mem_realloc(void *block, long newsize)
 
 PUBLIC void cell_free(void *m)
 {
-	CELL *cell = m;
+	CELL *cell = (CELL *)m;
 	CELL_HDR *c;
 
 	--cell;
@@ -219,7 +219,7 @@ PUBLIC void cell_free(void *m)
 
 PUBLIC void *mem_free(void *m)
 {
-	struct mem_block *memblock = m;
+	struct mem_block *memblock = (struct mem_block *)m;
 	void *result = memblock->next;
 
 	--memblock;

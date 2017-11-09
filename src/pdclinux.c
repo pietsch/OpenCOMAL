@@ -42,7 +42,7 @@ PRIVATE Keymap keymap;
 PRIVATE struct {
 	int curses_key;
 	int internal_key;
-	char *function;
+	const char *function;
 } my_keymap[] = {
 	{	KEY_HOME,	1,	"beginning-of-line"		},
 	{	KEY_END,	2,	"end-of-line"			},
@@ -59,7 +59,7 @@ PRIVATE struct {
 	
 };
 
-PRIVATE void int_handler()
+PRIVATE void int_handler(int signum)
 {
 	escape = 1;
 	signal(SIGINT, int_handler);
@@ -253,7 +253,7 @@ PUBLIC int sys_escape()
 	return 0;
 }
 
-PRIVATE void do_put(int stream, char *buf, long len)
+PRIVATE void do_put(int stream, const char *buf, long len)
 {
 	if (stream == MSG_ERROR)
 		attron(A_REVERSE);
@@ -266,7 +266,7 @@ PRIVATE void do_put(int stream, char *buf, long len)
 	refresh();
 }
 
-PUBLIC void sys_put(int stream, char *buf, long len)
+PUBLIC void sys_put(int stream, const char *buf, long len)
 {
 	int lines;
 	int c;
@@ -355,7 +355,7 @@ PUBLIC int sys_yn(int stream, const char *prompt)
 }
 
 
-PRIVATE int do_get(int stream, char *line, int maxlen, char *prompt,
+PRIVATE int do_get(int stream, char *line, int maxlen, const char *prompt,
 		   int cursor)
 {
 	int escape=0;
@@ -437,7 +437,7 @@ PUBLIC char *sys_dir_string()
 	static char *buf=0;
 
 	while (1==1) {
-		if (!buf) buf=malloc(buf_size);
+		if (!buf) buf=(char *)malloc(buf_size);
 
 		if (getcwd(buf,buf_size)!=NULL) return buf;
 
@@ -453,7 +453,7 @@ PUBLIC char *sys_dir_string()
 PUBLIC void sys_dir(const char *pattern) {
 	FILE *f;
 	int l=strlen(pattern);
-	char *buf=malloc(8+l);
+	char *buf=(char *)malloc(8+l);
 	char line[256];
 	
 	strcpy(buf,"ls -l ");
@@ -472,7 +472,7 @@ PUBLIC void sys_dir(const char *pattern) {
 	free(buf);
 }
 
-PUBLIC char *sys_unit_string() 
+PUBLIC const char *sys_unit_string() 
 {
 	return "C:"; /* :-) */
 }

@@ -13,7 +13,7 @@
 #include "pdcglob.h"
 
 
-PRIVATE long my_strlen(char HUGE_POINTER * s)
+PRIVATE long my_strlen(const char HUGE_POINTER * s)
 {
 	long l = 0;
 
@@ -26,10 +26,10 @@ PRIVATE long my_strlen(char HUGE_POINTER * s)
 }
 
 
-PUBLIC char *my_strcpy(char *s1, char *s2)
+PUBLIC char *my_strcpy(char *s1, const char *s2)
 {
 	char HUGE_POINTER *w1 = s1;
-	char HUGE_POINTER *w2 = s2;
+	const char HUGE_POINTER *w2 = s2;
 
 	while (*w2) {
 		*w1 = *w2;
@@ -63,7 +63,7 @@ PRIVATE char *my_strncpy(char *s1, char *s2, long n)
 
 PUBLIC char *my_strdup(int pool, const char *s)
 {
-	char *t = mem_alloc(pool, my_strlen(s) + 1);
+	char *t = (char *)mem_alloc(pool, my_strlen(s) + 1);
 
 	return my_strcpy(t, s);
 }
@@ -81,7 +81,7 @@ PUBLIC int str_cmp(struct string *s1, struct string *s2)
 }
 
 
-PUBLIC struct string *str_make(int pool, char *s)
+PUBLIC struct string *str_make(int pool, const char *s)
 {
 	long l = my_strlen(s);
 	struct string *work = STR_ALLOC(pool, l);

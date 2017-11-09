@@ -13,16 +13,16 @@
 #define ROOTENV		sym_newenv(1,NULL,NULL,"_program")
 
 extern struct sym_env *sym_newenv(int closed, struct sym_env *prev,
-				  struct comal_line *curproc, char *name);
+				  struct comal_line *curproc, const char *name);
 extern struct sym_env *search_env(char *name, struct sym_env *start);
 extern struct sym_env *search_env_level(int level, struct sym_env *start);
 extern struct sym_env *sym_newvarenv(struct sym_env *env);
 extern struct sym_item *sym_enter(struct sym_env *env, struct id_rec *id,
-				  int type, void *ptr);
+				  enum SYM_TYPE type, void *ptr);
 extern struct sym_item *sym_search(struct sym_env *env, struct id_rec *id,
-				   int type);
+				   enum SYM_TYPE type);
 extern struct sym_env *sym_freeenv(struct sym_env *env, int recur);
-extern struct var_item *var_newvar(int type, struct arr_dim *arrdim,
+extern struct var_item *var_newvar(enum VAL_TYPE type, struct arr_dim *arrdim,
 				   long strlen);
 extern struct var_item *var_refvar(struct var_item *lvar, enum VAL_TYPE type, long strlen, void *vref);
 extern struct name_rec *name_new(struct sym_env *env,

@@ -18,7 +18,7 @@
 #include <string.h>
 
 PUBLIC struct sym_env *sym_newenv(int closed, struct sym_env *prev,
-				  struct comal_line *curproc, char *name)
+				  struct comal_line *curproc, const char *name)
 {
 	struct sym_env *work = GETCORE(RUN_POOL, struct sym_env);
 

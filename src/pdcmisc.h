@@ -11,7 +11,7 @@
 /* Misc routines header file */
 
 extern void my_nl(int stream);
-extern void my_put(int stream, char *buf, long len);
+extern void my_put(int stream, const char *buf, long len);
 extern void my_printf(int stream, int newline, const char *s, ...);
 extern void fatal(const char *s, ...);
 extern void *my_reverse(void *root);
@@ -32,7 +32,7 @@ extern long my_read(int h, void *data, long size);
 extern struct comal_line *search_line(long l, int exact);
 extern int stat_size(int cmd);
 extern void give_run_err(struct comal_line *line);
-extern int type_size(int t);
+extern int type_size(enum VAL_TYPE t);
 extern void data_dump(char *data, int nr, char *title);
 extern void check_lval(struct expression *exp);
 extern int clean_string_lval(struct expression *exp);

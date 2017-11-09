@@ -44,7 +44,7 @@ PUBLIC void *exp_lval(struct expression *exp, enum VAL_TYPE *type,
 	struct exp_list *exproot;
 	struct sym_item *sym;
 	int nr;
-	char *err = NULL;
+	const char *err = NULL;
 	long index = 0;
 	long l;
 	struct exp_list *walke;
@@ -115,7 +115,7 @@ PUBLIC void *exp_lval(struct expression *exp, enum VAL_TYPE *type,
 				my_printf(MSG_DEBUG, 1, "Array index=%ld",
 					  index);
 
-			vdata=var_data(*varp);
+			vdata=(union var_data *)var_data(*varp);
 			lval =
 			    (char HUGE_POINTER *) vdata +
 			    index * type_size(*type);
@@ -198,7 +198,7 @@ PRIVATE void *my_not(void **result, enum VAL_TYPE *type)
 		return *result;
 	}
 
-	l = cell_alloc(INT_CPOOL);
+	l = (long int *)cell_alloc(INT_CPOOL);
 
 	*l = ((**(double **) result) == 0);
 	*type = V_INT;
@@ -237,7 +237,7 @@ PRIVATE void *my_eof(void **result, enum VAL_TYPE *type)
 		return *result;
 	}
 
-	l = cell_alloc(INT_CPOOL);
+	l = (long int *)cell_alloc(INT_CPOOL);
 
 	*l = d2int(**(double **) result, 1);
 	*l = my_eof2(*l);
@@ -263,7 +263,7 @@ PRIVATE void *my_sgn(void **result, enum VAL_TYPE *type)
 		return *result;
 	}
 
-	l = cell_alloc(INT_CPOOL);
+	l = (long int *)cell_alloc(INT_CPOOL);
 
 	if (**(double **) result < 0)
 		*l = -1;
@@ -301,7 +301,7 @@ PRIVATE double my_int(double x)
 
 PRIVATE double *my_val(struct string **result, enum VAL_TYPE *type)
 {
-	double *d = cell_alloc(FLOAT_CPOOL);
+	double *d = (double *)cell_alloc(FLOAT_CPOOL);
 	char *endptr;
 
 	*d = strtod((*result)->s, &endptr);
@@ -382,8 +382,8 @@ PRIVATE struct string *my_str(void **result, enum VAL_TYPE *type)
 PRIVATE void exp_unary(struct expression *expr, void **result,
 		       enum VAL_TYPE *type)
 {
-	double (*dfunc) () = NULL;
-	void *(*mfunc) () = NULL;
+	double (*dfunc) (double x) = NULL;
+	void *(*mfunc) (void **result, enum VAL_TYPE *type) = NULL;
 	char *s;
 	long delay;
 
@@ -528,7 +528,7 @@ PRIVATE void exp_unary(struct expression *expr, void **result,
 
 	if (dfunc) {
 		if (*type == V_INT) {
-			double *d = cell_alloc(FLOAT_CPOOL);
+			double *d = (double *)cell_alloc(FLOAT_CPOOL);
 
 			*d = **(long **) result;
 			cell_free(*result);
@@ -600,8 +600,12 @@ PRIVATE void exp_binary_s(int op, void **result, enum VAL_TYPE *type,
 
 
 PRIVATE void exp_binary_i(int op, void **result, enum VAL_TYPE *type,
-			  long *i1, long *i2)
+			  void *v1, void *v2)
 {
+        long *i1, *i2;
+
+        i1 = (long *)v1;
+        i2 = (long *)v2;
 	*result = NULL;
 
 	switch (op) {
@@ -645,8 +649,12 @@ PRIVATE void exp_binary_i(int op, void **result, enum VAL_TYPE *type,
 
 
 PRIVATE void exp_binary_f(int op, void **result, enum VAL_TYPE *type,
-			  double *f1, double *f2)
+			  void *v1, void *v2)
 {
+        double *f1, *f2;
+
+        f1 = (double *)v1;
+        f2 = (double *)v2;
 	switch (op) {
 	case powerSYM:
 		*f1 = pow(*f1, *f2);
@@ -782,7 +790,7 @@ PRIVATE void exp_rnd(struct expression *exp, double **result,
 	} else
 		fatal("exp_rnd internal error #1");
 
-	*result = cell_alloc(FLOAT_CPOOL);
+	*result = (double *)cell_alloc(FLOAT_CPOOL);
 	**result = d;
 	*type = V_FLOAT;
 }
@@ -792,7 +800,7 @@ PRIVATE void exp_binary(struct expression *exp, void **result,
 {
 	void *result1, *result2;
 	enum VAL_TYPE type1, type2;
-	void (*func) () = NULL;
+	void (*func) (int op, void **result, enum VAL_TYPE *type, void *v1, void *v2) = NULL;
 	int cmp;
 
 	if (logop(exp->op))
@@ -814,7 +822,7 @@ PRIVATE void exp_binary(struct expression *exp, void **result,
 			val_free(result2, type2);
 			*result = val_int(cmp, NULL, type);
 		} else if (type1==V_STRING)
-			exp_binary_s(exp->op, result, type, result1, result2, type2);
+			exp_binary_s(exp->op, result, type, (struct string *)result1, result2, type2);
 		else {
 			if (type1 != type2) {
 				if (type1 == V_INT)
@@ -846,29 +854,38 @@ PRIVATE void exp_binary(struct expression *exp, void **result,
 }
 
 
-PRIVATE void exp_intnum(struct expression *exp, long **result,
+PRIVATE void exp_intnum(struct expression *exp, void **vresult,
 			enum VAL_TYPE *type)
 {
-	*result = cell_alloc(INT_CPOOL);
-	**result = exp->e.num;
+        long *result = NULL;
+
+	result = (long int *)cell_alloc(INT_CPOOL);
+	*result = exp->e.num;
 	*type = V_INT;
+        *vresult = result;
 }
 
 
-PRIVATE void exp_float(struct expression *exp, double **result,
+PRIVATE void exp_float(struct expression *exp, void **vresult,
 		       enum VAL_TYPE *type)
 {
-	*result = cell_alloc(FLOAT_CPOOL);
-	**result = exp->e.fnum.val;
+        double *result = NULL;
+
+	result = (double *)cell_alloc(FLOAT_CPOOL);
+	*result = exp->e.fnum.val;
 	*type = V_FLOAT;
+        *vresult = result;
 }
 
 
-PRIVATE void exp_string(struct expression *exp, struct string **result,
+PRIVATE void exp_string(struct expression *exp, void **vresult,
 			enum VAL_TYPE *type)
 {
-	*result = str_dup(RUN_POOL, exp->e.str);
+        struct string *result = NULL;
+
+	result = str_dup(RUN_POOL, exp->e.str);
 	*type = V_STRING;
+        *vresult = result;
 }
 
 
@@ -968,7 +985,7 @@ PRIVATE void do_substr(struct string *tresult, struct string **result,
 		       struct two_exp *twoexp)
 {
 	long from, to;
-	char *err = NULL;
+	const char *err = NULL;
 
 	if (twoexp->exp1)
 		from = calc_intexp(twoexp->exp1);
@@ -995,13 +1012,14 @@ PRIVATE void do_substr(struct string *tresult, struct string **result,
 }
 
 
-PRIVATE void exp_sid(struct expression *exp, struct string **result,
+PRIVATE void exp_sid(struct expression *exp, void **vresult,
 		     enum VAL_TYPE *type)
 {
 	struct var_item *var;
 	long strl;
 	struct string *tresult = NULL;
-	struct string **lval = exp_lval(exp, type, &var, &strl);
+	struct string **lval = (struct string **)exp_lval(exp, type, &var, &strl);
+        struct string *result = NULL;
 
 	if (!lval) {
 		if (!exp_name
@@ -1017,15 +1035,16 @@ PRIVATE void exp_sid(struct expression *exp, struct string **result,
 		lval = &empty_string;
 
 	if (exp->e.expsid.twoexp)
-		do_substr(*lval, result, exp->e.expsid.twoexp);
+		do_substr(*lval, &result, exp->e.expsid.twoexp);
 	else if (tresult) {
-		*result = tresult;
+		result = tresult;
 		tresult = NULL;
 	} else
-		*result = str_dup(RUN_POOL, *lval);
+		result = str_dup(RUN_POOL, *lval);
 
 	if (tresult)
 		mem_free(tresult);
+        *vresult = result;
 }
 
 
@@ -1035,7 +1054,7 @@ PRIVATE void exp_substr(struct expression *exp, void **result, enum
 	void *tresult;
 
 	calc_exp(exp->e.expsubstr.exp, &tresult, type);
-	do_substr(tresult, (struct string **)result, &exp->e.expsubstr.twoexp);
+	do_substr((struct string *)tresult, (struct string **)result, &exp->e.expsubstr.twoexp);
 	mem_free(tresult);
 }
 
@@ -1047,10 +1066,13 @@ PRIVATE void exp_sys(struct expression *exp, void **result, enum
 }
 
 
-PRIVATE void exp_syss(struct expression *exp, struct string **result,
+PRIVATE void exp_syss(struct expression *exp, void **vresult,
 		      enum VAL_TYPE *type)
 {
-	sys_syss_exp(exp->e.exproot, result, type);
+        struct string *result = NULL;
+
+	sys_syss_exp(exp->e.exproot, &result, type);
+        *vresult = result;
 }
 
 
@@ -1064,7 +1086,7 @@ PRIVATE void exp_reexp(struct expression *exp, void **result, enum
 
 PRIVATE struct {
 	enum optype type;
-	void (*func) ();
+	void (*func) (struct expression *exp, void **result, enum VAL_TYPE *type);
 } exptab[] = {
 	{
 	T_EXP_IS_NUM, exp_reexp}, {
@@ -1082,7 +1104,7 @@ PRIVATE struct {
 	T_SUBSTR, exp_substr}, {
 	T_SYS, exp_sys}, {
 	T_SYSS, exp_syss}, {
-	0, 0}
+	T_UNUSED, 0}
 };
 
 

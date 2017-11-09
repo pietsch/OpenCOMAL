@@ -46,7 +46,7 @@ PUBLIC void my_nl(int stream)
 }
 
 
-PUBLIC void my_put(int stream, char *buf, long len)
+PUBLIC void my_put(int stream, const char *buf, long len)
 {
 	if (sel_outfile && stream == MSG_PROGRAM) {
 		if (fputs(buf, sel_outfile) == EOF)
@@ -268,7 +268,7 @@ PUBLIC char *exp_cmd(struct expression *exp)
 }
 
 
-PUBLIC long my_write(int h, char *data, long size)
+PUBLIC long my_write(int h, void *data, long size)
 {
 	long worksize = size;
 
@@ -287,7 +287,7 @@ PUBLIC long my_write(int h, char *data, long size)
 }
 
 
-PUBLIC long my_read(int h, char *data, long size)
+PUBLIC long my_read(int h, void *data, long size)
 {
 	long worksize = size;
 
