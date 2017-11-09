@@ -268,7 +268,7 @@ PUBLIC char *exp_cmd(struct expression *exp)
 }
 
 
-PUBLIC long my_write(int h, void *data, long size)
+PUBLIC long my_write(int h, char *data, long size)
 {
 	long worksize = size;
 
@@ -287,7 +287,7 @@ PUBLIC long my_write(int h, void *data, long size)
 }
 
 
-PUBLIC long my_read(int h, void *data, long size)
+PUBLIC long my_read(int h, char *data, long size)
 {
 	long worksize = size;
 

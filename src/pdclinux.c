@@ -10,8 +10,6 @@
 
 /* OpenComal SYS routines for LINUX */
 
-#define _XOPEN_SOURCE 600
-
 #include "pdcglob.h"
 #include "pdcmisc.h"
 #include "pdcext.h"

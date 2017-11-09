@@ -1387,7 +1387,7 @@ PRIVATE void read1(struct file_rec *f, struct id_rec *id, void **data,
 					    size);
 				(*(struct string **) data)->len = size;
 			} else
-				r = my_read(f->hfno, *data, size);
+				r = my_read(f->hfno, (char *)*data, size);
 		}
 	}
 
@@ -1531,7 +1531,7 @@ PRIVATE void write1(struct file_rec *f, void *data, enum VAL_TYPE type,
 					     ((struct string *) data)->s,
 					     size);
 		} else
-			w = my_write(f->hfno, data, size);
+			w = my_write(f->hfno, (char *)data, size);
 	}
 
 	if (w < 0)
