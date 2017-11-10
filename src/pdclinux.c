@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -147,7 +148,6 @@ PRIVATE int pre_input()
 PRIVATE int startup()
 {
 	int i;
-	rl_command_func_t *func;
 	static int started_up=0;
 
 	if (started_up) return 0;
@@ -156,6 +156,8 @@ PRIVATE int startup()
 	rl_set_keymap(keymap);
 
 	for (i=0; my_keymap[i].curses_key; i++) {
+		rl_command_func_t *func;
+
 		func=rl_named_function(my_keymap[i].function);
 
 		if (func)
@@ -267,7 +269,6 @@ PRIVATE void do_put(int stream, const char *buf, long len)
 PUBLIC void sys_put(int stream, const char *buf, long len)
 {
 	int lines;
-	int c;
 
 	if (len < 0)
 		len = strlen(buf);
@@ -285,7 +286,9 @@ PUBLIC void sys_put(int stream, const char *buf, long len)
 
 		if (pagern <= 0) {
 
-			while (1 == 1) {
+			while (true) {
+				int c;
+
 				c = my_getch();
 
 				if (c == ' ') {
@@ -335,11 +338,11 @@ PUBLIC void sys_screen_readjust()
 
 PUBLIC int sys_yn(int stream, const char *prompt)
 {
-	char c;
-
 	do_put(stream, prompt, strlen(prompt));
 
 	for (;;) {
+		char c;
+
 		c = my_getch();
 
 		if (sys_escape() || c == 'n' || c == 'N') {
@@ -434,7 +437,7 @@ PUBLIC char *sys_dir_string()
 	static int buf_size=1024;
 	static char *buf=0;
 
-	while (1==1) {
+	while (true) {
 		if (!buf) buf=(char *)malloc(buf_size);
 
 		if (getcwd(buf,buf_size)!=NULL) return buf;

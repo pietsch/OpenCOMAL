@@ -16,6 +16,7 @@
 #include "pdcmisc.h"
 
 #include <string.h>
+#include <stdbool.h>
 
 PUBLIC struct sym_env *sym_newenv(int closed, struct sym_env *prev,
 				  struct comal_line *curproc, const char *name)
@@ -148,7 +149,7 @@ PUBLIC struct sym_item *sym_search(struct sym_env *env, struct id_rec *id,
 	int level = proclevel(env->curproc);
 	struct sym_item *ret;
 
-	while (1 == 1) {
+	while (true) {
 		ret = search_horse(env, id, type);
 
 		if (ret || env->closed)
@@ -169,9 +170,9 @@ PUBLIC struct sym_item *sym_search(struct sym_env *env, struct id_rec *id,
 
 PRIVATE void free_var(struct var_item *var)
 {
-	long nritems;
-
 	if (!var->ref) {
+		long nritems;
+
 		if (var->array) {
 			nritems = var->array->nritems;
 			free_list((struct my_list *) var->array);
@@ -232,9 +233,9 @@ PRIVATE struct sym_item *free_symitem(struct sym_item *item)
 
 PUBLIC struct sym_env *sym_freeenv(struct sym_env *env, int recur)
 {
-	struct sym_item *work;
-
 	do {
+		struct sym_item *work;
+
 		if (comal_debug)
 			my_printf(MSG_DEBUG, 1, "Free env %p", env);
 

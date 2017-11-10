@@ -16,18 +16,6 @@
 
 PRIVATE struct id_rec *id_root = NULL;
 
-/* With id_eql you can compare two identifiers by their handles. The caller
- * gets 1 if they are equal and 0 if the two identifiers are unequal.
- * STRCMP is used instead of pointer comparision because pointers to the
- * same memory location can take different values on an 8086 CPU environment. 
- */
-
-PUBLIC int id_eql(struct id_rec *id1, struct id_rec *id2)
-{
-	return (strcmp(id1->name, id2->name) == 0) ? 1 : 0;
-}
-
-
 /* The private function install builds a new record in memory for the
  * specified id name. Memory is allocated from the free pool.
  */

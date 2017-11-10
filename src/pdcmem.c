@@ -349,13 +349,3 @@ PUBLIC struct mem_pool *pool_new()
 
 	return work;
 }
-
-PUBLIC void pool_free(struct mem_pool *pool)
-{
-	if (comal_debug)
-		my_printf(MSG_DEBUG, 1, "Freeing memory pool %d",
-			  pool->id);
-
-	mem_freepool_private(pool);
-	mem_free(pool);
-}

@@ -73,8 +73,6 @@ PRIVATE void cmd_list_horse(struct string *filename, long from, long to)
 
 PRIVATE int cmd_list(struct comal_line *line)
 {
-	long from, to;
-	int indent;
 	struct comal_line *curline;
 
 	if (!line->lc.listrec.id)
@@ -82,6 +80,9 @@ PRIVATE int cmd_list(struct comal_line *line)
 			       line->lc.listrec.twonum.num1,
 			       line->lc.listrec.twonum.num2);
 	else {
+		long from, to;
+		int indent;
+
 		curline = curenv->progroot;
 
 		while (curline
@@ -240,10 +241,11 @@ PRIVATE int cmd_auto(struct comal_line *line)
 	int direct_cmd = 0;
 	long nr = line->lc.twonum.num1;
 	long step = line->lc.twonum.num2;
-	struct comal_line *work;
-	struct comal_line *aline;
 
 	while (!direct_cmd) {
+		struct comal_line *work;
+		struct comal_line *aline;
+
 		if (nr < 0)
 			return 0;	/* nr<0 after nr+=step past INT_MAX */
 
@@ -313,9 +315,10 @@ PRIVATE int cmd_edit(struct comal_line *line)
 	long nr = line->lc.twonum.num1;
 	long to = line->lc.twonum.num2;
 	struct comal_line *work;
-	struct comal_line *aline;
 
 	while (result == 0) {
+		struct comal_line *aline;
+
 		if (nr > to || nr < 0)
 			return 0;	/* nr<0 after nr++ at INT_MAX */
 

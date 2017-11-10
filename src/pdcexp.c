@@ -23,6 +23,7 @@
 
 #include <math.h>
 #include <string.h>
+#include <stdbool.h>
 
 #ifdef HAS_ROUND
 extern double round(double x);
@@ -175,11 +176,11 @@ PRIVATE void exp_const(struct expression *exp, void **result,
 		break;
 
 	case _FALSE:
-		*result = val_int(0 == 1, NULL, type);
+		*result = val_int(false, NULL, type);
 		break;
 
 	case _TRUE:
-		*result = val_int(0 == 0, NULL, type);
+		*result = val_int(true, NULL, type);
 		break;
 
 	default:
@@ -385,7 +386,6 @@ PRIVATE void exp_unary(struct expression *expr, void **result,
 	double (*dfunc) (double x) = NULL;
 	void *(*mfunc) (void **result, enum VAL_TYPE *type) = NULL;
 	char *s;
-	long delay;
 
 	/*
 	 * This selection is necessary because INKEY has an optional
@@ -415,6 +415,8 @@ PRIVATE void exp_unary(struct expression *expr, void **result,
 		if (!*result)
 			s=sys_key(-1);
 		else {
+			long delay;
+
 			if (*type==V_FLOAT)
 				delay=(long)**(double **)result;
 			else
@@ -857,7 +859,7 @@ PRIVATE void exp_binary(struct expression *exp, void **result,
 PRIVATE void exp_intnum(struct expression *exp, void **vresult,
 			enum VAL_TYPE *type)
 {
-        long *result = NULL;
+        long *result;
 
 	result = (long int *)cell_alloc(INT_CPOOL);
 	*result = exp->e.num;
@@ -869,7 +871,7 @@ PRIVATE void exp_intnum(struct expression *exp, void **vresult,
 PRIVATE void exp_float(struct expression *exp, void **vresult,
 		       enum VAL_TYPE *type)
 {
-        double *result = NULL;
+        double *result;
 
 	result = (double *)cell_alloc(FLOAT_CPOOL);
 	*result = exp->e.fnum.val;
@@ -881,7 +883,7 @@ PRIVATE void exp_float(struct expression *exp, void **vresult,
 PRIVATE void exp_string(struct expression *exp, void **vresult,
 			enum VAL_TYPE *type)
 {
-        struct string *result = NULL;
+        struct string *result;
 
 	result = str_dup(RUN_POOL, exp->e.str);
 	*type = V_STRING;

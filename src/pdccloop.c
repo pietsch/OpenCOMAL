@@ -10,6 +10,7 @@
 
 /* Main file of OpenComal Command loop */
 
+#include <stdbool.h>
 #include "pdcglob.h"
 #include "pdcsym.h"
 #include "pdcmisc.h"
@@ -58,12 +59,13 @@ PUBLIC int process_comal_line(struct comal_line *line)
 
 PUBLIC struct comal_line *crunch_line(char *line)
 {
-	int rc;
-	int errpos;
 	extern struct comal_line c_line;
 	struct comal_line *work;
 
-	while (1 == 1) {
+	while (true) {
+		int rc;
+		int errpos;
+
 		lex_setinput(line);
 		rc = yyparse();
 

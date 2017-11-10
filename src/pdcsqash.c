@@ -100,9 +100,9 @@ PRIVATE void sqash_putstr(int code, struct string *s)
 
 PRIVATE void sqash_putstr2(int code, const char *s)
 {
-	int i;
-
 	if (s) {
+		int i;
+
 		i = strlen(s);
 		sqash_putint(code, i);
 		sqash_put(s, i + 1);
@@ -657,9 +657,10 @@ PRIVATE struct string *expand_getstr(int code)
 {
 	struct string *s = NULL;
 	char c = expand_getc();
-	long l;
 
 	if (c == code) {
+		long l;
+
 		l = expand_getlong();
 		s = STR_ALLOC_PRIVATE(curenv->program_pool, l);
 		expand_get(s->s, l);
@@ -675,9 +676,10 @@ PRIVATE char *expand_getstr2(int code)
 {
 	char *s = NULL;
 	char c = expand_getc();
-	int i;
 
 	if (c == code) {
+		int i;
+
 		i = expand_getint();
 		s = (char *)mem_alloc_private(curenv->program_pool, i + 1);
 		expand_get(s, i + 1);

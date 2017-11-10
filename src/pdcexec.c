@@ -29,6 +29,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
 
 #ifdef MSDOS
@@ -176,7 +177,6 @@ PRIVATE struct comal_line *routine_search_horse(struct id_rec *id,
 PRIVATE struct comal_line *routine_search(struct id_rec *id, int type)
 {
 	struct sym_item *sym;
-	struct comal_line *procline;
 	struct comal_line *father;
 
 	if (type == funcSYM)
@@ -190,6 +190,8 @@ PRIVATE struct comal_line *routine_search(struct id_rec *id, int type)
 	father = curenv->curenv->curproc;
 
 	while (father) {
+		struct comal_line *procline;
+
 		procline =
 		    routine_search_horse(id, type,
 					 father->lc.pfrec.localproc);
@@ -840,11 +842,12 @@ PRIVATE void exec_end()
 
 PRIVATE int exec_while(struct comal_line *line)
 {
-	int retcode;
 	struct ifwhile_rec *w = &line->lc.ifwhilerec;
 
 	if (w->stat)
 		while (calc_logexp(w->exp)) {
+			int retcode;
+
 			retcode = exec_line(w->stat);
 
 			if (retcode)
@@ -1062,7 +1065,7 @@ PRIVATE int exec_for(struct comal_line *line)
 
 	cell_free(eresult);
 
-	while (0 == 0) {
+	while (true) {
 		if (comal_debug) {
 			if (ltype == V_INT)
 				my_printf(MSG_DEBUG, 1,
@@ -1231,8 +1234,6 @@ PRIVATE void exec_close(struct comal_line *line)
 {
 	struct exp_list *work = line->lc.exproot;
 	struct file_rec *walk;
-	struct file_rec *last;
-	long fno;
 
 	if (!work) {
 		walk = curenv->fileroot;
@@ -1254,6 +1255,9 @@ PRIVATE void exec_close(struct comal_line *line)
 		curenv->fileroot = NULL;
 	} else {
 		while (work) {
+			struct file_rec *last;
+			long fno;
+
 			fno = calc_intexp(work->exp);
 			walk = curenv->fileroot;
 			last = NULL;
@@ -1289,13 +1293,14 @@ PRIVATE void exec_close(struct comal_line *line)
 PRIVATE struct file_rec *pos_file(struct two_exp *r)
 {
 	long cfno = calc_intexp(r->exp1);
-	long recno;
 	struct file_rec *f = fsearch(cfno);
 
 	if (!f)
 		run_error(POS_ERR, "File %ld not open", cfno);
 
 	if (f->mode == randomSYM) {
+		long recno;
+
 		if (!r->exp2)
 			run_error(POS_ERR,
 				  "Record number needed for a RANDOM file");
@@ -1405,13 +1410,14 @@ PUBLIC void do_readfile(struct two_exp *twoexp, struct exp_list *lvalroot)
 	enum VAL_TYPE ltype;
 	enum VAL_TYPE rtype;
 	long totsize = 0;
-	char HUGE_POINTER *lval;
 	struct var_item *var;
 	long strl;
 	long nr;
-	int size;
 
 	while (work) {
+		int size;
+		char HUGE_POINTER *lval;
+
 		lval = (char *)exec_lval(work->exp, &ltype, &var, &strl);
 
 		if (ltype==V_ARRAY) {
@@ -1549,12 +1555,13 @@ PUBLIC void exec_write(struct comal_line *line)
 	char HUGE_POINTER *result;
 	long nr;
 	struct var_item *var;
-	int size;
 
 	if (f->read_only)
 		run_error(WRITE_ERR, "File open for READ (only)");
 
 	while (work) {
+		int size;
+
 		calc_exp(work->exp, (void **)&result, &type);
 
 		if (type==V_ARRAY) {
@@ -1843,8 +1850,6 @@ PRIVATE void input_con(struct string *prompt, struct exp_list *lvalroot)
 	int n;
 	int quote;
 	int esc = 0;
-	void *data;
-	int must_free_mem;
 	const char *p;
 
 	if (prompt)
@@ -1856,6 +1861,9 @@ PRIVATE void input_con(struct string *prompt, struct exp_list *lvalroot)
 	i = line;
 
 	while (work) {
+		void *data;
+		int must_free_mem;
+
 		while (esc) {
 			if (curenv->running == RUNNING) {
 				if (curenv->escallowed)
@@ -1872,7 +1880,7 @@ PRIVATE void input_con(struct string *prompt, struct exp_list *lvalroot)
 
 		type = work->exp->e.expid.id->type;
 
-		while (1 == 1) {
+		while (true) {
 			while (*i && (*i == ' ' || *i == '\t'))
 				i++;
 
@@ -2281,9 +2289,10 @@ PUBLIC int exec_line(struct comal_line *line)
 PRIVATE int exec_seq3()
 {
 	int retcode = 0;
-	struct comal_line *eline;
 
 	while (!retcode) {
+		struct comal_line *eline;
+		
 		eline = curenv->curline;
 		retcode = exec_line(eline);
 

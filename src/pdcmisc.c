@@ -238,19 +238,6 @@ PUBLIC struct id_rec *exp_of_id(struct expression *exp)
 	return id;
 }
 
-/*
- * Check whether this expression consists of a single array. If this
- * is the case, return the identifier (name of the array), else return
- * NULL
- */
-PUBLIC struct id_rec *exp_of_array(struct expression *exp)
-{
-	if (exp->optype==T_ARRAY || exp->optype==T_SARRAY)
-		return exp->e.expid.id;
-
-	return NULL;
-}
-
 PUBLIC int exp_of_string(struct expression *exp)
 {
 	if (exp->optype != T_EXP_IS_STRING)
@@ -539,18 +526,6 @@ PUBLIC int type_size(enum VAL_TYPE t)
 }
 
 
-PUBLIC void data_dump(char *data, int nr, char *title)
-{
-	my_nl(MSG_DEBUG);
-	my_printf(MSG_DEBUG, 1, title);
-
-	for (; nr; nr--, data++)
-		my_printf(MSG_DEBUG, 0, "%02X ", *data);
-
-	my_nl(MSG_DEBUG);
-}
-
-
 PUBLIC void check_lval(struct expression *exp)
 {
 	struct sym_item *sym;
@@ -570,21 +545,6 @@ PUBLIC void check_lval(struct expression *exp)
 	if (exp->optype == T_SID && exp->e.expsid.twoexp)
 		run_error(LVAL_ERR,
 			  "This string lvalue cannot have a substring specifier");
-}
-
-
-PUBLIC int clean_string_lval(struct expression *exp)
-{
-	if (exp->optype == T_EXP_IS_STRING)
-		exp = exp->e.exp;
-
-	if (exp->optype != T_SID)
-		return 0;
-
-	if (exp->e.expsid.twoexp)
-		return 0;
-
-	return 1;
 }
 
 
@@ -650,25 +610,6 @@ PUBLIC struct comal_line *stat_dup(struct comal_line *stat)
 		*to = *from;
 
 	return work;
-}
-
-
-PUBLIC void trace_add(int *val, char *name)
-{
-	struct int_trace *work =
-	    (struct int_trace *)mem_alloc(MISC_POOL, sizeof(struct int_trace));
-
-	work->next = tr_root;
-	work->value = val;
-	work->name = name;
-	tr_root = work;
-}
-
-
-PUBLIC void trace_remove()
-{
-	if (tr_root)
-		tr_root = (struct int_trace *)mem_free(tr_root);
 }
 
 

@@ -84,7 +84,6 @@ PUBLIC int ext_sys_exp(struct exp_list *exproot, void **result, enum
 		       VAL_TYPE *type)
 {
 	char *cmd;
-	int *flag;
 
 	cmd = exp_cmd(exproot->exp);
 	exproot = exproot->next;
@@ -98,6 +97,8 @@ PUBLIC int ext_sys_exp(struct exp_list *exproot, void **result, enum
 		sscanf(VERSION, "%lG", *(double **) result);
 		*type = V_FLOAT;
 	} else {
+		int *flag;
+
 		flag = is_flag(cmd);
 
 		if (!flag)
@@ -308,11 +309,11 @@ PUBLIC int ext_sys_stat(struct exp_list *exproot)
 
 PUBLIC int ext_get(int stream, char *line, int maxlen, const char *prompt)
 {
-	int eof;
-
 	line[0] = '\0';
 
 	if (sys_inpfile) {
+		int eof;
+
 		if (fgets(line, maxlen, sys_inpfile))
 			return 1;
 

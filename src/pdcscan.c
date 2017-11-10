@@ -142,10 +142,11 @@ PRIVATE struct comal_line *routine_search_horse(struct id_rec *id,
 PRIVATE struct comal_line *routine_search(struct id_rec *id, int type,
 					  struct comal_line *curproc)
 {
-	struct comal_line *procline;
 	struct comal_line *father = curproc;
 
 	while (father) {
+		struct comal_line *procline;
+
 		procline =
 		    routine_search_horse(id, type,
 					 father->lc.pfrec.localproc);
@@ -448,7 +449,6 @@ PUBLIC int scan_scan(struct seg_des *seg, char *errtxt,
 	struct comal_line *lineptr;
 	struct scan_entry *p;
 	int sym;
-	int skip_processing;
 	int cmd2;
 	struct comal_line *procroot = NULL;
 	int level;
@@ -464,6 +464,8 @@ PUBLIC int scan_scan(struct seg_des *seg, char *errtxt,
 	scan_sp = 0;
 
 	while (curline) {
+		int skip_processing;
+
 		theline = line_2line(curline);
 
 		if (theline)
@@ -567,13 +569,14 @@ PUBLIC void prog_structure_scan()
 	int indent = 0;
 	struct comal_line *curline = curenv->progroot;
 	struct scan_entry *p;
-	int skip_processing;
-	int cmd2;
 
 	if (comal_debug)
 		my_printf(MSG_DEBUG, 1, "Structure scanning...");
 
 	while (curline) {
+		int skip_processing;
+		int cmd2;
+
 		cmd2 = line_2cmd(curline);
 		skip_processing = 0;
 
