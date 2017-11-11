@@ -1387,12 +1387,12 @@ PRIVATE void read1(struct file_rec *f, struct id_rec *id, void **data,
 
 			if (*type == V_STRING) {
 				*data = STR_ALLOC(RUN_POOL, size);
-				r = my_read(f->hfno,
+				r = read(f->hfno,
 					    (*(struct string **) data)->s,
 					    size);
 				(*(struct string **) data)->len = size;
 			} else
-				r = my_read(f->hfno, (char *)*data, size);
+				r = read(f->hfno, (char *)*data, size);
 		}
 	}
 
@@ -1533,11 +1533,11 @@ PRIVATE void write1(struct file_rec *f, void *data, enum VAL_TYPE type,
 			w = write(f->hfno, &size, sizeof(long));
 
 			if (w > 0)
-				w = my_write(f->hfno,
+				w = write(f->hfno,
 					     ((struct string *) data)->s,
 					     size);
 		} else
-			w = my_write(f->hfno, (char *)data, size);
+			w = write(f->hfno, (char *)data, size);
 	}
 
 	if (w < 0)

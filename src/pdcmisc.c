@@ -255,44 +255,6 @@ PUBLIC char *exp_cmd(struct expression *exp)
 }
 
 
-PUBLIC long my_write(int h, char *data, long size)
-{
-	long worksize = size;
-
-	while (worksize > MAXUNSIGNED) {
-		if (write(h, data, MAXUNSIGNED) < 0)
-			return -1;
-
-		data += MAXUNSIGNED;
-		worksize -= MAXUNSIGNED;
-	}
-
-	if (write(h, data, worksize) < 0)
-		return -1;
-
-	return size;
-}
-
-
-PUBLIC long my_read(int h, char *data, long size)
-{
-	long worksize = size;
-
-	while (worksize > MAXUNSIGNED) {
-		if (read(h, data, MAXUNSIGNED) < 0)
-			return -1;
-
-		data += MAXUNSIGNED;
-		worksize -= MAXUNSIGNED;
-	}
-
-	if (read(h, data, worksize) < 0)
-		return -1;
-
-	return size;
-}
-
-
 PUBLIC struct comal_line *search_line(long l, int exact)
 {
 	struct comal_line *work = curenv->progroot;
@@ -701,12 +663,14 @@ PUBLIC double my_frac(double x)
 	return -(ceil(x)-x);
 }
 
+#ifndef HAS_ROUND
 PUBLIC double my_round(double x)
 {
-	double d=my_frac(x);
+       double d=my_frac(x);
 
-	if (fabs(d)>=0.5)
-		return ceil(x);
+       if (fabs(d)>=0.5)
+               return ceil(x);
 
-	return floor(x);
+       return floor(x);
 }
+#endif

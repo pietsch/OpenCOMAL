@@ -26,8 +26,6 @@ extern int type_match1(struct id_rec *id, struct expression *exp);
 extern struct id_rec *exp_of_id(struct expression *exp);
 extern int exp_of_string(struct expression *exp);
 extern char *exp_cmd(struct expression *exp);
-extern long my_write(int h, char *data, long size);
-extern long my_read(int h, char *data, long size);
 extern struct comal_line *search_line(long l, int exact);
 extern int stat_size(int cmd);
 extern void give_run_err(struct comal_line *line);
@@ -47,5 +45,7 @@ extern void strlwr(char *s);
 #endif
 
 extern void remove_trailing(char *s, const char *trailing, const char *subst);
+#ifndef HAS_ROUND
 extern double my_round(double x);
+#endif
 extern double my_frac(double x);
