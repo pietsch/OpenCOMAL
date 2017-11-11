@@ -591,8 +591,10 @@ PRIVATE void exp_binary_s(int op, void **result, enum VAL_TYPE *type,
 		n=val_mustbelong(result2,type2,1);
 		s2=str_make2(RUN_POOL,n);
 
-		for (t=s2->s; n; n--, t+=s1->len)
-			strcpy(t,s1->s);
+		for (t=s2->s; n; n--, t+=s1->len) {
+			strncpy(t,s1->s,s1->len);
+			t[s1->len] = '\0';
+		}
 
 		*result=s2;
 		*type=V_STRING;

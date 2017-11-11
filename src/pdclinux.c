@@ -367,7 +367,8 @@ PRIVATE int do_get(int stream, char *line, int maxlen, const char *prompt,
 	getyx(win,gety,getx);
 	addstr(line);
 	refresh();
-	strcpy(line,readline(""));
+	strncpy(line,readline(""),maxlen-1);
+	line[maxlen-1] = '\0';
 	move(gety+rl_end/width,getx+rl_end%width);
 	addch('\n');
 
@@ -433,8 +434,9 @@ PUBLIC void sys_dir(const char *pattern) {
 	char *buf=(char *)malloc(8+l);
 	char line[256];
 	
-	strcpy(buf,"ls -l ");
-	strcat(buf,pattern);
+	strncpy(buf,"ls -l ",7);
+	buf[7] = '\0';
+	strncat(buf,pattern,l);
 	f=popen(buf,"r");
 
 	if (!f) run_error(DIRS_ERR,strerror(errno));

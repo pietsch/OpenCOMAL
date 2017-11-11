@@ -27,7 +27,8 @@ PRIVATE struct id_rec *install(char *idname)
 
 	work = (struct id_rec *)mem_alloc(MISC_POOL, sizeof(struct id_rec) + l);
 	work->left = work->right = NULL;
-	strcpy(work->name, idname);
+	strncpy(work->name, idname, l);
+	work->name[l] = '\0';
 
 	switch (work->name[l - 1]) {
 	case '#':
