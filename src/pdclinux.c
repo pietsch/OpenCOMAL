@@ -395,30 +395,6 @@ PUBLIC int sys_edit(int stream, char line[], int maxlen, int cursor)
 }
 
 
-PUBLIC void *sys_alloc(long size)
-{
-	if (size > MAXUNSIGNED)
-		return NULL;
-
-	return calloc(1, (unsigned) size);
-}
-
-
-PUBLIC void *sys_realloc(void *block, long newsize)
-{
-	if (newsize > MAXUNSIGNED)
-		return NULL;
-
-	return realloc(block, (unsigned) newsize);
-}
-
-
-PUBLIC void sys_free(void *p)
-{
-	free(p);
-}
-
-
 PUBLIC int sys_call_scan(struct id_rec *id, struct exp_list *exproot,
 			 char *errtext)
 {

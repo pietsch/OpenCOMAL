@@ -152,7 +152,7 @@ PUBLIC void *mem_alloc_private(struct mem_pool *pool, long size)
 			  "Mem_alloc block in pool %d, size %ld", pool->id,
 			  size);
 
-	p = (struct mem_block *)sys_alloc(size + sizeof(struct mem_block));
+	p = (struct mem_block *)calloc(1, size + sizeof(struct mem_block));
 
 	if (!p)
 		mem_error("allocating", size);
@@ -182,7 +182,7 @@ PUBLIC void *mem_realloc(void *block, long newsize)
 	--memblock;
 
 	memblock =
-	    (struct mem_block *)sys_realloc(memblock, newsize + sizeof(struct mem_block));
+	    (struct mem_block *)realloc(memblock, newsize + sizeof(struct mem_block));
 
 	if (!memblock)
 		mem_error("reallocating", newsize);
@@ -248,7 +248,7 @@ PUBLIC void *mem_free(void *m)
 		memblock->pool->root = memblock->next;
 
 	memblock->pool->size -= memblock->size;
-	sys_free(memblock);
+	free(memblock);
 
 	return result;
 }
@@ -295,7 +295,7 @@ PUBLIC void mem_freepool_private(struct mem_pool *pool)
 		if (work->marker != MEM_MARKER)
 			fatal("Invalid marker in mem_freepool(%d)", pool);
 
-		sys_free(work);
+		free(work);
 		work = next;
 	}
 
