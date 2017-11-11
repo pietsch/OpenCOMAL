@@ -42,7 +42,7 @@ PUBLIC int process_comal_line(struct comal_line *line)
 			if (setjmp(ERRBUF) == 0)
 				if (!cmd_exec(line, &result)) {
 					if (!curenv->curenv)
-						curenv->curenv = ROOTENV;
+						curenv->curenv = ROOTENV();
 
 					exec_line(line);
 				}

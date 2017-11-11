@@ -11,6 +11,9 @@
 
 /* OpenComal header file for Linux */
 
+#ifndef PDCLINUX_H
+#define PDCLINUX_H
+
 #define HUGE_POINTER		/* no need for this in real OS's */
 #define O_BINARY 	0
 
@@ -28,3 +31,5 @@
 #include <limits.h>
 #include <unistd.h>
 #include <errno.h>
+
+#endif

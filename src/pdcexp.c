@@ -172,7 +172,7 @@ PRIVATE void exp_const(struct expression *exp, void **result,
 		break;
 
 	case _PI:
-		*result = val_float(SYS_PI, NULL, type);
+		*result = val_float(M_PI, NULL, type);
 		break;
 
 	case _FALSE:
@@ -282,13 +282,13 @@ PRIVATE void *my_sgn(void **result, enum VAL_TYPE *type)
 
 PRIVATE double my_rad(double x)
 {
-	return (x * SYS_PI) / 180;
+	return (x * M_PI) / 180;
 }
 
 
 PRIVATE double my_deg(double x)
 {
-	return (x * 180) / SYS_PI;
+	return (x * 180) / M_PI;
 }
 
 PRIVATE double my_int(double x)

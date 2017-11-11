@@ -10,6 +10,9 @@
 
 /* Header file for lex support routines */
 
+#ifndef PDCLEXS_H
+#define PDCLEXS_H
+
 extern int lex_string_flatten(void);
 extern int lex_floatnum(void);
 extern int lex_intnum(void);
@@ -24,3 +27,5 @@ extern void lex_unput(char c);
 extern int yylex();
 extern int lex_pos();
 extern void lex_setinput(char *line);
+
+#endif

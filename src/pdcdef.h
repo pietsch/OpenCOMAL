@@ -13,6 +13,7 @@
 #ifndef PDCDEF_H
 #define PDCDEF_H
 
+#include "pdcmem.h"
 
 struct my_list {
 	struct my_list *next;
@@ -24,15 +25,26 @@ struct env_list {
 	struct comal_env *env;
 };
 
-#define	STR_ALLOC(p,x)		(struct string *)mem_alloc(p,sizeof(struct string)+x)
-#define	STR_ALLOC_PRIVATE(p,x)	(struct string *)mem_alloc_private(p,sizeof(struct string)+x)
-#define STR_REALLOC(s,l)	(struct string *)mem_realloc(s,sizeof(struct string)+l)
-
 struct string {
 	long len;
 	char s[1];
 };
 
+static inline struct string *
+STR_ALLOC(unsigned int p, long x)
+{
+	return (struct string *)mem_alloc(p, sizeof(struct string) + x);
+}
+static inline struct string *
+STR_ALLOC_PRIVATE(struct mem_pool *p, long x)
+{
+	return (struct string *)mem_alloc_private(p, sizeof(struct string) + x);
+}
+static inline struct string *
+STR_REALLOC(void *s, long l)
+{
+	return (struct string *)mem_realloc(s, sizeof(struct string) + l);
+}
 
 enum SYM_TYPE { S_ERROR, S_VAR, S_NAME, S_PROCVAR, S_FUNCVAR };
 enum VAL_TYPE { V_ERROR, V_INT, V_FLOAT, V_STRING, V_ARRAY };

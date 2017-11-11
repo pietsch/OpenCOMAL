@@ -17,12 +17,21 @@
 #include "pdcparss.h"
 
 #include <stdarg.h>
+#include <stdbool.h>
 
 PRIVATE int pars_error_happened = 0;
 PRIVATE char pars_errtxt[MAX_LINELEN];
 
-#define ISARRAY(e) ( e && (e->optype==T_ARRAY || e->optype==T_SARRAY) )
-#define ISARRAY2(f) ( f && ISARRAY(f->e.exp) )
+static inline bool
+ISARRAY(struct expression *e)
+{
+	return (e && (e->optype == T_ARRAY || e->optype == T_SARRAY));
+}
+static inline bool
+ISARRAY2(struct expression *f)
+{
+	return (f && ISARRAY(f->e.exp));
+}
 
 PUBLIC void yyerror(const char *s)
 {

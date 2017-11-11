@@ -562,7 +562,11 @@ PUBLIC int scan_scan(struct seg_des *seg, char *errtxt,
 }
 
 
-#define INDENT(x) ((x)>=INDENTION*MAX_INDENT ? INDENTION*MAX_INDENT : (x))
+static inline int
+INDENT(int x)
+{
+	return (x >= INDENTION * MAX_INDENT ? INDENTION * MAX_INDENT : x);
+}
 
 PUBLIC void prog_structure_scan()
 {

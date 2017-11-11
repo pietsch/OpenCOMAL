@@ -10,7 +10,8 @@
 
 /* OpenComal symbol table and related stuff header file */
 
-#define ROOTENV		sym_newenv(1,NULL,NULL,"_program")
+#ifndef PDCSYM_H
+#define PDCSYM_H
 
 extern struct sym_env *sym_newenv(int closed, struct sym_env *prev,
 				  struct comal_line *curproc, const char *name);
@@ -28,3 +29,11 @@ extern struct var_item *var_refvar(struct var_item *lvar, enum VAL_TYPE type, lo
 extern struct name_rec *name_new(struct sym_env *env,
 				 struct expression *exp);
 extern void *var_data(struct var_item *var);
+
+static inline struct sym_env *
+ROOTENV(void)
+{
+	return sym_newenv(1, NULL, NULL, "_program");
+}
+
+#endif

@@ -8,6 +8,9 @@
  * License. See doc/LICENSE for more information.
  */
 
+#ifndef PDCEXT_H
+#define PDCEXT_H
+
 extern void ext_init(void);
 extern void ext_tini(void);
 extern int ext_call_scan(struct id_rec *id, struct exp_list *exproot,
@@ -24,3 +27,5 @@ extern int ext_nl(void);
 extern int ext_page(void);
 extern int ext_cursor(int x, int y);
 extern int ext_put(int stream, const char *buf, long len);
+
+#endif

@@ -34,8 +34,16 @@ typedef struct {
 	CELL *root;
 } CELL_HDR;
 
-#define	CELL_ADDR(h,p,i)  ((CELL *)((char *)(h)->addr+(i)*(sizeof(CELL)+cell_size[(p)])))
-#define CELL_SIZE(p)	  (sizeof(CELL)+cell_size[p])
+static inline CELL *
+CELL_ADDR(CELL_HDR *h, unsigned int p, unsigned int i)
+{
+	return (CELL *)((char *)h->addr + i * (sizeof(CELL) + cell_size[p]));
+}
+static inline long
+CELL_SIZE(unsigned int p)
+{
+	return (sizeof(CELL) + cell_size[p]);
+}
 
 PRIVATE CELL_HDR *cell_hdr[NRCPOOLS];
 PRIVATE struct mem_pool mem_pool[NR_FIXED_POOLS];

@@ -10,6 +10,9 @@
 
 /* Parse Support Routines header file */
 
+#ifndef PDCPARSS_H
+#define PDCPARSS_H
+
 extern void yyerror(const char *s);
 extern int yyparse();
 
@@ -49,3 +52,5 @@ extern struct expression *pars_exp_str(struct expression *strexp);
 extern struct expression *pars_exp_rnd(struct expression *exp1, struct expression *exp2);
 extern void pars_error(const char *s, ...);
 extern int pars_handle_error(void);
+
+#endif

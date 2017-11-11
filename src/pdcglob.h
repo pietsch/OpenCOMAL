@@ -16,6 +16,9 @@
  *
  */
 
+#ifndef PDCGLOB_H
+#define PDCGLOB_H
+
 #include "pdcconst.h"
 #include "pdcsys.h"
 #include "pdcdef.h"
@@ -70,3 +73,5 @@ EXTERN const char *copyright;
 EXTERN char *runfilename;
 
 EXTERN struct env_list *env_root;
+
+#endif
