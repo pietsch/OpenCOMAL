@@ -592,7 +592,7 @@ PRIVATE void exp_binary_s(int op, void **result, enum VAL_TYPE *type,
 		s2=str_make2(RUN_POOL,n);
 
 		for (t=s2->s; n; n--, t+=s1->len)
-			my_strcpy(t,s1->s);
+			strcpy(t,s1->s);
 
 		*result=s2;
 		*type=V_STRING;

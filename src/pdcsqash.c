@@ -1021,7 +1021,7 @@ PRIVATE struct assign_list *expand_assign()
 		work->exp = expand_exp();
 
 		if (comal_debug)
-			my_printf(MSG_DEBUG, 1, "1Assign expanded");
+			my_printf(MSG_DEBUG, 1, "Assign expanded");
 	}
 
 	return (struct assign_list *)my_reverse(root);

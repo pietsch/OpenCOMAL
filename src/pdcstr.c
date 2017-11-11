@@ -10,62 +10,15 @@
 
 /* OpenComal own string routines */
 
+#include <string.h>
 #include "pdcglob.h"
-
-
-PRIVATE long my_strlen(const char HUGE_POINTER * s)
-{
-	long l = 0;
-
-	while (*s) {
-		s++;
-		l++;
-	}
-
-	return l;
-}
-
-
-PUBLIC char *my_strcpy(char *s1, const char *s2)
-{
-	char HUGE_POINTER *w1 = s1;
-	const char HUGE_POINTER *w2 = s2;
-
-	while (*w2) {
-		*w1 = *w2;
-		w1++; 
-		w2++;
-	}
-
-	*w1 = '\0';
-
-	return s1;
-}
-
-PRIVATE char *my_strncpy(char *s1, char *s2, long n)
-{
-	char HUGE_POINTER *w1 = s1;
-	char HUGE_POINTER *w2 = s2;
-
-	while (*w2 && n) {
-		*w1 = *w2;
-		w1++; 
-		w2++;
-		n--;
-	}
-
-	*w1 = '\0';
-
-	return s1;
-}
-
 
 
 PUBLIC char *my_strdup(int pool, const char *s)
 {
-	char *t = (char *)mem_alloc(pool, my_strlen(s) + 1);
+	char *t = (char *)mem_alloc(pool, strlen(s) + 1);
 
-	return my_strcpy(t, s);
+	return strcpy(t, s);
 }
 
 
@@ -74,20 +27,17 @@ PUBLIC int str_cmp(struct string *s1, struct string *s2)
 	char HUGE_POINTER *w1 = s1->s;
 	char HUGE_POINTER *w2 = s2->s;
 
-	while (*w1 && *w2 && *w1 == *w2)
-		w1++, w2++;
-
-	return *w1 - *w2;
+	return strcmp(w1, w2);
 }
 
 
 PUBLIC struct string *str_make(int pool, const char *s)
 {
-	long l = my_strlen(s);
+	long l = strlen(s);
 	struct string *work = STR_ALLOC(pool, l);
 
 	work->len = l;
-	my_strcpy(work->s, s);
+	strcpy(work->s, s);
 
 	return work;
 }
@@ -111,9 +61,8 @@ PUBLIC struct string *str_cat(struct string *s1, struct string *s2)
 {
 	char HUGE_POINTER *w1 = s1->s;
 
-	w1 = w1 + s1->len;
 	s1->len += s2->len;
-	my_strcpy(w1, s2->s);
+	strcat(w1, s2->s);
 
 	return s1;
 }
@@ -148,7 +97,7 @@ PUBLIC long str_search(struct string *needle, struct string *haystack)
 PUBLIC struct string *str_cpy(struct string *s1, struct string *s2)
 {
 	s1->len = s2->len;
-	my_strcpy(s1->s, s2->s);
+	strcpy(s1->s, s2->s);
 
 	return s1;
 }
@@ -156,7 +105,7 @@ PUBLIC struct string *str_cpy(struct string *s1, struct string *s2)
 PUBLIC struct string *str_ncpy(struct string *s1, struct string *s2, long n)
 {
 	s1->len = n;
-	my_strncpy(s1->s, s2->s,n);
+	strncpy(s1->s, s2->s,n);
 
 	return s1;
 }
