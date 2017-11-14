@@ -13,7 +13,6 @@
 #ifndef PDCID_H
 #define PDCID_H
 
-extern int id_eql(struct id_rec *id1, struct id_rec *id2);
 extern struct id_rec *id_search(char *id);
 
 #endif

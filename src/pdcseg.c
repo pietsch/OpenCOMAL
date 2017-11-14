@@ -93,7 +93,7 @@ PUBLIC struct seg_des *seg_static_load(struct comal_line *line)
 	struct seg_des *seg;
 
 	calc_exp(pf->external->filename, (void **) &name, &type);
-	seg = mem_alloc(RUN_POOL, sizeof(struct seg_des));
+	seg = (struct seg_des *)mem_alloc(RUN_POOL, sizeof(struct seg_des));
 	seg->lineroot = expand_fromfile(name->s);
 	mem_free(name);
 	seg->extdef = line;
@@ -125,7 +125,7 @@ PUBLIC struct seg_des *seg_static_free(struct seg_des *seg)
 	prog_del(&seg->lineroot, 0, INT_MAX, 0);
 	seg->extdef->lc.pfrec.localproc = seg->save_localproc;
 
-	return mem_free(seg);
+	return (struct seg_des *)mem_free(seg);
 }
 
 

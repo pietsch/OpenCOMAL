@@ -29,6 +29,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
 
 #ifdef MSDOS
@@ -42,7 +43,7 @@ PRIVATE enum VAL_TYPE return_type;
 PRIVATE int exec_seq3(void);
 PRIVATE int exec_seq2(void);
 
-PUBLIC void run_error(int error, char *s, ...)
+PUBLIC void run_error(int error, const char *s, ...)
 {
 	char *buf;
 	char buf2[MAX_LINELEN];
@@ -57,7 +58,7 @@ PUBLIC void run_error(int error, char *s, ...)
 	mem_free(curenv->lasterrmsg);
 	curenv->lasterrmsg = my_strdup(MISC_POOL, buf2);
 
-	buf = mem_alloc(MISC_POOL, MAX_LINELEN);
+	buf = (char *)mem_alloc(MISC_POOL, MAX_LINELEN);
 
 	if (curenv->running == RUNNING) {
 		sprintf(buf, "Error %d: \"%s\" at line %ld", error, buf2,
@@ -76,7 +77,7 @@ PUBLIC void run_error(int error, char *s, ...)
 }
 
 
-PRIVATE void exec_temphalt(char *reason)
+PRIVATE void exec_temphalt(const char *reason)
 {
 	puts_line(MSG_DIALOG, curenv->curline);
 	my_printf(MSG_DIALOG, 1, reason);
@@ -143,7 +144,7 @@ PRIVATE void *exec_lval(struct expression *exp, enum VAL_TYPE *type,
 
 
 PRIVATE void parm_enter(struct sym_env *env, struct id_rec *id,
-			enum SYM_TYPE type, void *ptr, char *kind)
+			enum SYM_TYPE type, void *ptr, const char *kind)
 {
 	if (!sym_enter(env, id, type, ptr))
 		run_error(PARM_ERR, "%s parameter %s already present",
@@ -176,7 +177,6 @@ PRIVATE struct comal_line *routine_search_horse(struct id_rec *id,
 PRIVATE struct comal_line *routine_search(struct id_rec *id, int type)
 {
 	struct sym_item *sym;
-	struct comal_line *procline;
 	struct comal_line *father;
 
 	if (type == funcSYM)
@@ -190,6 +190,8 @@ PRIVATE struct comal_line *routine_search(struct id_rec *id, int type)
 	father = curenv->curenv->curproc;
 
 	while (father) {
+		struct comal_line *procline;
+
 		procline =
 		    routine_search_horse(id, type,
 					 father->lc.pfrec.localproc);
@@ -230,7 +232,7 @@ PRIVATE struct arr_dim *dim_copy(struct arr_dim *a)
 	struct arr_dim *d = a;
 
 	while (d) {
-		d2 = mem_alloc(RUN_POOL, sizeof(struct arr_dim));
+		d2 = (struct arr_dim *)mem_alloc(RUN_POOL, sizeof(struct arr_dim));
 		d2->bottom = d->bottom;
 		d2->top = d->top;
 		d2->next = d2root;
@@ -239,7 +241,7 @@ PRIVATE struct arr_dim *dim_copy(struct arr_dim *a)
 		d = d->next;
 	}
 
-	return my_reverse(d2root);
+	return (struct arr_dim *)my_reverse(d2root);
 }
 
 PRIVATE void parm_array_val(struct sym_env *env, struct id_rec *id,
@@ -255,7 +257,7 @@ PRIVATE void parm_array_val(struct sym_env *env, struct id_rec *id,
 	int size;
 
 	check_lval(exp);
-	lval = exp_lval(exp, &type, &lvar, &strl);
+	lval = (char *)exp_lval(exp, &type, &lvar, &strl);
 
 	if (type!=V_ARRAY)
 		run_error(PARM_ERR, "Parameter %s should be an array()",id->name);
@@ -443,7 +445,7 @@ PUBLIC void exec_call(struct expression *exp, int calltype, void **result,
 PRIVATE void do_call(struct expression *exp, int calltype)
 {
 	void *val = 0;
-	enum VAL_TYPE type = 0;
+	enum VAL_TYPE type = V_ERROR;
 
 	exec_call(exp, calltype, &val, &type);
 
@@ -520,7 +522,7 @@ PRIVATE struct arr_dim *make_arrdim(struct dim_ension *d)
 		d = d->next;
 	}
 
-	root = my_reverse(root);
+	root = (struct arr_dim *)my_reverse(root);
 
 	return root;
 }
@@ -617,7 +619,7 @@ PRIVATE void do_num_array_assign(struct var_item *to, struct var_item *from)
 
 PRIVATE void do_calc_fromto(struct two_exp *twoexp, long *from, long *to)
 {
-	char *err = NULL;
+	const char *err = NULL;
 
 	if (twoexp) {
 		if (twoexp->exp1)
@@ -774,7 +776,7 @@ PRIVATE void do_assign2(struct expression *lval, void *rval,
 			if (ltype!=V_STRING)
 				fatal("do_assign2 internal error #4");
 			else
-				do_str_assign(lvalptr, lval->e.expsid.twoexp, strl, rval, must_free_mem);
+				do_str_assign((struct string **)lvalptr, lval->e.expsid.twoexp, strl, (struct string *)rval, must_free_mem);
 		else
 			run_error(TYPE_ERR,"Type mismatch in assignment (string expected)");
 	else
@@ -840,11 +842,12 @@ PRIVATE void exec_end()
 
 PRIVATE int exec_while(struct comal_line *line)
 {
-	int retcode;
 	struct ifwhile_rec *w = &line->lc.ifwhilerec;
 
 	if (w->stat)
 		while (calc_logexp(w->exp)) {
+			int retcode;
+
 			retcode = exec_line(w->stat);
 
 			if (retcode)
@@ -1062,7 +1065,7 @@ PRIVATE int exec_for(struct comal_line *line)
 
 	cell_free(eresult);
 
-	while (0 == 0) {
+	while (true) {
 		if (comal_debug) {
 			if (ltype == V_INT)
 				my_printf(MSG_DEBUG, 1,
@@ -1175,7 +1178,7 @@ PRIVATE void exec_open(struct comal_line *line)
 	int flags = 0;
 
 	calc_exp(o->filename, (void **) &name, &type);
-	frec = mem_alloc(RUN_POOL, sizeof(struct file_rec));
+	frec = (struct file_rec *)mem_alloc(RUN_POOL, sizeof(struct file_rec));
 	frec->cfno = calc_intexp(o->filenum);
 
 	if (fsearch(frec->cfno))
@@ -1231,8 +1234,6 @@ PRIVATE void exec_close(struct comal_line *line)
 {
 	struct exp_list *work = line->lc.exproot;
 	struct file_rec *walk;
-	struct file_rec *last;
-	long fno;
 
 	if (!work) {
 		walk = curenv->fileroot;
@@ -1248,12 +1249,15 @@ PRIVATE void exec_close(struct comal_line *line)
 					  "Close error on file %ld: %s",
 					  walk->cfno, strerror(errno));
 
-			walk = mem_free(walk);
+			walk = (struct file_rec *)mem_free(walk);
 		}
 
 		curenv->fileroot = NULL;
 	} else {
 		while (work) {
+			struct file_rec *last;
+			long fno;
+
 			fno = calc_intexp(work->exp);
 			walk = curenv->fileroot;
 			last = NULL;
@@ -1289,13 +1293,14 @@ PRIVATE void exec_close(struct comal_line *line)
 PRIVATE struct file_rec *pos_file(struct two_exp *r)
 {
 	long cfno = calc_intexp(r->exp1);
-	long recno;
 	struct file_rec *f = fsearch(cfno);
 
 	if (!f)
 		run_error(POS_ERR, "File %ld not open", cfno);
 
 	if (f->mode == randomSYM) {
+		long recno;
+
 		if (!r->exp2)
 			run_error(POS_ERR,
 				  "Record number needed for a RANDOM file");
@@ -1332,7 +1337,7 @@ PRIVATE void read1(struct file_rec *f, struct id_rec *id, void **data,
 
 	*type = (enum VAL_TYPE) 0;
 	r = read(f->hfno, &c, 1);
-	*type = c;
+	*type = (enum VAL_TYPE)c;
 
 	if (r > 0) {
 		if (comal_debug)
@@ -1382,12 +1387,12 @@ PRIVATE void read1(struct file_rec *f, struct id_rec *id, void **data,
 
 			if (*type == V_STRING) {
 				*data = STR_ALLOC(RUN_POOL, size);
-				r = my_read(f->hfno,
+				r = read(f->hfno,
 					    (*(struct string **) data)->s,
 					    size);
 				(*(struct string **) data)->len = size;
 			} else
-				r = my_read(f->hfno, *data, size);
+				r = read(f->hfno, (char *)*data, size);
 		}
 	}
 
@@ -1405,14 +1410,15 @@ PUBLIC void do_readfile(struct two_exp *twoexp, struct exp_list *lvalroot)
 	enum VAL_TYPE ltype;
 	enum VAL_TYPE rtype;
 	long totsize = 0;
-	char HUGE_POINTER *lval;
 	struct var_item *var;
 	long strl;
 	long nr;
-	int size;
 
 	while (work) {
-		lval = exec_lval(work->exp, &ltype, &var, &strl);
+		int size;
+		char HUGE_POINTER *lval;
+
+		lval = (char *)exec_lval(work->exp, &ltype, &var, &strl);
 
 		if (ltype==V_ARRAY) {
 			nr = var->array->nritems;
@@ -1427,7 +1433,7 @@ PUBLIC void do_readfile(struct two_exp *twoexp, struct exp_list *lvalroot)
 			      &totsize);
 
 			if (ltype == V_STRING)
-				do_str_assign((struct string **)lval, work->exp->e.expsid.twoexp, strl, result, 1);
+				do_str_assign((struct string **)lval, work->exp->e.expsid.twoexp, strl, (struct string *)result, 1);
 			else
 				do_num_assign((void *)lval, ltype, NULL, result,
 					      rtype, 1);
@@ -1527,11 +1533,11 @@ PRIVATE void write1(struct file_rec *f, void *data, enum VAL_TYPE type,
 			w = write(f->hfno, &size, sizeof(long));
 
 			if (w > 0)
-				w = my_write(f->hfno,
+				w = write(f->hfno,
 					     ((struct string *) data)->s,
 					     size);
 		} else
-			w = my_write(f->hfno, data, size);
+			w = write(f->hfno, (char *)data, size);
 	}
 
 	if (w < 0)
@@ -1549,13 +1555,14 @@ PUBLIC void exec_write(struct comal_line *line)
 	char HUGE_POINTER *result;
 	long nr;
 	struct var_item *var;
-	int size;
 
 	if (f->read_only)
 		run_error(WRITE_ERR, "File open for READ (only)");
 
 	while (work) {
-		calc_exp(work->exp, (void *)&result, &type);
+		int size;
+
+		calc_exp(work->exp, (void **)&result, &type);
 
 		if (type==V_ARRAY) {
 			var=(struct var_item *)result;
@@ -1696,7 +1703,7 @@ PRIVATE void exec_print(struct comal_line *line)
 }
 
 
-PRIVATE void exec_selfile(FILE ** f, struct expression *exp, char *mode)
+PRIVATE void exec_selfile(FILE ** f, struct expression *exp, const char *mode)
 {
 	struct string *result;
 	enum VAL_TYPE type;
@@ -1803,7 +1810,7 @@ PUBLIC void input_file(struct two_exp *twoexp, struct exp_list *lvalroot)
 }
 
 
-PRIVATE int input_line(char *s, char *p)
+PRIVATE int input_line(char *s, const char *p)
 {
 	int esc;
 
@@ -1843,9 +1850,7 @@ PRIVATE void input_con(struct string *prompt, struct exp_list *lvalroot)
 	int n;
 	int quote;
 	int esc = 0;
-	void *data;
-	int must_free_mem;
-	char *p;
+	const char *p;
 
 	if (prompt)
 		p = prompt->s;
@@ -1856,6 +1861,9 @@ PRIVATE void input_con(struct string *prompt, struct exp_list *lvalroot)
 	i = line;
 
 	while (work) {
+		void *data;
+		int must_free_mem;
+
 		while (esc) {
 			if (curenv->running == RUNNING) {
 				if (curenv->escallowed)
@@ -1872,7 +1880,7 @@ PRIVATE void input_con(struct string *prompt, struct exp_list *lvalroot)
 
 		type = work->exp->e.expid.id->type;
 
-		while (1 == 1) {
+		while (true) {
 			while (*i && (*i == ' ' || *i == '\t'))
 				i++;
 
@@ -2281,9 +2289,10 @@ PUBLIC int exec_line(struct comal_line *line)
 PRIVATE int exec_seq3()
 {
 	int retcode = 0;
-	struct comal_line *eline;
 
 	while (!retcode) {
+		struct comal_line *eline;
+		
 		eline = curenv->curline;
 		retcode = exec_line(eline);
 

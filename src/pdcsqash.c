@@ -19,8 +19,8 @@
 #include <sys/stat.h>
 #include <string.h>
 
-PRIVATE void sqash_exp();
-PRIVATE void sqash_horse();
+PRIVATE void sqash_exp(struct expression *exp);
+PRIVATE void sqash_horse(struct comal_line *line);
 
 PRIVATE struct expression *expand_exp();
 PRIVATE struct comal_line *expand_horse();
@@ -47,7 +47,7 @@ PRIVATE void sqash_flush()
 }
 
 
-PRIVATE void sqash_put(void *data, unsigned size)
+PRIVATE void sqash_put(const void *data, unsigned size)
 {
 	if (size > SQASH_BUFSIZE)
 		fatal("Sqash_put() size overflow");
@@ -98,11 +98,11 @@ PRIVATE void sqash_putstr(int code, struct string *s)
 }
 
 
-PRIVATE void sqash_putstr2(int code, char *s)
+PRIVATE void sqash_putstr2(int code, const char *s)
 {
-	int i;
-
 	if (s) {
+		int i;
+
 		i = strlen(s);
 		sqash_putint(code, i);
 		sqash_put(s, i + 1);
@@ -535,7 +535,7 @@ PRIVATE void sqash_horse(struct comal_line *line)
 PUBLIC void sqash_2file(char *fname)
 {
 	struct comal_line *work = curenv->progroot;
-	char *s;
+	const char *s;
 
 	sqash_file =
 	    open(fname, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY,
@@ -545,7 +545,7 @@ PUBLIC void sqash_2file(char *fname)
 		run_error(OPEN_ERR, "File open error: %s",
 			  strerror(errno));
 
-	sqash_buf = mem_alloc(MISC_POOL, SQASH_BUFSIZE);
+	sqash_buf = (char *)mem_alloc(MISC_POOL, SQASH_BUFSIZE);
 	sqash_i = 0;
 
 	for (s=SQ_MARKER; *s; s++)
@@ -657,9 +657,10 @@ PRIVATE struct string *expand_getstr(int code)
 {
 	struct string *s = NULL;
 	char c = expand_getc();
-	long l;
 
 	if (c == code) {
+		long l;
+
 		l = expand_getlong();
 		s = STR_ALLOC_PRIVATE(curenv->program_pool, l);
 		expand_get(s->s, l);
@@ -675,11 +676,12 @@ PRIVATE char *expand_getstr2(int code)
 {
 	char *s = NULL;
 	char c = expand_getc();
-	int i;
 
 	if (c == code) {
+		int i;
+
 		i = expand_getint();
-		s = mem_alloc_private(curenv->program_pool, i + 1);
+		s = (char *)mem_alloc_private(curenv->program_pool, i + 1);
 		expand_get(s, i + 1);
 	} else if (c != SQ_EMPTYSTRING)
 		fatal("Internal sqash/expand error #1");
@@ -720,7 +722,7 @@ PRIVATE struct exp_list *expand_explist()
 
 	while (expand_peekc() != SQ_ENDEXPLIST) {
 		work =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct exp_list *)mem_alloc_private(curenv->program_pool,
 				      sizeof(struct exp_list));
 		work->exp = expand_exp();
 		work->next = root;
@@ -729,7 +731,7 @@ PRIVATE struct exp_list *expand_explist()
 
 	expand_getc();
 
-	return my_reverse(root);
+	return (struct exp_list *)my_reverse(root);
 }
 
 
@@ -757,7 +759,7 @@ PRIVATE struct two_exp *expand_alloc_twoexp() {
 		expand_getc();
 		work=NULL;
 	} else {
-		work = mem_alloc_private(curenv->program_pool, 
+		work = (struct two_exp *)mem_alloc_private(curenv->program_pool, 
 			sizeof(struct two_exp));
 		expand_twoexp(work);
 	}
@@ -766,8 +768,8 @@ PRIVATE struct two_exp *expand_alloc_twoexp() {
 }
 
 
-#define EXP_ALLOC(x)	exp=mem_alloc_private(curenv->program_pool,sizeof(struct expression)-sizeof(union exp_data)+sizeof(x))
-#define EXP_ALLOC0	exp=mem_alloc_private(curenv->program_pool,sizeof(struct expression)-sizeof(union exp_data))
+#define EXP_ALLOC(x)	exp=(struct expression *)mem_alloc_private(curenv->program_pool,sizeof(struct expression)-sizeof(union exp_data)+sizeof(x))
+#define EXP_ALLOC0	exp=(struct expression *)mem_alloc_private(curenv->program_pool,sizeof(struct expression)-sizeof(union exp_data))
 
 PRIVATE struct expression *expand_exp()
 {
@@ -783,7 +785,7 @@ PRIVATE struct expression *expand_exp()
 	} else if (c != SQ_EXP)
 		fatal("Internal sqash/expand error #3");
 
-	o = expand_getint();
+	o = (enum optype)expand_getint();
 
 	switch (o) {
 	case T_CONST:
@@ -884,7 +886,7 @@ PRIVATE void expand_dim(struct comal_line *line)
 
 	while (expand_peekc() == SQ_ID) {
 		work =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct dim_list *)mem_alloc_private(curenv->program_pool,
 				      sizeof(struct dim_list));
 		work->next = root;
 		root = work;
@@ -895,7 +897,7 @@ PRIVATE void expand_dim(struct comal_line *line)
 		while (expand_peekc() == SQ_1DIMENSION) {
 			expand_getc();
 			dwork =
-			    mem_alloc_private(curenv->program_pool,
+			    (struct dim_ension *)mem_alloc_private(curenv->program_pool,
 					      sizeof(struct dim_ension));
 			dwork->next = droot;
 			droot = dwork;
@@ -903,11 +905,11 @@ PRIVATE void expand_dim(struct comal_line *line)
 			dwork->top = expand_exp();
 		}
 
-		work->dimensionroot = my_reverse(droot);
+		work->dimensionroot = (struct dim_ension *)my_reverse(droot);
 		work->strlen = expand_exp();
 	}
 
-	line->lc.dimroot = my_reverse(work);
+	line->lc.dimroot = (struct dim_list *)my_reverse(work);
 }
 
 
@@ -931,7 +933,7 @@ PRIVATE void expand_input(struct comal_line *line)
 	if (expand_peekc() == SQ_MODIFIER) {
 		expand_getc();
 		i->modifier =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct input_modifier *)mem_alloc_private(curenv->program_pool,
 				      sizeof(*i->modifier));
 		i->modifier->type = expand_getint();
 
@@ -960,7 +962,7 @@ PRIVATE struct print_list *expand_printlist()
 
 	while (expand_peekc() == SQ_EXP) {
 		work =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct print_list *)mem_alloc_private(curenv->program_pool,
 				      sizeof(struct print_list));
 		work->next = root;
 		root = work;
@@ -968,7 +970,7 @@ PRIVATE struct print_list *expand_printlist()
 		work->pr_sep = expand_getint();
 	}
 
-	return my_reverse(root);
+	return (struct print_list *)my_reverse(root);
 }
 
 
@@ -979,7 +981,7 @@ PRIVATE void expand_print(struct comal_line *line)
 	if (expand_peekc() == SQ_MODIFIER) {
 		expand_getc();
 		p->modifier =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct print_modifier *)mem_alloc_private(curenv->program_pool,
 				      sizeof(*p->modifier));
 		p->modifier->type = expand_getint();
 
@@ -1009,7 +1011,7 @@ PRIVATE struct assign_list *expand_assign()
 
 	while (expand_peekc() == SQ_EXP) {
 		work =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct assign_list *)mem_alloc_private(curenv->program_pool,
 				      sizeof(struct assign_list));
 		work->next = root;
 		root = work;
@@ -1019,10 +1021,10 @@ PRIVATE struct assign_list *expand_assign()
 		work->exp = expand_exp();
 
 		if (comal_debug)
-			my_printf(MSG_DEBUG, 1, "1Assign expanded");
+			my_printf(MSG_DEBUG, 1, "Assign expanded");
 	}
 
-	return my_reverse(root);
+	return (struct assign_list *)my_reverse(root);
 }
 
 
@@ -1033,7 +1035,7 @@ PRIVATE struct when_list *expand_whenlist()
 
 	while (expand_peekc() == SQ_EXP) {
 		work =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct when_list *)mem_alloc_private(curenv->program_pool,
 				      sizeof(struct when_list));
 		work->next = root;
 		root = work;
@@ -1042,7 +1044,7 @@ PRIVATE struct when_list *expand_whenlist()
 		work->op = expand_getint();
 	}
 
-	return my_reverse(root);
+	return (struct when_list *)my_reverse(root);
 }
 
 
@@ -1054,7 +1056,7 @@ PRIVATE struct parm_list *expand_parmlist()
 	while (expand_peekc() == SQ_1PARM) {
 		expand_getc();
 		work =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct parm_list *)mem_alloc_private(curenv->program_pool,
 				      sizeof(struct parm_list));
 		work->next = root;
 		root = work;
@@ -1064,7 +1066,7 @@ PRIVATE struct parm_list *expand_parmlist()
 		work->array = expand_getint();
 	}
 
-	return my_reverse(root);
+	return (struct parm_list *)my_reverse(root);
 }
 
 
@@ -1076,7 +1078,7 @@ PRIVATE struct import_list *expand_importlist()
 	while (expand_peekc() == SQ_1PARM) {
 		expand_getc();
 		work =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct import_list *)mem_alloc_private(curenv->program_pool,
 				      sizeof(struct import_list));
 		work->next = root;
 		root = work;
@@ -1085,7 +1087,7 @@ PRIVATE struct import_list *expand_importlist()
 		work->array = expand_getint();
 	}
 
-	return my_reverse(root);
+	return (struct import_list *)my_reverse(root);
 }
 
 
@@ -1101,13 +1103,13 @@ PRIVATE struct comal_line *expand_horse()
 		fatal("Sqash/expand internal error #5");
 
 	cmd = expand_getint();
-	line = mem_alloc_private(curenv->program_pool, stat_size(cmd));
+	line = (struct comal_line *)mem_alloc_private(curenv->program_pool, stat_size(cmd));
 	line->cmd = cmd;
 
 	if (expand_peekc() == SQ_LD) {
 		expand_getc();
 		line->ld =
-		    mem_alloc_private(curenv->program_pool,
+		    (struct comal_line_data *)mem_alloc_private(curenv->program_pool,
 				      sizeof(*line->ld));
 		line->ld->lineno = expand_getlong();
 		line->ld->rem = expand_getstr(SQ_REM);
@@ -1193,7 +1195,7 @@ PRIVATE struct comal_line *expand_horse()
 			line->lc.pfrec.external = NULL;
 		} else {
 			line->lc.pfrec.external =
-			    mem_alloc_private(curenv->program_pool,
+			    (struct ext_rec *)mem_alloc_private(curenv->program_pool,
 					      sizeof(struct ext_rec));
 			line->lc.pfrec.external->dynamic = expand_getint();
 			line->lc.pfrec.external->filename = expand_exp();
@@ -1269,7 +1271,7 @@ PUBLIC struct comal_line *expand_fromfile(char *fname)
 	struct comal_line *line;
 	struct comal_line *last = NULL;
 	char *checkstr;
-	char *s;
+	const char *s;
 	extern int eof(int file);
 
 	sqash_file = open(fname, O_RDONLY | O_BINARY);
@@ -1278,7 +1280,7 @@ PUBLIC struct comal_line *expand_fromfile(char *fname)
 		run_error(OPEN_ERR, "File open error: %s",
 			  strerror(errno));
 
-	sqash_buf = mem_alloc(MISC_POOL, SQASH_BUFSIZE);
+	sqash_buf = (char *)mem_alloc(MISC_POOL, SQASH_BUFSIZE);
 	sqash_i = MAXUNSIGNED;
 
 	for (s=SQ_MARKER; *s; s++)

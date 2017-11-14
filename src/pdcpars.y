@@ -28,7 +28,7 @@
 
 PUBLIC struct comal_line c_line;
 
-PRIVATE void p_error(char *msg);
+PRIVATE void p_error(const char *msg);
 
 extern int yylex();
 
@@ -254,7 +254,7 @@ comal_line	:	command
 		|	intnumSYM program_line optrem
 			{
 				$$=$2;
-				$$.ld=mem_alloc(PARSE_POOL,sizeof(struct comal_line_data));
+				$$.ld=(struct comal_line_data *)mem_alloc(PARSE_POOL,sizeof(struct comal_line_data));
 				$$.ld->lineno=$1;
 				$$.ld->rem=$3;
 				$$.lineptr=NULL;
@@ -597,7 +597,7 @@ close_stat	:	closeSYM
 		|	closeSYM optfileS exp_list
 			{
 				$$.cmd=closeSYM;
-				$$.lc.exproot=my_reverse($3);
+				$$.lc.exproot=(struct exp_list *)my_reverse($3);
 			}
 		;
 
@@ -633,7 +633,7 @@ mkdir_stat	:	mkdirSYM stringexp
 data_stat	:	dataSYM exp_list
 			{
 				$$.cmd=dataSYM;
-				$$.lc.exproot=my_reverse($2);
+				$$.lc.exproot=(struct exp_list *)my_reverse($2);
 			}
 		;
 
@@ -662,7 +662,7 @@ unit_stat	:	unitSYM stringexp
 local_stat	:	localSYM local_list
 			{
 				$$.cmd=localSYM;
-				$$.lc.dimroot=my_reverse($2);
+				$$.lc.dimroot=(struct dim_list *)my_reverse($2);
 			}
 		;
 local_list	:	local_list commaSYM local_item
@@ -703,7 +703,7 @@ local_item	:	numid opt_dim_ensions
 dim_stat	:	dimSYM dim_list
 			{
 				$$.cmd=dimSYM;
-				$$.lc.dimroot=my_reverse($2);
+				$$.lc.dimroot=(struct dim_list *)my_reverse($2);
 			}
 		;
 		
@@ -768,19 +768,19 @@ dim_ension_list	:	dim_ension_list commaSYM dim_ension
 		
 dim_ension	:	numexp
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct dim_ension));
+				$$=(struct dim_ension *)mem_alloc(PARSE_POOL,sizeof(struct dim_ension));
 				$$->bottom=NULL;
 				$$->top=$1;
 			}
 		|	numexp colonSYM numexp
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct dim_ension));
+				$$=(struct dim_ension *)mem_alloc(PARSE_POOL,sizeof(struct dim_ension));
 				$$->bottom=$1;
 				$$->top=$3;
 			}
 		|	numexp becminusSYM numexp
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct dim_ension));
+				$$=(struct dim_ension *)mem_alloc(PARSE_POOL,sizeof(struct dim_ension));
 				$$->bottom=$1;
 				$$->top=pars_exp_unary(minusSYM,$3);
 			}
@@ -847,7 +847,7 @@ func_stat	:	funcSYM id procfunc_head optclosed opt_external
 			{
 				$$.cmd=funcSYM;
 				$$.lc.pfrec.id=$2;
-				$$.lc.pfrec.parmroot=my_reverse($3);
+				$$.lc.pfrec.parmroot=(struct parm_list *)my_reverse($3);
 				$$.lc.pfrec.closed=$4;
 				$$.lc.pfrec.external=$5;
 			}
@@ -865,26 +865,26 @@ import_stat	:	importSYM id colonSYM import_list
 			{
 				$$.cmd=importSYM;
 				$$.lc.importrec.id=$2;
-				$$.lc.importrec.importroot=my_reverse($4);
+				$$.lc.importrec.importroot=(struct import_list *)my_reverse($4);
 			}
 		|	importSYM import_list
 			{
 				$$.cmd=importSYM;
 				$$.lc.importrec.id=NULL;
-				$$.lc.importrec.importroot=my_reverse($2);
+				$$.lc.importrec.importroot=(struct import_list *)my_reverse($2);
 			}
 		;
 		
 import_list	:	import_list commaSYM oneparm		
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct import_list));
+				$$=(struct import_list *)mem_alloc(PARSE_POOL,sizeof(struct import_list));
 				$$->id=$3.id;
 				$$->array=$3.array;
 				$$->next=$1;				
 			}
 		|	oneparm
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct import_list));
+				$$=(struct import_list *)mem_alloc(PARSE_POOL,sizeof(struct import_list));
 				$$->id=$1.id;
 				$$->array=$1.array;
 				$$->next=NULL;
@@ -895,19 +895,19 @@ input_stat	:	inputSYM input_modifier lval_list
 			{
 				$$.cmd=inputSYM;
 				$$.lc.inputrec.modifier=$2;
-				$$.lc.inputrec.lvalroot=my_reverse($3);
+				$$.lc.inputrec.lvalroot=(struct exp_list *)my_reverse($3);
 			}
 		;
 		
 input_modifier	:	file_designator
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct input_modifier));
+				$$=(struct input_modifier *)mem_alloc(PARSE_POOL,sizeof(struct input_modifier));
 				$$->type=fileSYM;
 				$$->data.twoexp=$1;
 			}
 		|	stringSYM colonSYM
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct input_modifier));
+				$$=(struct input_modifier *)mem_alloc(PARSE_POOL,sizeof(struct input_modifier));
 				$$->type=stringSYM;
 				$$->data.str=$1;
 			}
@@ -964,25 +964,25 @@ print_stat	:	printi
 			{
 				$$.cmd=printSYM;
 				$$.lc.printrec.modifier=NULL;
-				$$.lc.printrec.printroot=my_reverse($2);
+				$$.lc.printrec.printroot=(struct print_list *)my_reverse($2);
 				$$.lc.printrec.pr_sep=$3;
 			}
 		|	printi usingSYM stringexp colonSYM prnum_list optpr_sep
 			{
 				$$.cmd=printSYM;
-				$$.lc.printrec.modifier=mem_alloc(PARSE_POOL,sizeof(struct print_modifier));
+				$$.lc.printrec.modifier=(struct print_modifier *)mem_alloc(PARSE_POOL,sizeof(struct print_modifier));
 				$$.lc.printrec.modifier->type=usingSYM;
 				$$.lc.printrec.modifier->data.str=$3;
-				$$.lc.printrec.printroot=my_reverse($5);
+				$$.lc.printrec.printroot=(struct print_list *)my_reverse($5);
 				$$.lc.printrec.pr_sep=$6;
 			}
 		|	printi file_designator print_list
 			{
 				$$.cmd=printSYM;
-				$$.lc.printrec.modifier=mem_alloc(PARSE_POOL,sizeof(struct print_modifier));
+				$$.lc.printrec.modifier=(struct print_modifier *)mem_alloc(PARSE_POOL,sizeof(struct print_modifier));
 				$$.lc.printrec.modifier->type=fileSYM;
 				$$.lc.printrec.modifier->data.twoexp=$2;
-				$$.lc.printrec.printroot=my_reverse($3);
+				$$.lc.printrec.printroot=(struct print_list *)my_reverse($3);
 				$$.lc.printrec.pr_sep=0;
 			}
 		;
@@ -1032,7 +1032,7 @@ proc_stat	:	procSYM idSYM procfunc_head optclosed opt_external
 			{
 				$$.cmd=procSYM;
 				$$.lc.pfrec.id=$2;
-				$$.lc.pfrec.parmroot=my_reverse($3);
+				$$.lc.pfrec.parmroot=(struct parm_list *)my_reverse($3);
 				$$.lc.pfrec.closed=$4;
 				$$.lc.pfrec.external=$5;
 			}
@@ -1042,7 +1042,7 @@ read_stat	:	readSYM optfile lval_list
 			{
 				$$.cmd=readSYM;
 				$$.lc.readrec.modifier=$2;
-				$$.lc.readrec.lvalroot=my_reverse($3);
+				$$.lc.readrec.lvalroot=(struct exp_list *)my_reverse($3);
 			}
 		;
 
@@ -1092,7 +1092,7 @@ stop_stat	:	stopSYM optexp
 sys_stat	:	sysSYM exp_list
 			{
 				$$.cmd=sysSYM;
-				$$.lc.exproot=my_reverse($2);
+				$$.lc.exproot=(struct exp_list *)my_reverse($2);
 			}
 		;
 
@@ -1135,7 +1135,7 @@ plusorminus	:	plusSYM
 when_stat	:	whenSYM when_list
 			{
 				$$.cmd=whenSYM;
-				$$.lc.whenroot=my_reverse($2);
+				$$.lc.whenroot=(struct when_list *)my_reverse($2);
 			}
 		;
 
@@ -1229,14 +1229,14 @@ write_stat	:	writeSYM file_designator exp_list
 			{
 				$$.cmd=writeSYM;
 				$$.lc.writerec.twoexp=$2;
-				$$.lc.writerec.exproot=my_reverse($3);
+				$$.lc.writerec.exproot=(struct exp_list *)my_reverse($3);
 			}
 		;
 
 assign_stat	:	assign_list
 			{
 				$$.cmd=becomesSYM;
-				$$.lc.assignroot=my_reverse($1);
+				$$.lc.assignroot=(struct assign_list *)my_reverse($1);
 			}
 		;
 		
@@ -1601,7 +1601,7 @@ optid2		:	idSYM
 		
 optfile		:	file_designator
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct two_exp));
+				$$=(struct two_exp *)mem_alloc(PARSE_POOL,sizeof(struct two_exp));
 				
 				*($$)=$1;
 			}
@@ -1694,7 +1694,7 @@ file_designator	:	fileSYM numexp colonSYM
 
 opt_external	:	externalSYM stringexp
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct ext_rec));
+				$$=(struct ext_rec *)mem_alloc(PARSE_POOL,sizeof(struct ext_rec));
 				
 				$$->dynamic=0;
 				$$->filename=$2;
@@ -1702,7 +1702,7 @@ opt_external	:	externalSYM stringexp
 			}
 		|	dynamicSYM externalSYM stringexp
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct ext_rec));
+				$$=(struct ext_rec *)mem_alloc(PARSE_POOL,sizeof(struct ext_rec));
 				
 				$$->dynamic=dynamicSYM;
 				$$->filename=$3;
@@ -1710,7 +1710,7 @@ opt_external	:	externalSYM stringexp
 			}
 		|	staticSYM externalSYM stringexp
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct ext_rec));
+				$$=(struct ext_rec *)mem_alloc(PARSE_POOL,sizeof(struct ext_rec));
 				
 				$$->dynamic=staticSYM;
 				$$->filename=$3;
@@ -1746,35 +1746,35 @@ parmlist	:	parmlist commaSYM parmitem
 		
 parmitem	:	oneparm
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct parm_list));
+				$$=(struct parm_list *)mem_alloc(PARSE_POOL,sizeof(struct parm_list));
 				$$->id=$1.id;
 				$$->array=$1.array;
 				$$->ref=0;
 			}
 		|	refSYM oneparm
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct parm_list));
+				$$=(struct parm_list *)mem_alloc(PARSE_POOL,sizeof(struct parm_list));
 				$$->id=$2.id;
 				$$->array=$2.array;
 				$$->ref=refSYM;
 			}
 		|	nameSYM id
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct parm_list));
+				$$=(struct parm_list *)mem_alloc(PARSE_POOL,sizeof(struct parm_list));
 				$$->id=$2;
 				$$->array=0;
 				$$->ref=nameSYM;
 			}
 		|	procSYM idSYM
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct parm_list));
+				$$=(struct parm_list *)mem_alloc(PARSE_POOL,sizeof(struct parm_list));
 				$$->id=$2;
 				$$->array=0;
 				$$->ref=procSYM;
 			}
 		|	funcSYM id
 			{
-				$$=mem_alloc(PARSE_POOL,sizeof(struct parm_list));
+				$$=(struct parm_list *)mem_alloc(PARSE_POOL,sizeof(struct parm_list));
 				$$->id=$2;
 				$$->array=0;
 				$$->ref=funcSYM;
@@ -1872,7 +1872,7 @@ optclosed	:	closedSYM
 
 %%
 
-PRIVATE void p_error(char *s)
+PRIVATE void p_error(const char *s)
 	{
 		pars_error(s);
 		yyclearin;

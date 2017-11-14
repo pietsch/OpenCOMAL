@@ -30,7 +30,12 @@ STATIC=
 #PROFILE=-pg
 PROFILE=
 
-COPTS=-c -Wall -Wextra -std=c11 -DOS_LINUX $(PROFILE) -flto
+# I recommend using c++ for compile-time warnings only, and building for release with the C compiler
+ifeq ($(CC),c++)
+COPTS=-c -Wall -Wextra -Weffc++ -std=c++14 -DOS_LINUX $(PROFILE) -flto
+else
+COPTS=-c -Wall -Wextra -std=gnu11 -DOS_LINUX $(PROFILE) -flto -D_FORTIFY_SOURCE=2
+endif
 ifeq ($(OPSYS),macos)
 COPTS+=-Oz -I/usr/local/opt/readline/include
 else

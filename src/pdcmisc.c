@@ -46,7 +46,7 @@ PUBLIC void my_nl(int stream)
 }
 
 
-PUBLIC void my_put(int stream, char *buf, long len)
+PUBLIC void my_put(int stream, const char *buf, long len)
 {
 	if (sel_outfile && stream == MSG_PROGRAM) {
 		if (fputs(buf, sel_outfile) == EOF)
@@ -58,7 +58,7 @@ PUBLIC void my_put(int stream, char *buf, long len)
 }
 
 
-PUBLIC void my_printf(int stream, int newline, char *s, ...)
+PUBLIC void my_printf(int stream, int newline, const char *s, ...)
 {
 	char buf[MAX_LINELEN];
 	va_list ap;
@@ -73,7 +73,7 @@ PUBLIC void my_printf(int stream, int newline, char *s, ...)
 }
 
 
-PUBLIC void fatal(char *s, ...)
+PUBLIC void fatal(const char *s, ...)
 {
 	char buf[140];
 	va_list ap;
@@ -110,7 +110,7 @@ PUBLIC void free_list(struct my_list *root)
 		return;
 
 	while (root)
-		root = mem_free(root);
+		root = (struct my_list *)mem_free(root);
 }
 
 
@@ -238,19 +238,6 @@ PUBLIC struct id_rec *exp_of_id(struct expression *exp)
 	return id;
 }
 
-/*
- * Check whether this expression consists of a single array. If this
- * is the case, return the identifier (name of the array), else return
- * NULL
- */
-PUBLIC struct id_rec *exp_of_array(struct expression *exp)
-{
-	if (exp->optype==T_ARRAY || exp->optype==T_SARRAY)
-		return exp->e.expid.id;
-
-	return NULL;
-}
-
 PUBLIC int exp_of_string(struct expression *exp)
 {
 	if (exp->optype != T_EXP_IS_STRING)
@@ -265,44 +252,6 @@ PUBLIC int exp_of_string(struct expression *exp)
 PUBLIC char *exp_cmd(struct expression *exp)
 {
 	return (exp_of_id(exp))->name;
-}
-
-
-PUBLIC long my_write(int h, char *data, long size)
-{
-	long worksize = size;
-
-	while (worksize > MAXUNSIGNED) {
-		if (write(h, data, MAXUNSIGNED) < 0)
-			return -1;
-
-		data += MAXUNSIGNED;
-		worksize -= MAXUNSIGNED;
-	}
-
-	if (write(h, data, worksize) < 0)
-		return -1;
-
-	return size;
-}
-
-
-PUBLIC long my_read(int h, char *data, long size)
-{
-	long worksize = size;
-
-	while (worksize > MAXUNSIGNED) {
-		if (read(h, data, MAXUNSIGNED) < 0)
-			return -1;
-
-		data += MAXUNSIGNED;
-		worksize -= MAXUNSIGNED;
-	}
-
-	if (read(h, data, worksize) < 0)
-		return -1;
-
-	return size;
 }
 
 
@@ -539,18 +488,6 @@ PUBLIC int type_size(enum VAL_TYPE t)
 }
 
 
-PUBLIC void data_dump(char *data, int nr, char *title)
-{
-	my_nl(MSG_DEBUG);
-	my_printf(MSG_DEBUG, 1, title);
-
-	for (; nr; nr--, data++)
-		my_printf(MSG_DEBUG, 0, "%02X ", *data);
-
-	my_nl(MSG_DEBUG);
-}
-
-
 PUBLIC void check_lval(struct expression *exp)
 {
 	struct sym_item *sym;
@@ -570,21 +507,6 @@ PUBLIC void check_lval(struct expression *exp)
 	if (exp->optype == T_SID && exp->e.expsid.twoexp)
 		run_error(LVAL_ERR,
 			  "This string lvalue cannot have a substring specifier");
-}
-
-
-PUBLIC int clean_string_lval(struct expression *exp)
-{
-	if (exp->optype == T_EXP_IS_STRING)
-		exp = exp->e.exp;
-
-	if (exp->optype != T_SID)
-		return 0;
-
-	if (exp->e.expsid.twoexp)
-		return 0;
-
-	return 1;
 }
 
 
@@ -643,32 +565,13 @@ PUBLIC struct comal_line *stat_dup(struct comal_line *stat)
 	char *to;
 	char *from;
 
-	work = mem_alloc(PARSE_POOL, memsize);
+	work = (struct comal_line *)mem_alloc(PARSE_POOL, memsize);
 
 	for (to = (char *) work, from = (char *) stat; memsize > 0;
 	     memsize--, to++, from++)
 		*to = *from;
 
 	return work;
-}
-
-
-PUBLIC void trace_add(int *val, char *name)
-{
-	struct int_trace *work =
-	    mem_alloc(MISC_POOL, sizeof(struct int_trace));
-
-	work->next = tr_root;
-	work->value = val;
-	work->name = name;
-	tr_root = work;
-}
-
-
-PUBLIC void trace_remove()
-{
-	if (tr_root)
-		tr_root = mem_free(tr_root);
 }
 
 
@@ -689,7 +592,7 @@ PUBLIC void trace_reset()
 	struct int_trace *work = tr_root;
 
 	while (work)
-		work = mem_free(work);
+		work = (struct int_trace *)mem_free(work);
 }
 
 #ifndef EVIL32
@@ -739,7 +642,7 @@ PUBLIC int eof(int f)
 }
 #endif
 
-PUBLIC void remove_trailing(char *s, char *trailer, char *subst) 
+PUBLIC void remove_trailing(char *s, const char *trailer, const char *subst) 
 {
 	int l=strlen(s);
 	int m=strlen(trailer);
@@ -760,12 +663,14 @@ PUBLIC double my_frac(double x)
 	return -(ceil(x)-x);
 }
 
+#ifndef HAS_ROUND
 PUBLIC double my_round(double x)
 {
-	double d=my_frac(x);
+       double d=my_frac(x);
 
-	if (fabs(d)>=0.5)
-		return ceil(x);
+       if (fabs(d)>=0.5)
+               return ceil(x);
 
-	return floor(x);
+       return floor(x);
 }
+#endif
