@@ -50,14 +50,10 @@ PUBLIC struct string *str_make(int pool, const char *s)
 PUBLIC struct string *str_make2(int pool, long len)
 {
 	struct string *work = STR_ALLOC(pool, len);
-	char HUGE_POINTER *s;
 
 	work->len = len;
 	
-	for (s=work->s; len; --len) {
-		*s=' ';
-		s++;
-	}
+        memset(work->s, ' ', len);
 
 	return work;
 }
@@ -77,25 +73,11 @@ PUBLIC long str_search(struct string *needle, struct string *haystack)
 {
 	char HUGE_POINTER *h = haystack->s;
 	char HUGE_POINTER *n = needle->s;
-	char HUGE_POINTER *wn;
-	char HUGE_POINTER *wh;
 
-	while (*h) {
-		if (*h == *n) {
-			wn = n;
-			wh = h;
-
-			while (*wn == *wh && *wn)
-				wn++, wh++;
-
-			if (!*wn)
-				return h - haystack->s + 1;
-		}
-
-		h++;
-	}
-
-	return 0L;
+        if ((h = strstr(h, n)) != NULL) {
+                return h - haystack->s + 1;
+        }
+        return 0L;
 }
 
 
@@ -129,10 +111,9 @@ PUBLIC struct string *str_partcpy(struct string *s1, struct string *s2,
 	s1->len = to - from + 1;
 	w2 = w2 + from - 1;
 
-	while (from <= to && *w2)
-		*w1 = *w2, w1++, w2++, from++;
+        strncpy(w1, w2, to - from + 1);
 
-	*w1 = '\0';
+        w1[to - from + 1] = '\0';
 
 	return s1;
 }
@@ -146,8 +127,7 @@ PUBLIC struct string *str_partcpy2(struct string *s1, struct string *s2,
 	char HUGE_POINTER *w1 = s1->s+from-1; /* Comal strings start at offset 1 */
 	char HUGE_POINTER *w2 = s2->s;
 
-	while (from <= to && *w2)
-		*w1 = *w2, w1++, w2++, from++;
+        strncpy(w1, w2, to - from + 1);
 
 	return s1;
 }
@@ -177,7 +157,6 @@ PUBLIC void str_extend(int pool, struct string **s, long newlen)
 {
 	struct string *work;
 	char HUGE_POINTER *t;
-	long i;
 
 	if ((*s) && (*s)->len>=newlen) return;
 
@@ -185,12 +164,8 @@ PUBLIC void str_extend(int pool, struct string **s, long newlen)
 	str_cpy(work,*s);
 	t=&work->s[(*s)->len];
 	
-	for (i=newlen-(*s)->len; i; --i) {
-		*t=' ';
-		t++;
-	}
-	
-	*t=0;
+        memset(t, ' ', newlen - (*s)->len);
+        t[newlen - (*s)->len] = '\0';
 	work->len=newlen;
 	mem_free(*s);
 	*s=work;
